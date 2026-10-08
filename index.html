@@ -507,6 +507,78 @@ bd.querySelector('.bar').onclick=e=>{const k=e.target.dataset.a;if(k==='cap')cap
 
 document.addEventListener('keydown',e=>{if(act&&act.key&&!e.target.closest('input,textarea'))act.key(e);if(e.key==='Escape')closePops();hot(e)});
 const al=ST.get('w11.al','c');$('#task').classList.toggle('l',al==='l');document.body.classList.toggle('l',al==='l');
+
+/* ===== WINDOWS 11 SUPER OS CORE UPGRADE ===== */
+(()=>{
+  const oldToast=toast;
+  const mini=(title,icon,body,opts={})=>({n:title,i:icon,w:opts.w||680,h:opts.h||460,d:opts.d||title+' — Windows 11',r(w){
+    const b=w.bd;
+    b.innerHTML=`<div class="osapp"><div class="oshero"><div class="osicon">${icon}</div><div><h2>${title}</h2><div class="mut">${opts.sub||'Windows 11 Web application'}</div></div></div><div class="osbody">${body}</div></div>`;
+    if(opts.mount)opts.mount(b,w);
+  }});
+  const rows=(items)=>items.map(x=>`<div class="osrow"><span>${x[0]}</span><span>${x[1]||''}</span></div>`).join('');
+  const btn=(t,a='')=>`<button class="bt" ${a}>${t}</button>`;
+
+  Object.assign(APPS,{
+    mail:mini('Mail','✉️',`<div class="osgrid"><div class="oscard"><b>Inbox</b><p>Welcome to Windows Web!</p><small>Microsoft account</small></div><div class="oscard"><b>Drafts</b><p>Start a new message.</p>${btn('New message','data-mail=new')}</div></div>`,{sub:'Mail & accounts',mount(b){b.onclick=e=>{if(e.target.dataset.mail==='new')toast('New message composer opened')}}}),
+    onedrive:mini('OneDrive','☁️',`<div class="oscard"><b>Files are synced</b><p>Desktop · Documents · Pictures</p><div class="osbar"><i style="width:72%"></i></div><small>3.6 GB of 5 GB used</small></div>${btn('Sync now','data-sync')}`,{sub:'Cloud files',mount(b){b.onclick=e=>{if(e.target.dataset.sync)toast('OneDrive sync complete')}}}),
+    todo:mini('Microsoft To Do','✓',`<div class="todoadd"><input id="tdi" placeholder="Add a task…">${btn('Add','data-add')}</div><div id="tdl"></div>`,{sub:'Tasks & reminders',mount(b){let list=J('w11.todo',[]);const draw=()=>b.querySelector('#tdl').innerHTML=list.map((x,i)=>`<div class="osrow"><span>${x}</span><button class="bt" data-del="${i}">✓</button></div>`).join('')||'<div class="mut">No tasks yet.</div>';b.onclick=e=>{if(e.target.dataset.add){const v=b.querySelector('#tdi').value.trim();if(v){list.push(v);ST.set('w11.todo',JSON.stringify(list));b.querySelector('#tdi').value='';draw()}}else if(e.target.dataset.del!=null){list.splice(+e.target.dataset.del,1);ST.set('w11.todo',JSON.stringify(list));draw()}};draw()}}),
+    maps:mini('Maps','🗺️',`<div class="mapfake"><div class="maproad r1"></div><div class="maproad r2"></div><div class="mappin">📍</div><div class="maplabel">Windows Web City</div></div><div style="margin-top:10px">${btn('Use my location','data-loc')}</div>`,{sub:'Maps',mount(b){b.onclick=e=>{if(e.target.dataset.loc)toast('Location access is controlled by your browser')}}}),
+    tips:mini('Tips','💡',`<div class="osgrid">${[['⌨️','Press Win to open Start'],['🪟','Use Win + Arrow keys to snap windows'],['🔎','Search apps from Start'],['📁','Drag files between Explorer folders']].map(x=>`<div class="oscard"><b>${x[0]} ${x[1]}</b><p class="mut">Try it in this Windows 11 Web desktop.</p></div>`).join('')}</div>`,{sub:'Windows tips'}),
+    feedback:mini('Feedback Hub','💬',`<textarea id="fb" placeholder="Tell us what you think…" style="width:100%;min-height:150px;box-sizing:border-box"></textarea><div style="margin-top:10px">${btn('Submit feedback','data-fb')}</div>`,{sub:'Help improve Windows',mount(b){b.onclick=e=>{if(e.target.dataset.fb){const v=b.querySelector('#fb').value.trim();toast(v?'Feedback submitted. Thanks!':'Write some feedback first.')}}}}),
+    sysinfo:mini('System Information','🖥️',rows([['OS','Windows 11 Web'],['Browser',navigator.userAgent.split(') ')[0]+')'],['Screen',innerWidth+' × '+innerHeight],['Memory','Browser-managed'],['Storage',Math.round(JSON.stringify(fs).length/1024)+' KB'],['Apps',String(APPLIST().length)],['Online',navigator.onLine?'Yes':'No']]),{sub:'System diagnostics'}),
+    resmon:mini('Resource Monitor','📈',`<div class="oscard"><b>CPU</b><div class="osbar"><i id="cpuBar"></i></div><span id="cpuTxt">0%</span></div><div class="oscard"><b>Memory</b><div class="osbar"><i style="width:46%"></i></div><span>46%</span></div><div class="oscard"><b>Network</b><div class="osbar"><i style="width:23%"></i></div><span>23%</span></div>`,{sub:'Live resource monitor',mount(b,w){const bar=b.querySelector('#cpuBar'),txt=b.querySelector('#cpuTxt');const iv=setInterval(()=>{if(!w.e.isConnected)return clearInterval(iv);const n=8+Math.floor(Math.random()*32);bar.style.width=n+'%';txt.textContent=n+'%'},800)}}),
+    eventviewer:mini('Event Viewer','📋',`<div class="oscard">${['Application started','Store catalog refreshed','Settings changed','User signed in','Windows Web initialized'].map((x,i)=>`<div class="osrow"><span>🛈 ${x}</span><small>${new Date(Date.now()-i*60000).toLocaleTimeString()}</small></div>`).join('')}</div>`,{sub:'System event log'}),
+    services:mini('Services','⚙️',`<div class="oscard">${['Windows Update','Windows Security','Audio','Network','Print Spooler','Windows Search'].map(x=>`<div class="osrow"><span>${x}</span><span class="green">Running</span></div>`).join('')}</div>`,{sub:'Service manager'}),
+    diskcleanup:mini('Disk Cleanup','🧹',`<div class="oscard">${['Temporary files','Thumbnails','Browser cache','Delivery optimization'].map((x,i)=>`<label class="oscheck"><input type="checkbox" ${i<2?'checked':''}> ${x}<span>${(12+i*7)} MB</span></label>`).join('')}</div>${btn('Clean up','data-clean')}`,{sub:'Free disk space',mount(b){b.onclick=e=>{if(e.target.dataset.clean)toast('Disk Cleanup finished — 31 MB available')}}}),
+    fonts:mini('Fonts','🔤',`<input id="fontq" placeholder="Search fonts" style="width:100%;padding:10px;box-sizing:border-box"><div id="fontlist" class="fontlist">${['Arial','Calibri','Consolas','Courier New','Georgia','Segoe UI','Times New Roman','Verdana'].map(x=>`<div style="font-family:'${x}',sans-serif" data-font>${x}<span>Regular</span></div>`).join('')}</div>`,{sub:'Font management',mount(b){b.querySelector('#fontq').oninput=e=>{const q=e.target.value.toLowerCase();b.querySelectorAll('[data-font]').forEach(x=>x.style.display=x.textContent.toLowerCase().includes(q)?'flex':'none')}}}),
+    alarms:mini('Clock & Alarms','⏰',`<div class="oscard"><h3 id="alarmTime">--:--:--</h3><input id="alarmInput" type="time"> ${btn('Set alarm','data-alarm')}<div id="alarmMsg" class="mut" style="margin-top:10px">No alarm set.</div></div>`,{sub:'Alarms & clock',mount(b,w){let target=null;b.onclick=e=>{if(e.target.dataset.alarm){target=b.querySelector('#alarmInput').value;b.querySelector('#alarmMsg').textContent=target?'Alarm set for '+target:'Choose a time'}};const iv=setInterval(()=>{if(!w.e.isConnected)return clearInterval(iv);const d=new Date();b.querySelector('#alarmTime').textContent=d.toLocaleTimeString();if(target&&d.toTimeString().slice(0,5)===target){toast('⏰ Alarm!');target=null}},500)}}),
+    solitaire:mini('Solitaire','🃏',`<div class="solboard"><div class="solcard">A♠</div><div class="solcard">K♥</div><div class="solcard">Q♦</div><div class="solcard">J♣</div></div>${btn('New game','data-new')}`,{sub:'Classic card game',mount(b){b.onclick=e=>{if(e.target.dataset.new)toast('New Solitaire game started')}}}),
+    clipchamp:mini('Clipchamp','🎬',`<div class="oscard"><h3>New video project</h3><p class="mut">Import media, arrange clips and export a video.</p>${btn('Create project','data-project')}</div><div class="osgrid"><div class="oscard">📹 Media</div><div class="oscard">🎵 Audio</div><div class="oscard">✨ Effects</div><div class="oscard">📝 Text</div></div>`,{sub:'Video editor',mount(b){b.onclick=e=>{if(e.target.dataset.project)toast('Video project created')}}}),
+    xbox:mini('Xbox','🎮',`<div class="osgrid"><div class="oscard">🎮 Game Library<br><small>12 games</small></div><div class="oscard">🏆 Achievements<br><small>240G</small></div><div class="oscard">👥 Friends<br><small>3 online</small></div><div class="oscard">☁️ Cloud Gaming<br><small>Ready</small></div></div>`,{sub:'Gaming'}),
+    edge:mini('Microsoft Edge','🌐',`<div class="browserbar"><input id="edgeurl" value="https://www.example.com"><button class="bt" data-go>Go</button></div><div class="edgepage" id="edgepage"><h2>New tab</h2><p>Search or enter a web address.</p><div class="osgrid"><div class="oscard">📰 News</div><div class="oscard">⭐ Favorites</div><div class="oscard">🕘 History</div></div></div>`,{sub:'Web browser',mount(b){b.onclick=e=>{if(e.target.dataset.go){const u=b.querySelector('#edgeurl').value; b.querySelector('#edgepage').innerHTML='<h2>Web preview</h2><p class="mut">Navigation requested: '+esc(u)+'</p><div class="oscard">This local browser shell does not bypass website security or network restrictions.</div>'}}}}),
+    appstore:mini('App Library','🛍️',`<h3>Installed apps</h3><div class="osgrid">${Object.keys(APPS).slice(0,30).map(id=>`<div class="oscard"><b>${APPS[id].i} ${APPS[id].n}</b><br><small>Installed</small></div>`).join('')}</div>`,{sub:'Application manager'})
+  });
+
+  /* Add the new catalog to the Store's existing catalog. */
+  const newStore={mail:'Productivity',onedrive:'Productivity',todo:'Productivity',maps:'Utilities',tips:'Utilities',feedback:'Utilities',sysinfo:'System',resmon:'System',eventviewer:'System',services:'System',diskcleanup:'System',fonts:'System',alarms:'Utilities',solitaire:'Gaming',clipchamp:'Productivity',xbox:'Gaming',edge:'Utilities',appstore:'Utilities'};
+  Object.keys(newStore).forEach(id=>{if(typeof CAT==='object'&&CAT)CAT[id]={...APPS[id],d:APPS[id].d||'Windows application'};});
+  if(typeof SUPER_IDS!=='undefined'&&Array.isArray(SUPER_IDS))SUPER_IDS.push(...Object.keys(newStore).filter(x=>!SUPER_IDS.includes(x)));
+
+  /* Visual system upgrade. */
+  const style=document.createElement('style');style.textContent=`
+  .osapp{height:100%;box-sizing:border-box;overflow:auto;background:var(--cont);color:var(--txt)}
+  .oshero{display:flex;gap:14px;align-items:center;padding:18px;border-bottom:1px solid var(--ln);background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 15%,var(--cont)),var(--cont))}
+  .oshero h2{margin:0 0 4px;font-weight:600}.osicon{font-size:44px}.osbody{padding:18px}.osgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.oscard{padding:14px;border:1px solid var(--ln);border-radius:12px;background:var(--card);margin-bottom:10px}.osrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-bottom:1px solid var(--ln)}.osrow:last-child{border-bottom:0}.osbar{height:9px;border-radius:10px;background:var(--card2,var(--card));overflow:hidden;margin:9px 0}.osbar i{display:block;height:100%;background:var(--acc);border-radius:10px}.mut{color:var(--mut)}.green{color:#28c76f}.todoadd,.browserbar{display:flex;gap:8px;margin-bottom:12px}.todoadd input,.browserbar input{flex:1;padding:10px;border:1px solid var(--ln);border-radius:8px;background:var(--card);color:inherit}.mapfake{height:250px;border-radius:12px;position:relative;overflow:hidden;background:repeating-linear-gradient(45deg,#dbe8d5 0 30px,#cddfcb 30px 60px)}.maproad{position:absolute;background:#fff}.maproad.r1{height:20px;width:120%;left:-10%;top:90px;transform:rotate(18deg)}.maproad.r2{height:16px;width:120%;left:-10%;top:155px;transform:rotate(-22deg)}.mappin{position:absolute;left:52%;top:48%;font-size:32px}.maplabel{position:absolute;left:20px;bottom:15px;background:#fff;color:#222;padding:7px 10px;border-radius:7px}.fontlist>div{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid var(--ln)}.fontlist span{color:var(--mut);font-family:system-ui}.oscheck{display:flex;justify-content:space-between;padding:10px}.solboard{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.solcard{height:130px;border-radius:10px;background:var(--card);border:1px solid var(--ln);display:flex;align-items:center;justify-content:center;font-size:34px}.browserbar{padding:12px;background:var(--card);border-radius:10px}.edgepage{padding:15px}.`;
+  document.head.appendChild(style);
+
+  /* Better taskbar: running indicators + app tooltip metadata. */
+  const refreshTask=()=>{try{drawTask()}catch{}};
+  const oldOpen=open;
+  open=function(id,arg){const w=oldOpen(id,arg);setTimeout(refreshTask,20);return w};
+
+  /* Better Start search: search every registered app, not only pinned apps. */
+  const si=document.querySelector('#si')||document.querySelector('#startSearch');
+  if(si){si.addEventListener('input',()=>{const q=si.value.trim().toLowerCase();document.querySelectorAll('.di,.start-app').forEach(x=>{const hit=!q||x.textContent.toLowerCase().includes(q);x.style.display=hit?'':'none'})})}
+
+  /* Desktop keyboard launcher. */
+  document.addEventListener('keydown',e=>{
+    if(e.target.matches('input,textarea,[contenteditable]'))return;
+    if(e.key==='F1'){e.preventDefault();try{open('tips')}catch{}}
+    if(e.ctrlKey&&e.altKey&&e.key.toLowerCase()==='s'){e.preventDefault();try{open('store')}catch{}}
+  });
+
+  /* Network-aware status indicator. */
+  const net=()=>{const el=document.querySelector('#sys');if(!el)return;const q=Q||{};el.title=navigator.onLine?'Online':'Offline';if(!navigator.onLine)el.textContent='⚠️ Offline'};
+  window.addEventListener('online',net);window.addEventListener('offline',net);net();
+
+  /* Safe error reporting inside the OS instead of silent dead clicks. */
+  window.addEventListener('error',e=>{try{oldToast('App error: '+(e.message||'Unknown error'))}catch{}});
+  window.addEventListener('unhandledrejection',e=>{try{oldToast('App error: '+(e.reason?.message||'Action failed'))}catch{}});
+
+  oldToast('Windows 11 Super OS loaded 🚀');
+})();
+
 applyQ();drawTask();boot(1100);
 })();
 </script><script>
