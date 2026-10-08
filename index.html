@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Windows Web Desktop</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>macOS Web Desktop</title>
 
 <style>
 *{box-sizing:border-box}
@@ -12,3169 +12,2408 @@ html,body{
   width:100%;
   height:100%;
   overflow:hidden;
-  font-family:"Segoe UI",Arial,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
+  color:#111;
 }
-:root{
-  --accent:#0078d4;
-  --task:#202020;
-  --desktop1:#0879bd;
-  --desktop2:#004f91;
+body{
+  background:#071d3d;
+  user-select:none;
 }
 button,input,textarea{font:inherit}
+button{cursor:pointer}
 
-body{
-  background:linear-gradient(135deg,var(--desktop1),var(--desktop2));
+:root{
+  --accent:#0a84ff;
+  --glass:rgba(255,255,255,.68);
+  --glass2:rgba(255,255,255,.82);
+  --border:rgba(255,255,255,.32);
+  --shadow:0 25px 70px rgba(0,0,0,.30);
 }
 
-/* ================= DESKTOP ================= */
+body.dark{
+  --glass:rgba(30,30,35,.72);
+  --glass2:rgba(40,40,45,.92);
+  --border:rgba(255,255,255,.13);
+  color:#eee;
+}
 
 #desktop{
-  position:absolute;
-  inset:0 0 44px 0;
+  position:fixed;
+  inset:0;
   overflow:hidden;
   background:
-    radial-gradient(circle at 72% 40%,#31a6df 0,transparent 24%),
-    linear-gradient(135deg,#0879bd,#005a9f 55%,#063e76);
+    radial-gradient(circle at 18% 30%,rgba(30,130,255,.55),transparent 28%),
+    radial-gradient(circle at 80% 25%,rgba(160,70,255,.45),transparent 28%),
+    radial-gradient(circle at 55% 85%,rgba(0,220,190,.25),transparent 30%),
+    linear-gradient(135deg,#07142e,#153f70 45%,#321866);
 }
 
-.wall{
-  position:absolute;
-  width:700px;
-  height:700px;
-  right:-150px;
-  top:-180px;
-  border:75px solid rgba(255,255,255,.08);
-  transform:rotate(28deg);
-  pointer-events:none;
+body.dark #desktop{
+  background:
+    radial-gradient(circle at 20% 25%,rgba(30,100,190,.35),transparent 30%),
+    radial-gradient(circle at 80% 25%,rgba(100,40,170,.3),transparent 30%),
+    linear-gradient(135deg,#02050b,#0b1730,#170b25);
 }
 
-.wall2{
-  position:absolute;
-  width:500px;
-  height:500px;
-  right:250px;
-  top:160px;
-  border:45px solid rgba(255,255,255,.06);
-  transform:rotate(28deg);
-  pointer-events:none;
-}
-
-.desktop-icons{
-  position:absolute;
-  left:8px;
-  top:8px;
-  width:90px;
-  display:flex;
-  flex-direction:column;
-  gap:3px;
-}
-
-.dicon{
-  color:#fff;
-  text-align:center;
-  padding:7px 2px;
-  border:1px solid transparent;
-  border-radius:3px;
-  cursor:pointer;
-  font-size:12px;
-  text-shadow:0 1px 4px #000;
-  user-select:none;
-}
-
-.dicon:hover{
-  background:#ffffff1c;
-  border-color:#ffffff25;
-}
-
-.dicon .ico{
-  display:block;
-  font-size:34px;
-  margin-bottom:5px;
-}
-
-/* ================= TASKBAR ================= */
-
-#taskbar{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  height:44px;
-  z-index:10000;
-  display:flex;
-  align-items:center;
-  background:rgba(30,30,30,.96);
-  color:#fff;
-  box-shadow:0 -2px 8px #0005;
-  backdrop-filter:blur(15px);
-}
-
-#startButton{
-  width:52px;
-  height:44px;
-  border:0;
-  background:transparent;
-  display:grid;
-  place-items:center;
-  cursor:pointer;
-}
-
-#startButton:hover{
-  background:#333;
-}
-
-.windows-logo{
-  width:23px;
-  height:23px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  grid-template-rows:1fr 1fr;
-  gap:2px;
-  transform:skewY(-5deg);
-}
-
-.windows-logo span{
-  background:#fff;
-  display:block;
-}
-
-#startButton:hover .windows-logo span{
-  background:#45c6ff;
-}
-
-#taskSearch{
-  width:240px;
-  height:31px;
-  border:1px solid transparent;
-  background:#333;
-  color:#fff;
-  outline:none;
-  padding:0 12px;
-}
-
-#taskSearch:focus{
-  background:#444;
-  border-color:#777;
-}
-
-#taskApps{
-  display:flex;
-  height:100%;
-  margin-left:4px;
-}
-
-.task{
-  width:48px;
-  height:44px;
-  display:grid;
-  place-items:center;
-  position:relative;
-  cursor:pointer;
-  font-size:20px;
-}
-
-.task:hover{
-  background:#333;
-}
-
-.task.active::after{
+/* wallpaper decoration */
+#desktop:before,#desktop:after{
   content:"";
   position:absolute;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  width:20px;
-  height:2px;
-  background:var(--accent);
-}
-
-#tray{
-  margin-left:auto;
-  height:100%;
-  display:flex;
-  align-items:center;
-}
-
-.tray{
-  height:44px;
-  min-width:38px;
-  display:grid;
-  place-items:center;
-  cursor:pointer;
-}
-
-.tray:hover{
-  background:#333;
-}
-
-#clock{
-  width:90px;
-  font-size:11px;
-  line-height:14px;
-  text-align:center;
-}
-
-/* ================= START MENU ================= */
-
-#startMenu{
-  position:absolute;
-  left:0;
-  bottom:44px;
-  width:720px;
-  height:610px;
-  background:rgba(30,30,30,.97);
-  color:#fff;
-  z-index:11000;
-  display:none;
-  flex-direction:column;
-  box-shadow:0 0 30px #0009;
-  backdrop-filter:blur(20px);
-}
-
-#startMenu.open{
-  display:flex;
-}
-
-.startTop{
-  height:70px;
-  padding:12px 18px;
-  display:flex;
-  align-items:center;
-  background:#292929;
-}
-
-.avatar{
-  width:42px;
-  height:42px;
+  width:55vw;
+  height:55vw;
   border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:#555;
-  margin-right:12px;
+  border:1px solid rgba(255,255,255,.08);
+  filter:blur(1px);
+  pointer-events:none;
 }
+#desktop:before{left:-20vw;bottom:-30vw}
+#desktop:after{right:-20vw;top:-30vw}
 
-.startSearch{
-  margin-left:auto;
-  width:310px;
-  height:35px;
-  background:#3a3a3a;
-  color:#fff;
-  border:1px solid #555;
-  outline:none;
-  padding:0 12px;
-}
-
-.startBody{
-  display:flex;
-  flex:1;
-  min-height:0;
-}
-
-.startList{
-  width:255px;
-  overflow:auto;
-  padding:7px 0;
-}
-
-.section{
-  color:#999;
-  font-size:11px;
-  text-transform:uppercase;
-  padding:9px 18px;
-}
-
-.startItem{
-  height:42px;
-  padding:0 18px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  cursor:pointer;
-}
-
-.startItem:hover{
-  background:#333;
-}
-
-.tiles{
-  flex:1;
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  grid-auto-rows:105px;
-  gap:5px;
-  padding:15px;
-  overflow:auto;
-}
-
-.tile{
-  background:#0879c9;
-  padding:12px;
-  cursor:pointer;
-  transition:.12s;
-}
-
-.tile:hover{
-  filter:brightness(1.15);
-}
-
-.tile.big{
-  grid-column:span 2;
-}
-
-.tile b{
-  font-size:29px;
-}
-
-.tile small{
-  display:block;
-  margin-top:12px;
-}
-
-/* ================= ACTION CENTER ================= */
-
-#actionCenter{
+/* MENU BAR */
+#menuBar{
   position:absolute;
+  z-index:10000;
+  left:0;
   right:0;
-  bottom:44px;
-  width:370px;
-  height:510px;
-  z-index:12000;
-  display:none;
-  color:#fff;
-  background:rgba(30,30,30,.97);
-  box-shadow:0 0 25px #0008;
-  backdrop-filter:blur(20px);
-}
-
-#actionCenter.open{
-  display:block;
-}
-
-.acHead{
-  padding:18px;
-  font-size:19px;
-}
-
-.quickGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:5px;
-  padding:10px;
-}
-
-.quick{
-  padding:15px;
-  background:#333;
-  cursor:pointer;
-}
-
-.quick.on{
-  background:var(--accent);
-}
-
-.notif{
-  margin:8px 10px;
-  padding:14px;
-  background:#333;
-}
-
-.notif small{
-  display:block;
-  margin-top:5px;
-  color:#aaa;
-}
-
-/* ================= WINDOWS ================= */
-
-.window{
-  position:absolute;
-  z-index:100;
-  display:none;
-  flex-direction:column;
-  min-width:320px;
-  min-height:200px;
-  background:#f3f3f3;
-  color:#111;
-  border:1px solid #777;
-  box-shadow:0 10px 35px #0007;
-}
-
-.window.show{
-  display:flex;
-}
-
-.window.max{
-  inset:0 0 44px 0!important;
-  width:auto!important;
-  height:auto!important;
-}
-
-.title{
-  height:35px;
-  display:flex;
-  align-items:center;
-  background:#eee;
-  border-bottom:1px solid #ccc;
-  flex-shrink:0;
-  user-select:none;
-}
-
-.ti{
-  width:38px;
-  text-align:center;
-}
-
-.tt{
-  flex:1;
-  font-size:13px;
-}
-
-.wb{
-  height:100%;
-  display:flex;
-}
-
-.wb button{
-  width:45px;
-  height:100%;
-  border:0;
-  background:transparent;
-  cursor:pointer;
-}
-
-.wb button:hover{
-  background:#ddd;
-}
-
-.wb .x:hover{
-  background:#e81123;
-  color:#fff;
-}
-
-.content{
-  flex:1;
-  min-height:0;
-  overflow:auto;
-}
-
-/* ================= EXPLORER ================= */
-
-.toolbar{
-  height:45px;
-  display:flex;
-  gap:4px;
-  align-items:center;
-  padding:5px 8px;
-  background:#fafafa;
-  border-bottom:1px solid #ddd;
-}
-
-.toolbar button{
-  border:0;
-  background:transparent;
-  padding:7px 11px;
-  cursor:pointer;
-}
-
-.toolbar button:hover{
-  background:#ddd;
-}
-
-.address{
-  flex:1;
-  height:31px;
-  padding:6px 10px;
-  border:1px solid #bbb;
-  background:#fff;
-  font-size:13px;
-}
-
-.explorer{
-  height:calc(100% - 45px);
-  display:flex;
-}
-
-.side{
-  width:190px;
-  background:#f5f5f5;
-  border-right:1px solid #ddd;
-}
-
-.side div{
-  padding:10px 17px;
-  cursor:pointer;
-  font-size:13px;
-}
-
-.side div:hover{
-  background:#ddd;
-}
-
-.files{
-  flex:1;
-  padding:18px;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,100px);
-  grid-auto-rows:100px;
-  gap:8px;
-  align-content:start;
-}
-
-.file{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  border:1px solid transparent;
-  cursor:pointer;
-  font-size:12px;
-}
-
-.file:hover{
-  background:#e5f3ff;
-  border-color:#afd1ea;
-}
-
-.ficon{
-  font-size:37px;
-  margin-bottom:6px;
-}
-
-/* ================= SETTINGS ================= */
-
-.settings{
-  height:100%;
-  display:flex;
-}
-
-.snav{
-  width:215px;
-  background:#f2f2f2;
-  border-right:1px solid #ddd;
-}
-
-.sprofile{
-  padding:20px;
-  border-bottom:1px solid #ddd;
-}
-
-.snav div:not(.sprofile){
-  padding:12px 18px;
-  cursor:pointer;
-  font-size:13px;
-}
-
-.snav div:not(.sprofile):hover,
-.snav .sel{
-  background:#ddd;
-}
-
-.smain{
-  flex:1;
-  padding:28px;
-  overflow:auto;
-}
-
-.spage{
-  display:none;
-}
-
-.spage.active{
-  display:block;
-}
-
-.smain h1{
-  font-size:28px;
-  font-weight:400;
-  margin:0 0 22px;
-}
-
-.card{
-  background:#fff;
-  border:1px solid #ddd;
-  padding:17px;
-  margin-bottom:12px;
-}
-
-.row{
-  min-height:46px;
+  top:0;
+  height:30px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  border-bottom:1px solid #eee;
-  padding:9px 0;
+  padding:0 10px;
+  background:rgba(245,245,245,.55);
+  backdrop-filter:blur(22px) saturate(180%);
+  -webkit-backdrop-filter:blur(22px) saturate(180%);
+  border-bottom:1px solid rgba(255,255,255,.18);
+  font-size:13px;
 }
+body.dark #menuBar{background:rgba(25,25,28,.65)}
 
-.row:last-child{
-  border-bottom:0;
-}
-
-.toggle{
-  width:44px;
-  height:23px;
-  border-radius:15px;
-  background:#888;
-  position:relative;
-  cursor:pointer;
-}
-
-.toggle::after{
-  content:"";
-  width:19px;
-  height:19px;
-  border-radius:50%;
-  background:#fff;
-  position:absolute;
-  top:2px;
-  left:2px;
-  transition:.15s;
-}
-
-.toggle.on{
-  background:var(--accent);
-}
-
-.toggle.on::after{
-  left:23px;
-}
-
-/* ================= BROWSER ================= */
-
-.browserBar{
-  height:50px;
+.menu-left,.menu-right{
   display:flex;
-  gap:4px;
   align-items:center;
-  padding:5px;
-  background:#eee;
-}
-
-.browserBar button{
-  width:35px;
-  height:35px;
-  border:0;
-  background:transparent;
-  cursor:pointer;
-}
-
-.browserBar button:hover{
-  background:#ddd;
-}
-
-.url{
-  height:35px;
-  flex:1;
-  border:1px solid #bbb;
-  padding:0 12px;
-  outline:none;
-}
-
-.home{
-  min-height:100%;
-  text-align:center;
-  padding-top:65px;
-  background:#fff;
-}
-
-.bigglobe{
-  font-size:70px;
-}
-
-.home h1{
-  font-size:30px;
-  font-weight:300;
-}
-
-.webSearch{
-  width:65%;
-  height:45px;
-  border:1px solid #aaa;
-  border-radius:24px;
-  padding:0 18px;
-  font-size:16px;
-  outline:none;
-}
-
-.webpage{
-  min-height:100%;
-  padding:30px;
-  background:#fff;
-}
-
-/* ================= NOTEPAD ================= */
-
-.notepad{
-  height:100%;
-  display:flex;
-  flex-direction:column;
-}
-
-.noteMenu{
-  height:35px;
-  background:#eee;
-  border-bottom:1px solid #ccc;
-}
-
-.noteMenu button{
-  height:100%;
-  border:0;
-  background:transparent;
-  padding:0 13px;
-  cursor:pointer;
-}
-
-.noteMenu button:hover{
-  background:#ddd;
-}
-
-#note{
-  flex:1;
-  resize:none;
-  border:0;
-  outline:none;
-  padding:10px;
-  font:14px Consolas,monospace;
-}
-
-/* ================= CALCULATOR ================= */
-
-.calc{
-  height:100%;
-  padding:10px;
-  background:#eee;
-  display:flex;
-  flex-direction:column;
-}
-
-.display{
-  height:70px;
-  margin-bottom:8px;
-  padding:10px;
-  display:flex;
-  align-items:end;
-  justify-content:end;
-  background:#222;
-  color:#fff;
-  font-size:28px;
-  overflow:hidden;
-}
-
-.calcGrid{
-  flex:1;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
   gap:5px;
 }
+.menu-item{
+  padding:3px 8px;
+  border-radius:6px;
+  white-space:nowrap;
+}
+.menu-item:hover{background:rgba(255,255,255,.22)}
+.apple{
+  font-size:17px;
+  line-height:1;
+  padding:0 8px;
+}
+.menu-app{font-weight:650}
 
-.calcGrid button{
+.status{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:3px 6px;
+  border-radius:7px;
+}
+.status:hover{background:rgba(255,255,255,.2)}
+#clock{min-width:125px;text-align:right}
+
+/* DESKTOP ICONS */
+#desktopIcons{
+  position:absolute;
+  top:48px;
+  right:20px;
+  width:100px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  z-index:2;
+}
+.desktop-icon{
+  width:88px;
+  padding:7px 3px;
+  border-radius:10px;
+  text-align:center;
+  color:white;
+  text-shadow:0 2px 5px rgba(0,0,0,.7);
+}
+.desktop-icon:hover{background:rgba(255,255,255,.14)}
+.desktop-icon .big{font-size:42px;display:block;margin-bottom:3px}
+.desktop-icon span{font-size:12px}
+
+/* WINDOWS */
+#windows{
+  position:absolute;
+  inset:30px 0 0;
+  z-index:100;
+  pointer-events:none;
+}
+.window{
+  position:absolute;
+  min-width:340px;
+  min-height:220px;
+  width:720px;
+  height:500px;
+  max-width:calc(100vw - 20px);
+  max-height:calc(100vh - 80px);
+  overflow:hidden;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--glass2);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  pointer-events:auto;
+  resize:both;
+  animation:windowIn .18s ease;
+}
+@keyframes windowIn{
+  from{opacity:0;transform:scale(.94) translateY(12px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+.window.active{
+  box-shadow:0 30px 90px rgba(0,0,0,.42);
+}
+.window.maximized{
+  left:8px!important;
+  top:4px!important;
+  width:calc(100vw - 16px)!important;
+  height:calc(100vh - 76px)!important;
+  max-width:none;
+  max-height:none;
+  resize:none;
+}
+.window.minimized{
+  display:none;
+}
+
+.titlebar{
+  height:46px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 13px;
+  background:rgba(255,255,255,.24);
+  border-bottom:1px solid var(--border);
+  cursor:grab;
+}
+body.dark .titlebar{background:rgba(255,255,255,.04)}
+.titlebar:active{cursor:grabbing}
+
+.traffic{
+  display:flex;
+  gap:7px;
+}
+.traffic button{
   border:0;
-  background:#fff;
-  font-size:18px;
-  cursor:pointer;
+  width:13px;
+  height:13px;
+  border-radius:50%;
+  padding:0;
+  position:relative;
+}
+.close{background:#ff5f57}
+.min{background:#febc2e}
+.max{background:#28c840}
+.traffic button:hover:after{
+  content:"";
+  position:absolute;
+  inset:3px;
+  border-radius:50%;
+  background:rgba(0,0,0,.25);
+}
+.window-title{
+  flex:1;
+  text-align:center;
+  font-size:13px;
+  font-weight:600;
+  margin-right:58px;
+}
+.window-body{
+  height:calc(100% - 46px);
+  overflow:auto;
 }
 
-.calcGrid button:hover{
-  background:#ddd;
+/* DOCK */
+#dockWrap{
+  position:absolute;
+  z-index:9000;
+  bottom:8px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:6px;
+  border-radius:21px;
+  background:rgba(245,245,245,.48);
+  border:1px solid rgba(255,255,255,.25);
+  backdrop-filter:blur(25px) saturate(180%);
+  -webkit-backdrop-filter:blur(25px) saturate(180%);
+  box-shadow:0 12px 40px rgba(0,0,0,.28);
+}
+body.dark #dockWrap{background:rgba(35,35,40,.58)}
+
+#dock{
+  display:flex;
+  align-items:flex-end;
+  gap:7px;
+}
+.dock-item{
+  width:52px;
+  height:52px;
+  border-radius:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:31px;
+  position:relative;
+  transition:.16s cubic-bezier(.2,.8,.2,1);
+  transform-origin:bottom center;
+  filter:drop-shadow(0 4px 5px rgba(0,0,0,.25));
+}
+.dock-item:hover{
+  transform:translateY(-17px) scale(1.38);
+  margin:0 10px;
+}
+.dock-item:active{transform:translateY(-10px) scale(1.25)}
+.dock-item[data-tip]:after{
+  content:attr(data-tip);
+  position:absolute;
+  top:-34px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(20,20,20,.85);
+  color:white;
+  font-size:11px;
+  padding:5px 8px;
+  border-radius:6px;
+  opacity:0;
+  pointer-events:none;
+  white-space:nowrap;
+  transition:.15s;
+}
+.dock-item:hover:after{opacity:1}
+.active-dot{
+  position:absolute;
+  bottom:-3px;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:#333;
+}
+body.dark .active-dot{background:white}
+
+.divider{
+  width:1px;
+  height:44px;
+  background:rgba(255,255,255,.4);
+  margin:0 3px;
 }
 
-/* ================= STORE ================= */
-
-.store{
-  min-height:100%;
-  background:#f5f5f5;
+/* APP COMMON */
+.app{
+  height:100%;
+  display:flex;
 }
-
-.storeHead{
-  padding:27px;
-  color:#fff;
-  background:#0879c9;
+.sidebar{
+  width:190px;
+  padding:13px 9px;
+  background:rgba(245,245,245,.28);
+  border-right:1px solid var(--border);
+  overflow:auto;
 }
-
-.storeHead h1{
+body.dark .sidebar{background:rgba(0,0,0,.12)}
+.sidebar h4{
+  font-size:11px;
+  text-transform:uppercase;
+  opacity:.55;
+  padding:7px 10px;
   margin:0;
-  font-size:32px;
-  font-weight:300;
 }
+.side-btn{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:inherit;
+  padding:8px 10px;
+  border-radius:7px;
+  text-align:left;
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.side-btn:hover,.side-btn.active{background:rgba(100,100,100,.13)}
+.side-btn.active{color:var(--accent);font-weight:600}
 
-.storeGrid{
+.content{
+  flex:1;
+  overflow:auto;
+  padding:18px;
+}
+.toolbar{
+  height:42px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-bottom:1px solid var(--border);
+}
+.toolbtn{
+  border:0;
+  background:rgba(120,120,120,.12);
+  color:inherit;
+  border-radius:7px;
+  padding:6px 10px;
+}
+.toolbtn:hover{background:rgba(120,120,120,.2)}
+.search{
+  margin-left:auto;
+  width:190px;
+  border:1px solid rgba(100,100,100,.2);
+  background:rgba(255,255,255,.3);
+  color:inherit;
+  border-radius:8px;
+  padding:7px 10px;
+  outline:none;
+}
+body.dark .search{background:rgba(255,255,255,.08)}
+
+.card{
+  border-radius:14px;
+  background:rgba(255,255,255,.35);
+  border:1px solid var(--border);
+  padding:16px;
+}
+body.dark .card{background:rgba(255,255,255,.05)}
+
+.grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(125px,1fr));
+  gap:14px;
+}
+.tile{
+  border:1px solid var(--border);
+  border-radius:13px;
+  background:rgba(255,255,255,.25);
+  padding:16px;
+  min-height:105px;
+  transition:.15s;
+}
+.tile:hover{
+  transform:translateY(-2px);
+  background:rgba(255,255,255,.4);
+}
+body.dark .tile{background:rgba(255,255,255,.04)}
+.tile-icon{font-size:38px;margin-bottom:8px}
+.tile-name{font-weight:600;font-size:13px}
+.muted{opacity:.58}
+h1,h2,h3,p{margin-top:0}
+
+/* FINDER */
+.filegrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(125px,1fr));
   gap:12px;
   padding:18px;
 }
-
-.storeCard{
-  min-height:185px;
-  padding:18px;
-  background:#fff;
-  border:1px solid #ddd;
+.file{
+  padding:13px;
+  border-radius:10px;
+  text-align:center;
 }
+.file:hover{background:rgba(80,120,255,.13)}
+.file .fi{font-size:48px}
+.file .fn{font-size:12px;margin-top:7px;word-break:break-word}
 
-.storeCard .si{
-  font-size:42px;
+/* LAUNCHPAD */
+#launchpad{
+  position:absolute;
+  inset:30px 0 0;
+  z-index:8000;
+  display:none;
+  background:rgba(10,20,45,.68);
+  backdrop-filter:blur(35px);
+  -webkit-backdrop-filter:blur(35px);
+  padding:45px 8vw;
+  overflow:auto;
 }
+#launchpad.show{display:block}
+.launch-search{
+  width:300px;
+  max-width:90%;
+  display:block;
+  margin:0 auto 35px;
+  padding:12px 18px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:20px;
+  outline:none;
+  color:white;
+  background:rgba(255,255,255,.13);
+  text-align:center;
+}
+.launch-grid{
+  max-width:950px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(95px,1fr));
+  gap:30px;
+}
+.launch-app{
+  text-align:center;
+  color:white;
+  border-radius:12px;
+  padding:8px;
+}
+.launch-app:hover{background:rgba(255,255,255,.13)}
+.launch-icon{
+  font-size:51px;
+  margin-bottom:7px;
+  filter:drop-shadow(0 8px 8px rgba(0,0,0,.25));
+}
+.launch-name{font-size:12px}
 
-.storeCard button{
-  margin-top:10px;
-  padding:8px 15px;
+/* CONTROL CENTER */
+#controlCenter{
+  position:absolute;
+  right:12px;
+  top:36px;
+  z-index:11000;
+  width:340px;
+  padding:12px;
+  border-radius:20px;
+  background:var(--glass2);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(30px);
+  display:none;
+}
+#controlCenter.show{display:block}
+.cc-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+.cc-card{
   border:0;
-  color:#fff;
-  background:var(--accent);
-  cursor:pointer;
+  border-radius:14px;
+  padding:14px;
+  text-align:left;
+  background:rgba(100,100,100,.12);
+  color:inherit;
+}
+.cc-card.on{background:var(--accent);color:white}
+.cc-card b{display:block;font-size:13px}
+.cc-card span{font-size:11px;opacity:.75}
+.slider{
+  width:100%;
+  accent-color:var(--accent);
 }
 
-/* ================= PAINT ================= */
+/* NOTES */
+.notes-layout{display:flex;height:100%}
+.notes-list{
+  width:210px;
+  border-right:1px solid var(--border);
+  overflow:auto;
+}
+.note-row{
+  padding:12px;
+  border-bottom:1px solid var(--border);
+}
+.note-row.active{background:rgba(100,100,100,.12)}
+.note-row b{display:block}
+.note-editor{
+  flex:1;
+  padding:20px;
+}
+.note-title{
+  width:100%;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:inherit;
+  font-size:25px;
+  font-weight:700;
+}
+.note-text{
+  width:100%;
+  height:calc(100% - 50px);
+  margin-top:15px;
+  resize:none;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:inherit;
+}
 
-.paint{
+/* CALENDAR */
+.calendar-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:15px 20px;
+}
+.cal-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  padding:0 16px 16px;
+  gap:4px;
+}
+.cal-day{
+  min-height:62px;
+  padding:7px;
+  border-radius:8px;
+  background:rgba(120,120,120,.06);
+}
+.cal-day.today{outline:2px solid var(--accent)}
+.cal-head{
+  text-align:center;
+  opacity:.55;
+  padding:6px;
+  font-size:12px;
+}
+
+/* CALCULATOR */
+.calc{
+  max-width:360px;
+  margin:25px auto;
+}
+.calc-display{
+  width:100%;
+  height:90px;
+  border:0;
+  background:rgba(0,0,0,.12);
+  color:inherit;
+  border-radius:16px;
+  text-align:right;
+  padding:15px;
+  font-size:42px;
+  margin-bottom:10px;
+}
+.calc-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+.calc-btn{
+  height:65px;
+  border:0;
+  border-radius:14px;
+  background:rgba(120,120,120,.15);
+  color:inherit;
+  font-size:20px;
+}
+.calc-btn:hover{background:rgba(120,120,120,.25)}
+.calc-btn.op{background:var(--accent);color:white}
+
+/* TERMINAL */
+.terminal{
   height:100%;
+  background:#111;
+  color:#e9e9e9;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  padding:15px;
+  overflow:auto;
+}
+.term-output{white-space:pre-wrap;line-height:1.45}
+.term-line{display:flex;gap:8px}
+.term-input{
+  flex:1;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:white;
+  font:inherit;
+}
+
+/* BROWSER */
+.browser-bar{
+  display:flex;
+  gap:8px;
+  padding:9px;
+  background:rgba(120,120,120,.09);
+  border-bottom:1px solid var(--border);
+}
+.browser-input{
+  flex:1;
+  border:0;
+  outline:0;
+  border-radius:9px;
+  padding:9px 12px;
+  background:rgba(120,120,120,.12);
+  color:inherit;
+}
+.browser-page{
+  min-height:100%;
+  padding:40px;
+}
+.browser-home{
+  max-width:650px;
+  margin:40px auto;
+  text-align:center;
+}
+.browser-logo{font-size:75px}
+.browser-home input{
+  width:100%;
+  padding:15px 20px;
+  border-radius:25px;
+  border:1px solid var(--border);
+  outline:none;
+  background:rgba(120,120,120,.12);
+  color:inherit;
+}
+
+/* MESSAGES */
+.chat{
+  display:flex;
+  height:100%;
+}
+.contacts{
+  width:190px;
+  border-right:1px solid var(--border);
+  overflow:auto;
+}
+.contact{
+  padding:12px;
+  display:flex;
+  gap:9px;
+  align-items:center;
+}
+.contact:hover,.contact.active{background:rgba(100,100,100,.13)}
+.avatar{
+  width:38px;
+  height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:linear-gradient(135deg,#0a84ff,#8e44ff);
+  color:white;
+}
+.conversation{
+  flex:1;
   display:flex;
   flex-direction:column;
 }
+.chat-messages{
+  flex:1;
+  overflow:auto;
+  padding:20px;
+}
+.bubble{
+  max-width:70%;
+  width:max-content;
+  padding:9px 13px;
+  border-radius:17px;
+  margin:6px 0;
+  background:rgba(120,120,120,.15);
+}
+.bubble.me{
+  margin-left:auto;
+  background:var(--accent);
+  color:white;
+}
+.chat-compose{
+  display:flex;
+  gap:7px;
+  padding:10px;
+  border-top:1px solid var(--border);
+}
+.chat-compose input{
+  flex:1;
+  border:0;
+  outline:0;
+  border-radius:20px;
+  padding:10px 14px;
+  background:rgba(120,120,120,.12);
+  color:inherit;
+}
 
-.paintTools{
-  height:43px;
+/* SETTINGS */
+.settings{
+  display:flex;
+  height:100%;
+}
+.settings-side{
+  width:210px;
+  padding:12px;
+  border-right:1px solid var(--border);
+}
+.settings-page{
+  flex:1;
+  padding:25px;
+  overflow:auto;
+}
+.setting-row{
   display:flex;
   align-items:center;
-  gap:5px;
-  padding:5px;
-  background:#eee;
+  justify-content:space-between;
+  padding:14px 0;
+  border-bottom:1px solid var(--border);
 }
-
-.paintTools button{
-  height:30px;
-  border:1px solid #bbb;
-  background:#fff;
-  cursor:pointer;
+.toggle{
+  width:45px;
+  height:25px;
+  border-radius:20px;
+  border:0;
+  background:#888;
+  padding:3px;
 }
-
-#canvas{
-  flex:1;
-  width:100%;
-  background:#fff;
-  touch-action:none;
-}
-
-/* ================= CONTEXT MENU ================= */
-
-#context{
-  position:absolute;
-  z-index:30000;
-  width:225px;
-  display:none;
-  background:#f5f5f5;
-  border:1px solid #999;
-  box-shadow:0 5px 18px #0005;
-}
-
-.cx{
-  padding:9px 14px;
-  font-size:13px;
-  cursor:pointer;
-}
-
-.cx:hover{
-  background:var(--accent);
-  color:#fff;
-}
-
-.sep{
-  height:1px;
-  background:#ddd;
-}
-
-/* ================= TOASTS ================= */
-
-#toasts{
-  position:absolute;
-  right:14px;
-  bottom:58px;
-  width:320px;
-  z-index:40000;
-}
-
-.toast{
-  margin-top:7px;
-  padding:14px;
-  color:#fff;
-  background:#252525;
-  box-shadow:0 4px 16px #0007;
-}
-
-.toast b{
+.toggle i{
   display:block;
-  margin-bottom:4px;
+  width:19px;
+  height:19px;
+  border-radius:50%;
+  background:white;
+  transition:.2s;
+}
+.toggle.on{background:var(--accent)}
+.toggle.on i{transform:translateX(20px)}
+
+.color-row{display:flex;gap:10px}
+.color{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  border:2px solid white;
+  box-shadow:0 0 0 1px #999;
 }
 
-/* ================= MOBILE ================= */
+/* PHOTOS */
+.photo{
+  aspect-ratio:1;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:45px;
+  cursor:pointer;
+  background:linear-gradient(135deg,#5d9cff,#c77dff);
+  box-shadow:0 8px 20px rgba(0,0,0,.13);
+}
+.photo:nth-child(2n){background:linear-gradient(135deg,#00c6ff,#0072ff)}
+.photo:nth-child(3n){background:linear-gradient(135deg,#ff758c,#ff7eb3)}
+.photo:nth-child(4n){background:linear-gradient(135deg,#43e97b,#38f9d7)}
 
+/* MAIL */
+.mail-list{padding:10px}
+.mail{
+  padding:14px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+}
+.mail:hover{background:rgba(100,100,100,.1)}
+.mail.unread{font-weight:700}
+.mail-subject{font-size:14px}
+.mail-preview{font-size:12px;opacity:.65;margin-top:4px}
+
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:20000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.35);
+}
+.modal.show{display:flex}
+.modal-box{
+  width:400px;
+  max-width:90vw;
+  border-radius:17px;
+  background:var(--glass2);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  padding:20px;
+  backdrop-filter:blur(30px);
+}
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:15px;
+}
+.primary{
+  border:0;
+  background:var(--accent);
+  color:white;
+  border-radius:8px;
+  padding:8px 14px;
+}
+.secondary{
+  border:0;
+  background:rgba(100,100,100,.14);
+  color:inherit;
+  border-radius:8px;
+  padding:8px 14px;
+}
+
+/* TOAST */
+#toastArea{
+  position:absolute;
+  right:18px;
+  bottom:95px;
+  z-index:30000;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.toast{
+  background:rgba(30,30,30,.88);
+  color:white;
+  padding:11px 15px;
+  border-radius:11px;
+  box-shadow:0 8px 25px rgba(0,0,0,.3);
+  animation:toastIn .2s ease;
+}
+@keyframes toastIn{
+  from{opacity:0;transform:translateX(20px)}
+  to{opacity:1;transform:translateX(0)}
+}
+
+/* CONTEXT MENU */
+#contextMenu{
+  position:absolute;
+  z-index:25000;
+  width:210px;
+  padding:5px;
+  border-radius:11px;
+  background:var(--glass2);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(25px);
+  display:none;
+}
+.context-item{
+  padding:8px 10px;
+  border-radius:7px;
+  font-size:13px;
+}
+.context-item:hover{background:var(--accent);color:white}
+
+/* MOBILE */
 @media(max-width:700px){
-  #taskSearch{
-    width:140px;
+  #menuBar{height:32px}
+  .menu-left .hide-mobile{display:none}
+  .menu-right .hide-mobile{display:none}
+  #desktopIcons{right:7px;top:45px}
+  #dockWrap{
+    bottom:5px;
+    max-width:calc(100vw - 10px);
+    overflow-x:auto;
   }
-
-  #startMenu{
-    width:100%;
-    height:78%;
-  }
-
-  .startList{
-    width:45%;
-  }
-
+  #dock{gap:3px}
+  .dock-item{width:45px;height:45px;font-size:27px}
+  .dock-item:hover{transform:translateY(-8px) scale(1.12);margin:0 2px}
   .window{
-    left:2%!important;
-    top:2%!important;
-    width:96%!important;
-    height:94%!important;
+    left:5px!important;
+    top:5px!important;
+    width:calc(100vw - 10px)!important;
+    height:calc(100vh - 82px)!important;
+    resize:none;
+    min-width:0;
   }
-
-  .snav{
-    width:145px;
-  }
+  .sidebar{width:135px}
+  .settings-side{width:145px}
+  .contacts{width:125px}
+  .notes-list{width:130px}
+  .content{padding:12px}
+  .browser-page{padding:20px}
 }
 </style>
 </head>
 
 <body>
-
 <div id="desktop">
 
-  <div class="wall"></div>
-  <div class="wall2"></div>
-
-  <div class="desktop-icons">
-
-    <div class="dicon" ondblclick="openApp('explorer')">
-      <span class="ico">💻</span>
-      This PC
+  <div id="menuBar">
+    <div class="menu-left">
+      <div class="menu-item apple">●</div>
+      <div class="menu-item menu-app" id="activeMenu">Finder</div>
+      <div class="menu-item hide-mobile">File</div>
+      <div class="menu-item hide-mobile">Edit</div>
+      <div class="menu-item hide-mobile">View</div>
+      <div class="menu-item hide-mobile">Go</div>
+      <div class="menu-item hide-mobile">Window</div>
+      <div class="menu-item hide-mobile">Help</div>
     </div>
 
-    <div class="dicon" ondblclick="openApp('explorer')">
-      <span class="ico">📁</span>
-      Files
+    <div class="menu-right">
+      <div class="status hide-mobile">◉</div>
+      <div class="status hide-mobile">⌁</div>
+      <div class="status">▣</div>
+      <div class="status" id="clock"></div>
+      <div class="status" id="ccButton">☷</div>
     </div>
-
-    <div class="dicon" ondblclick="openApp('browser')">
-      <span class="ico">🌐</span>
-      Browser
-    </div>
-
-    <div class="dicon" ondblclick="openApp('store')">
-      <span class="ico">🛍️</span>
-      Store
-    </div>
-
-    <div class="dicon" ondblclick="openApp('settings')">
-      <span class="ico">⚙️</span>
-      Settings
-    </div>
-
-    <div class="dicon" ondblclick="openApp('notepad')">
-      <span class="ico">📝</span>
-      Notepad
-    </div>
-
-  </div>
-</div>
-
-
-<!-- ================= START MENU ================= -->
-
-<div id="startMenu">
-
-  <div class="startTop">
-
-    <div class="avatar">👤</div>
-
-    <div>
-      <b>Windows User</b>
-      <br>
-      <small style="color:#aaa">Local account</small>
-    </div>
-
-    <input
-      class="startSearch"
-      id="startSearch"
-      placeholder="Search apps"
-      oninput="filterStart(this.value)"
-    >
-
   </div>
 
-  <div class="startBody">
-
-    <div class="startList" id="startList">
-
-      <div class="section">Most used</div>
-
-      <div class="startItem appItem"
-           data-name="browser"
-           onclick="openApp('browser')">
-        🌐 Browser
-      </div>
-
-      <div class="startItem appItem"
-           data-name="file explorer"
-           onclick="openApp('explorer')">
-        📁 File Explorer
-      </div>
-
-      <div class="startItem appItem"
-           data-name="settings"
-           onclick="openApp('settings')">
-        ⚙️ Settings
-      </div>
-
-      <div class="startItem appItem"
-           data-name="store"
-           onclick="openApp('store')">
-        🛍️ Store
-      </div>
-
-      <div class="section">Apps</div>
-
-      <div class="startItem appItem"
-           data-name="calculator"
-           onclick="openApp('calculator')">
-        🧮 Calculator
-      </div>
-
-      <div class="startItem appItem"
-           data-name="notepad"
-           onclick="openApp('notepad')">
-        📝 Notepad
-      </div>
-
-      <div class="startItem appItem"
-           data-name="paint"
-           onclick="openApp('paint')">
-        🎨 Paint
-      </div>
-
-      <div class="startItem appItem"
-           data-name="game hub"
-           onclick="showToast('Game Hub','Game Hub is ready')">
-        🎮 Game Hub
-      </div>
-
+  <div id="desktopIcons">
+    <div class="desktop-icon" onclick="openApp('finder')">
+      <span class="big">📁</span>
+      <span>Macintosh HD</span>
     </div>
-
-    <div class="tiles">
-
-      <div class="tile big" onclick="openApp('browser')">
-        <b>🌐</b>
-        <small>Web Browser</small>
-      </div>
-
-      <div class="tile" onclick="openApp('store')">
-        <b>🛍️</b>
-        <small>Store</small>
-      </div>
-
-      <div class="tile" onclick="openApp('explorer')">
-        <b>📁</b>
-        <small>Files</small>
-      </div>
-
-      <div class="tile" onclick="openApp('settings')">
-        <b>⚙️</b>
-        <small>Settings</small>
-      </div>
-
-      <div class="tile" onclick="openApp('calculator')">
-        <b>🧮</b>
-        <small>Calculator</small>
-      </div>
-
-      <div class="tile big" onclick="openApp('notepad')">
-        <b>📝</b>
-        <small>Notepad</small>
-      </div>
-
+    <div class="desktop-icon" onclick="openApp('trash')">
+      <span class="big">🗑️</span>
+      <span>Trash</span>
     </div>
-
   </div>
 
-</div>
+  <div id="windows"></div>
 
-
-<!-- ================= ACTION CENTER ================= -->
-
-<div id="actionCenter">
-
-  <div class="acHead">
-    Quick actions
+  <div id="launchpad">
+    <input class="launch-search" id="launchSearch" placeholder="Search">
+    <div class="launch-grid" id="launchGrid"></div>
   </div>
 
-  <div class="quickGrid">
-
-    <div class="quick on" onclick="quickToggle(this)">
-      📶 Wi-Fi
-    </div>
-
-    <div class="quick" onclick="quickToggle(this)">
-      ✈️ Airplane mode
-    </div>
-
-    <div class="quick" onclick="quickToggle(this)">
-      🔵 Bluetooth
-    </div>
-
-    <div class="quick" onclick="quickToggle(this)">
-      🌙 Night light
-    </div>
-
-  </div>
-
-  <div class="notif">
-    <b>Windows Web Desktop</b>
-    <small>Your desktop is ready.</small>
-  </div>
-
-  <div class="notif">
-    <b>System</b>
-    <small>No updates are required.</small>
-  </div>
-
-</div>
-
-
-<!-- ================= FILE EXPLORER ================= -->
-
-<div
-  class="window"
-  id="window-explorer"
-  style="left:120px;top:65px;width:850px;height:550px"
->
-
-  <div class="title">
-
-    <span class="ti">📁</span>
-
-    <span class="tt">
-      File Explorer
-    </span>
-
-    <div class="wb">
-      <button onclick="minApp('explorer')">—</button>
-      <button onclick="maxApp('explorer')">□</button>
-      <button class="x" onclick="closeApp('explorer')">×</button>
-    </div>
-
-  </div>
-
-  <div class="content">
-
-    <div class="toolbar">
-
-      <button onclick="explorerBack()">←</button>
-      <button onclick="showToast('Explorer','Forward')">→</button>
-      <button onclick="explorerBack()">↑</button>
-
-      <div class="address" id="address">
-        📁 This PC
-      </div>
-
-      <button onclick="showToast('Explorer','Search ready')">
-        🔎
+  <div id="controlCenter">
+    <div class="cc-grid">
+      <button class="cc-card on" id="wifiCC" onclick="toggleCC('wifi')">
+        <b>◉ Wi-Fi</b><span>Connected</span>
       </button>
-
-    </div>
-
-    <div class="explorer">
-
-      <div class="side">
-
-        <div onclick="folder('Desktop')">
-          🖥️ Desktop
-        </div>
-
-        <div onclick="folder('Documents')">
-          📄 Documents
-        </div>
-
-        <div onclick="folder('Downloads')">
-          ⬇️ Downloads
-        </div>
-
-        <div onclick="folder('Pictures')">
-          🖼️ Pictures
-        </div>
-
-        <div onclick="folder('Music')">
-          🎵 Music
-        </div>
-
-        <div onclick="folder('Videos')">
-          🎬 Videos
-        </div>
-
-        <div onclick="folder('This PC')">
-          💻 This PC
-        </div>
-
-      </div>
-
-      <div class="files" id="files"></div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ================= SETTINGS ================= -->
-
-<div
-  class="window"
-  id="window-settings"
-  style="left:170px;top:50px;width:900px;height:590px"
->
-
-  <div class="title">
-
-    <span class="ti">⚙️</span>
-
-    <span class="tt">
-      Settings
-    </span>
-
-    <div class="wb">
-      <button onclick="minApp('settings')">—</button>
-      <button onclick="maxApp('settings')">□</button>
-      <button class="x" onclick="closeApp('settings')">×</button>
-    </div>
-
-  </div>
-
-  <div class="content">
-
-    <div class="settings">
-
-      <div class="snav">
-
-        <div class="sprofile">
-          👤 <b>Windows User</b>
-          <br>
-          <small>Local account</small>
-        </div>
-
-        <div class="sel" onclick="sp('system',this)">
-          🖥️ System
-        </div>
-
-        <div onclick="sp('devices',this)">
-          📱 Devices
-        </div>
-
-        <div onclick="sp('network',this)">
-          🌐 Network
-        </div>
-
-        <div onclick="sp('personalization',this)">
-          🎨 Personalization
-        </div>
-
-        <div onclick="sp('apps',this)">
-          📦 Apps
-        </div>
-
-        <div onclick="sp('accounts',this)">
-          👤 Accounts
-        </div>
-
-        <div onclick="sp('gaming',this)">
-          🎮 Gaming
-        </div>
-
-        <div onclick="sp('privacy',this)">
-          🔒 Privacy
-        </div>
-
-        <div onclick="sp('update',this)">
-          🔄 Update
-        </div>
-
-      </div>
-
-      <div class="smain">
-
-        <div class="spage active" id="sp-system">
-
-          <h1>System</h1>
-
-          <div class="card">
-
-            <h3>Display</h3>
-
-            <div class="row">
-              Night light
-              <span class="toggle" onclick="toggle(this)"></span>
-            </div>
-
-            <div class="row">
-              HDR
-              <span class="toggle" onclick="toggle(this)"></span>
-            </div>
-
-          </div>
-
-          <div class="card">
-
-            <h3>Sound</h3>
-
-            <div class="row">
-              Master volume
-              <input type="range" value="75">
-            </div>
-
-            <div class="row">
-              Spatial sound
-              <span class="toggle" onclick="toggle(this)"></span>
-            </div>
-
-          </div>
-
-          <div class="card">
-
-            <h3>Notifications</h3>
-
-            <div class="row">
-              Notifications
-              <span class="toggle on" onclick="toggle(this)"></span>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="spage" id="sp-devices">
-
-          <h1>Devices</h1>
-
-          <div class="card">
-
-            <h3>Bluetooth & devices</h3>
-
-            <div class="row">
-              Bluetooth
-              <span class="toggle on" onclick="toggle(this)"></span>
-            </div>
-
-          </div>
-
-          <div class="card">
-
-            <h3>Printers & scanners</h3>
-
-            <p>
-              No physical printer is attached to this web desktop.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div class="spage" id="sp-network">
-
-          <h1>Network & Internet</h1>
-
-          <div class="card">
-
-            <h3>Wi-Fi</h3>
-
-            <div class="row">
-              Wi-Fi
-              <span class="toggle on" onclick="toggle(this)"></span>
-            </div>
-
-            <div class="row">
-              Status
-              <b>Connected</b>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="spage" id="sp-personalization">
-
-          <h1>Personalization</h1>
-
-          <div class="card">
-
-            <h3>Accent color</h3>
-
-            <div style="display:flex;gap:9px;margin-top:15px">
-
-              <button onclick="accent('#0078d4')"
-                style="width:34px;height:34px;background:#0078d4;border:0">
-              </button>
-
-              <button onclick="accent('#107c10')"
-                style="width:34px;height:34px;background:#107c10;border:0">
-              </button>
-
-              <button onclick="accent('#e81123')"
-                style="width:34px;height:34px;background:#e81123;border:0">
-              </button>
-
-              <button onclick="accent('#744da9')"
-                style="width:34px;height:34px;background:#744da9;border:0">
-              </button>
-
-              <button onclick="accent('#ff8c00')"
-                style="width:34px;height:34px;background:#ff8c00;border:0">
-              </button>
-
-            </div>
-
-          </div>
-
-          <div class="card">
-
-            <div class="row">
-              Dark mode
-              <span class="toggle" onclick="dark(this)"></span>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="spage" id="sp-apps">
-
-          <h1>Apps</h1>
-
-          <div class="card">
-
-            <div class="row">
-              🌐 Browser
-              <button onclick="openApp('browser')">Open</button>
-            </div>
-
-            <div class="row">
-              📁 Explorer
-              <button onclick="openApp('explorer')">Open</button>
-            </div>
-
-            <div class="row">
-              📝 Notepad
-              <button onclick="openApp('notepad')">Open</button>
-            </div>
-
-            <div class="row">
-              🧮 Calculator
-              <button onclick="openApp('calculator')">Open</button>
-            </div>
-
-            <div class="row">
-              🎨 Paint
-              <button onclick="openApp('paint')">Open</button>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="spage" id="sp-accounts">
-
-          <h1>Accounts</h1>
-
-          <div class="card">
-
-            <h3>Your info</h3>
-
-            <p>
-              👤 Windows User
-            </p>
-
-          </div>
-
-          <div class="card">
-
-            <h3>Sign-in options</h3>
-
-            <div class="row">
-              PIN
-              <button onclick="showToast('Accounts','PIN settings opened')">
-                Configure
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="spage" id="sp-gaming">
-
-          <h1>Gaming</h1>
-
-          <div class="card">
-
-            <div class="row">
-              Game Mode
-              <span class="toggle on" onclick="toggle(this)"></span>
-            </div>
-
-            <div class="row">
-              Game Bar
-              <span class="toggle on" onclick="toggle(this)"></span>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="spage" id="sp-privacy">
-
-          <h1>Privacy</h1>
-
-          <div class="card">
-
-            <div class="row">
-              Location
-              <span class="toggle" onclick="toggle(this)"></span>
-            </div>
-
-            <div class="row">
-              Camera
-              <span class="toggle" onclick="toggle(this)"></span>
-            </div>
-
-            <div class="row">
-              Microphone
-              <span class="toggle" onclick="toggle(this)"></span>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="spage" id="sp-update">
-
-          <h1>Windows Update</h1>
-
-          <div class="card">
-
-            <h3>You're up to date</h3>
-
-            <p>
-              This simulated desktop has no operating-system updates.
-            </p>
-
-            <button onclick="showToast('Windows Update','You are up to date!')">
-              Check for updates
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ================= BROWSER ================= -->
-
-<div
-  class="window"
-  id="window-browser"
-  style="left:100px;top:45px;width:900px;height:600px"
->
-
-  <div class="title">
-
-    <span class="ti">🌐</span>
-
-    <span class="tt">
-      Web Browser
-    </span>
-
-    <div class="wb">
-      <button onclick="minApp('browser')">—</button>
-      <button onclick="maxApp('browser')">□</button>
-      <button class="x" onclick="closeApp('browser')">×</button>
-    </div>
-
-  </div>
-
-  <div class="content">
-
-    <div class="browserBar">
-
-      <button onclick="home()">⌂</button>
-
-      <button onclick="showToast('Browser','Back')">
-        ←
+      <button class="cc-card on" id="bluetoothCC" onclick="toggleCC('bluetooth')">
+        <b>ᛒ Bluetooth</b><span>On</span>
       </button>
-
-      <button onclick="showToast('Browser','Forward')">
-        →
+      <button class="cc-card" id="focusCC" onclick="toggleCC('focus')">
+        <b>☾ Focus</b><span>Off</span>
       </button>
-
-      <button onclick="showToast('Browser','Reloaded')">
-        ↻
+      <button class="cc-card" id="darkCC" onclick="toggleDark()">
+        <b>◐ Dark Mode</b><span>Toggle</span>
       </button>
-
-      <input
-        class="url"
-        id="url"
-        value="home://start"
-        onkeydown="if(event.key==='Enter')navigate()"
-      >
-
-      <button onclick="navigate()">➜</button>
-
     </div>
-
-    <div id="browserPage">
-
-      <div class="home">
-
-        <div class="bigglobe">
-          🌐
-        </div>
-
-        <h1>
-          Web Browser
-        </h1>
-
-        <input
-          class="webSearch"
-          placeholder="Search the web or enter a URL"
-          onkeydown="if(event.key==='Enter')searchWeb(this.value)"
-        >
-
-        <p style="color:#777;margin-top:30px">
-          Try a website or search term.
-        </p>
-
-      </div>
-
+    <div style="margin-top:12px" class="card">
+      <b>Display</b>
+      <input class="slider" id="brightness" type="range" min="20" max="100" value="100">
     </div>
-
+    <div style="margin-top:10px" class="card">
+      <b>Sound</b>
+      <input class="slider" id="volume" type="range" min="0" max="100" value="70">
+    </div>
   </div>
+
+  <div id="dockWrap">
+    <div id="dock"></div>
+  </div>
+
+  <div id="contextMenu">
+    <div class="context-item" onclick="newFolder()">New Folder</div>
+    <div class="context-item" onclick="openApp('finder')">Open Finder</div>
+    <div class="context-item" onclick="openApp('settings')">Desktop Settings</div>
+    <div class="context-item" onclick="showToast('Desktop refreshed')">Refresh</div>
+  </div>
+
+  <div id="toastArea"></div>
 
 </div>
 
-
-<!-- ================= NOTEPAD ================= -->
-
-<div
-  class="window"
-  id="window-notepad"
-  style="left:230px;top:90px;width:700px;height:500px"
->
-
-  <div class="title">
-
-    <span class="ti">📝</span>
-
-    <span class="tt">
-      Notepad
-    </span>
-
-    <div class="wb">
-      <button onclick="minApp('notepad')">—</button>
-      <button onclick="maxApp('notepad')">□</button>
-      <button class="x" onclick="closeApp('notepad')">×</button>
-    </div>
-
-  </div>
-
-  <div class="content">
-
-    <div class="notepad">
-
-      <div class="noteMenu">
-
-        <button onclick="newNote()">
-          New
-        </button>
-
-        <button onclick="saveNote()">
-          Save
-        </button>
-
-        <button onclick="selectNote()">
-          Select All
-        </button>
-
-      </div>
-
-      <textarea
-        id="note"
-        spellcheck="false"
-        placeholder="Type something..."
-      ></textarea>
-
-    </div>
-
-  </div>
-
+<div class="modal" id="modal">
+  <div class="modal-box" id="modalBox"></div>
 </div>
-
-
-<!-- ================= CALCULATOR ================= -->
-
-<div
-  class="window"
-  id="window-calculator"
-  style="left:350px;top:80px;width:350px;height:520px"
->
-
-  <div class="title">
-
-    <span class="ti">🧮</span>
-
-    <span class="tt">
-      Calculator
-    </span>
-
-    <div class="wb">
-      <button onclick="minApp('calculator')">—</button>
-      <button onclick="maxApp('calculator')">□</button>
-      <button class="x" onclick="closeApp('calculator')">×</button>
-    </div>
-
-  </div>
-
-  <div class="content">
-
-    <div class="calc">
-
-      <div class="display" id="display">
-        0
-      </div>
-
-      <div class="calcGrid">
-
-        <button onclick="cc()">C</button>
-        <button onclick="ci('(')">(</button>
-        <button onclick="ci(')')">)</button>
-        <button onclick="ci('/')">÷</button>
-
-        <button onclick="ci('7')">7</button>
-        <button onclick="ci('8')">8</button>
-        <button onclick="ci('9')">9</button>
-        <button onclick="ci('*')">×</button>
-
-        <button onclick="ci('4')">4</button>
-        <button onclick="ci('5')">5</button>
-        <button onclick="ci('6')">6</button>
-        <button onclick="ci('-')">−</button>
-
-        <button onclick="ci('1')">1</button>
-        <button onclick="ci('2')">2</button>
-        <button onclick="ci('3')">3</button>
-        <button onclick="ci('+')">+</button>
-
-        <button onclick="ci('0')">0</button>
-        <button onclick="ci('.')">.</button>
-        <button onclick="back()">⌫</button>
-
-        <button
-          style="background:#0078d4;color:white"
-          onclick="eq()">
-          =
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ================= STORE ================= -->
-
-<div
-  class="window"
-  id="window-store"
-  style="left:115px;top:45px;width:950px;height:620px"
->
-
-  <div class="title">
-
-    <span class="ti">🛍️</span>
-
-    <span class="tt">
-      Store
-    </span>
-
-    <div class="wb">
-      <button onclick="minApp('store')">—</button>
-      <button onclick="maxApp('store')">□</button>
-      <button class="x" onclick="closeApp('store')">×</button>
-    </div>
-
-  </div>
-
-  <div class="content">
-
-    <div class="store">
-
-      <div class="storeHead">
-
-        <h1>Store</h1>
-
-        <p>
-          Apps, games and utilities
-        </p>
-
-      </div>
-
-      <div class="storeGrid">
-
-        <div class="storeCard">
-          <div class="si">🌐</div>
-          <h3>Browser</h3>
-          <p>Browse the web.</p>
-          <button onclick="openApp('browser')">Open</button>
-        </div>
-
-        <div class="storeCard">
-          <div class="si">📝</div>
-          <h3>Notepad</h3>
-          <p>Write text.</p>
-          <button onclick="openApp('notepad')">Open</button>
-        </div>
-
-        <div class="storeCard">
-          <div class="si">🧮</div>
-          <h3>Calculator</h3>
-          <p>Calculate.</p>
-          <button onclick="openApp('calculator')">Open</button>
-        </div>
-
-        <div class="storeCard">
-          <div class="si">🎨</div>
-          <h3>Paint</h3>
-          <p>Draw pictures.</p>
-          <button onclick="openApp('paint')">Open</button>
-        </div>
-
-        <div class="storeCard">
-          <div class="si">📁</div>
-          <h3>File Explorer</h3>
-          <p>Manage files.</p>
-          <button onclick="openApp('explorer')">Open</button>
-        </div>
-
-        <div class="storeCard">
-          <div class="si">⚙️</div>
-          <h3>Settings</h3>
-          <p>Customize Windows.</p>
-          <button onclick="openApp('settings')">Open</button>
-        </div>
-
-        <div class="storeCard">
-          <div class="si">🎮</div>
-          <h3>Game Hub</h3>
-          <p>Launch games.</p>
-          <button onclick="showToast('Game Hub','Ready to launch games')">
-            Launch
-          </button>
-        </div>
-
-        <div class="storeCard">
-          <div class="si">☁️</div>
-          <h3>Cloud Drive</h3>
-          <p>Cloud storage.</p>
-          <button onclick="showToast('Cloud Drive','Opened')">
-            Open
-          </button>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ================= PAINT ================= -->
-
-<div
-  class="window"
-  id="window-paint"
-  style="left:150px;top:60px;width:850px;height:580px"
->
-
-  <div class="title">
-
-    <span class="ti">🎨</span>
-
-    <span class="tt">
-      Paint
-    </span>
-
-    <div class="wb">
-      <button onclick="minApp('paint')">—</button>
-      <button onclick="maxApp('paint')">□</button>
-      <button class="x" onclick="closeApp('paint')">×</button>
-    </div>
-
-  </div>
-
-  <div class="content">
-
-    <div class="paint">
-
-      <div class="paintTools">
-
-        <button onclick="tool='pen'">
-          ✏️ Pen
-        </button>
-
-        <button onclick="tool='eraser'">
-          🧽 Eraser
-        </button>
-
-        <button onclick="clearCanvas()">
-          🗑️ Clear
-        </button>
-
-        <input
-          id="color"
-          type="color"
-          value="#000000"
-        >
-
-        <input
-          id="size"
-          type="range"
-          min="1"
-          max="40"
-          value="5"
-        >
-
-      </div>
-
-      <canvas id="canvas"></canvas>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ================= CONTEXT MENU ================= -->
-
-<div id="context">
-
-  <div class="cx"
-       onclick="openApp('explorer');hideContext()">
-    📁 Open
-  </div>
-
-  <div class="cx"
-       onclick="openApp('settings');hideContext()">
-    ⚙️ Personalize
-  </div>
-
-  <div class="sep"></div>
-
-  <div class="cx"
-       onclick="showToast('Desktop','Desktop refreshed');hideContext()">
-    🔄 Refresh
-  </div>
-
-  <div class="cx"
-       onclick="showToast('Desktop','New item menu opened');hideContext()">
-    ➕ New
-  </div>
-
-  <div class="cx"
-       onclick="openApp('settings');hideContext()">
-    🖥️ Display settings
-  </div>
-
-</div>
-
-
-<!-- ================= TOASTS ================= -->
-
-<div id="toasts"></div>
-
-
-<!-- ================= TASKBAR ================= -->
-
-<div id="taskbar">
-
-  <button
-    id="startButton"
-    onclick="toggleStart()"
-    aria-label="Start"
-  >
-    <span class="windows-logo">
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </span>
-  </button>
-
-
-  <input
-    id="taskSearch"
-    placeholder="Type here to search"
-    onkeydown="taskSearch(event)"
-  >
-
-
-  <div id="taskApps">
-
-    <div
-      class="task"
-      data-app="explorer"
-      onclick="openApp('explorer')">
-      📁
-    </div>
-
-    <div
-      class="task"
-      data-app="browser"
-      onclick="openApp('browser')">
-      🌐
-    </div>
-
-    <div
-      class="task"
-      data-app="store"
-      onclick="openApp('store')">
-      🛍️
-    </div>
-
-    <div
-      class="task"
-      data-app="notepad"
-      onclick="openApp('notepad')">
-      📝
-    </div>
-
-    <div
-      class="task"
-      data-app="calculator"
-      onclick="openApp('calculator')">
-      🧮
-    </div>
-
-    <div
-      class="task"
-      data-app="settings"
-      onclick="openApp('settings')">
-      ⚙️
-    </div>
-
-  </div>
-
-
-  <div id="tray">
-
-    <div
-      class="tray"
-      onclick="showToast('Network','Connected')">
-      📶
-    </div>
-
-    <div
-      class="tray"
-      onclick="showToast('Volume','Volume 75%')">
-      🔊
-    </div>
-
-    <div
-      class="tray"
-      onclick="toggleAC()">
-      💬
-    </div>
-
-    <div id="clock"></div>
-
-  </div>
-
-</div>
-
 
 <script>
-
 /* =========================================================
-   APP SYSTEM
+   STATE
 ========================================================= */
 
-const apps={
-  explorer:"File Explorer",
-  browser:"Browser",
-  settings:"Settings",
-  notepad:"Notepad",
-  calculator:"Calculator",
-  store:"Store",
-  paint:"Paint"
+const state = {
+  z:100,
+  windows:{},
+  dark:localStorage.getItem("macDark")==="1",
+  accent:localStorage.getItem("macAccent") || "#0a84ff",
+  wifi:true,
+  bluetooth:true,
+  focus:false,
+  brightness:100,
+  volume:70,
+  notes:JSON.parse(localStorage.getItem("macNotes") || "null") || [
+    {id:1,title:"Welcome",text:"Welcome to your web Mac!\\n\\nEverything here is running from one HTML file."},
+    {id:2,title:"Ideas",text:"Build something awesome."}
+  ],
+  selectedNote:1,
+  chat:"Alex",
+  chats:{
+    Alex:["Yo! Welcome to the new Mac.","This desktop is actually interactive 😎"],
+    Sam:["Hey!","Check out the new apps!"],
+    Jordan:["What's up?","Try the Terminal app."]
+  }
 };
 
-let z=200;
-
-function openApp(app){
-
-  const win=document.getElementById("window-"+app);
-
-  if(!win)return;
-
-  document.getElementById("startMenu")
-    .classList.remove("open");
-
-  win.classList.add("show");
-
-  win.style.zIndex=++z;
-
-  if(app==="explorer"){
-    folder("This PC");
-  }
-
-  if(app==="paint"){
-    setTimeout(resizeCanvas,50);
-  }
-
-  updateTasks();
-}
-
-function closeApp(app){
-
-  const win=document.getElementById("window-"+app);
-
-  if(!win)return;
-
-  win.classList.remove("show");
-  win.classList.remove("max");
-
-  updateTasks();
-}
-
-function minApp(app){
-
-  const win=document.getElementById("window-"+app);
-
-  if(!win)return;
-
-  win.classList.remove("show");
-
-  updateTasks();
-}
-
-function maxApp(app){
-
-  const win=document.getElementById("window-"+app);
-
-  if(!win)return;
-
-  win.classList.toggle("max");
-
-  if(app==="paint"){
-    setTimeout(resizeCanvas,50);
-  }
-}
-
-function updateTasks(){
-
-  Object.keys(apps).forEach(app=>{
-
-    const win=document.getElementById(
-      "window-"+app
-    );
-
-    const task=document.querySelector(
-      '[data-app="'+app+'"]'
-    );
-
-    if(task){
-
-      task.classList.toggle(
-        "active",
-        win.classList.contains("show")
-      );
-
-    }
-
-  });
-
-}
-
+document.documentElement.style.setProperty("--accent",state.accent);
+if(state.dark) document.body.classList.add("dark");
 
 /* =========================================================
-   START MENU
+   APP DEFINITIONS
 ========================================================= */
 
-function toggleStart(){
-
-  document
-    .getElementById("startMenu")
-    .classList.toggle("open");
-
-  document
-    .getElementById("actionCenter")
-    .classList.remove("open");
-
-}
-
-function filterStart(query){
-
-  query=query.toLowerCase();
-
-  document
-    .querySelectorAll(".appItem")
-    .forEach(item=>{
-
-      item.style.display=
-        item.dataset.name.includes(query)
-        ?"flex"
-        :"none";
-
-    });
-
-}
-
-
-/* =========================================================
-   ACTION CENTER
-========================================================= */
-
-function toggleAC(){
-
-  document
-    .getElementById("actionCenter")
-    .classList.toggle("open");
-
-  document
-    .getElementById("startMenu")
-    .classList.remove("open");
-
-}
-
-function quickToggle(element){
-
-  element.classList.toggle("on");
-
-}
-
-
-/* =========================================================
-   WINDOW DRAGGING
-========================================================= */
-
-document
-  .querySelectorAll(".window")
-  .forEach(win=>{
-
-    const title=win.querySelector(".title");
-
-    let dragging=false;
-    let ox=0;
-    let oy=0;
-
-    title.addEventListener("mousedown",e=>{
-
-      if(
-        e.target.closest(".wb") ||
-        win.classList.contains("max")
-      )return;
-
-      dragging=true;
-
-      win.style.zIndex=++z;
-
-      ox=e.clientX-win.offsetLeft;
-      oy=e.clientY-win.offsetTop;
-
-    });
-
-    document.addEventListener("mousemove",e=>{
-
-      if(!dragging)return;
-
-      win.style.left=
-        Math.max(0,e.clientX-ox)+"px";
-
-      win.style.top=
-        Math.max(0,e.clientY-oy)+"px";
-
-    });
-
-    document.addEventListener("mouseup",()=>{
-
-      dragging=false;
-
-    });
-
-    win.addEventListener("mousedown",()=>{
-
-      win.style.zIndex=++z;
-
-    });
-
-  });
-
-
-/* =========================================================
-   DESKTOP CONTEXT MENU
-========================================================= */
-
-document
-  .getElementById("desktop")
-  .addEventListener("contextmenu",e=>{
-
-    e.preventDefault();
-
-    const menu=
-      document.getElementById("context");
-
-    menu.style.display="block";
-
-    menu.style.left=e.clientX+"px";
-    menu.style.top=e.clientY+"px";
-
-  });
-
-document.addEventListener("click",e=>{
-
-  if(!e.target.closest("#context")){
-    hideContext();
-  }
-
-});
-
-function hideContext(){
-
-  document
-    .getElementById("context")
-    .style.display="none";
-
-}
-
-
-/* =========================================================
-   FILE EXPLORER
-========================================================= */
-
-const fileData={
-
-  "This PC":[
-    ["💽","Local Disk (C:)","drive"],
-    ["💾","Local Disk (D:)","drive"],
-    ["📁","Documents","folder"],
-    ["📁","Downloads","folder"],
-    ["🖼️","Pictures","folder"],
-    ["🎵","Music","folder"],
-    ["🎬","Videos","folder"],
-    ["🖥️","Desktop","folder"]
-  ],
-
-  "Documents":[
-    ["📄","Welcome.txt","file"],
-    ["📄","Notes.txt","file"],
-    ["📄","Project.txt","file"]
-  ],
-
-  "Downloads":[
-    ["📦","Example.zip","file"],
-    ["🌐","Browser.html","file"],
-    ["📄","Download.txt","file"]
-  ],
-
-  "Pictures":[
-    ["🖼️","Wallpaper.jpg","file"],
-    ["🖼️","Photo.png","file"]
-  ],
-
-  "Music":[
-    ["🎵","Song.mp3","file"]
-  ],
-
-  "Videos":[
-    ["🎬","Video.mp4","file"]
-  ],
-
-  "Desktop":[
-    ["📁","Projects","folder"],
-    ["📄","README.txt","file"]
-  ]
-
+const apps = {
+  finder:{name:"Finder",icon:"📁"},
+  launchpad:{name:"Launchpad",icon:"🚀"},
+  safari:{name:"Safari",icon:"🧭"},
+  messages:{name:"Messages",icon:"💬"},
+  mail:{name:"Mail",icon:"✉️"},
+  photos:{name:"Photos",icon:"🌈"},
+  calendar:{name:"Calendar",icon:"📅"},
+  notes:{name:"Notes",icon:"📝"},
+  calculator:{name:"Calculator",icon:"🧮"},
+  terminal:{name:"Terminal",icon:"⌘"},
+  settings:{name:"System Settings",icon:"⚙️"},
+  appstore:{name:"App Store",icon:"🛍️"},
+  music:{name:"Music",icon:"🎵"},
+  weather:{name:"Weather",icon:"☀️"},
+  maps:{name:"Maps",icon:"🗺️"},
+  clockapp:{name:"Clock",icon:"⏰"},
+  contacts:{name:"Contacts",icon:"👤"},
+  reminders:{name:"Reminders",icon:"✓"},
+  news:{name:"News",icon:"📰"},
+  trash:{name:"Trash",icon:"🗑️"}
 };
 
-let explorerHistory=[];
+const dockApps=[
+  "finder","launchpad","safari","messages","mail","photos",
+  "calendar","notes","calculator","terminal","settings"
+];
 
-function folder(name){
+/* =========================================================
+   DOCK
+========================================================= */
 
-  explorerHistory.push(name);
+function buildDock(){
+  const dock=document.getElementById("dock");
+  dock.innerHTML="";
 
-  renderFolder(name);
-
-}
-
-function renderFolder(name){
-
-  document
-    .getElementById("address")
-    .textContent="📁 "+name;
-
-  const container=
-    document.getElementById("files");
-
-  container.innerHTML="";
-
-  (fileData[name]||[]).forEach(item=>{
-
-    const file=
-      document.createElement("div");
-
-    file.className="file";
-
-    file.innerHTML=`
-      <div class="ficon">${item[0]}</div>
-      <div>${item[1]}</div>
-    `;
-
-    file.ondblclick=()=>{
-
-      if(
-        item[2]==="folder" &&
-        fileData[item[1]]
-      ){
-
-        folder(item[1]);
-
-      }else{
-
-        if(item[1].endsWith(".txt")){
-
-          openApp("notepad");
-
-          document.getElementById("note").value=
-            "Opened "+item[1]+
-            "\n\nSimulated document.";
-
-        }else{
-
-          showToast(
-            "File Explorer",
-            "Opened "+item[1]
-          );
-
-        }
-
-      }
-
-    };
-
-    container.appendChild(file);
-
+  dockApps.forEach(id=>{
+    const a=apps[id];
+    const el=document.createElement("div");
+    el.className="dock-item";
+    el.dataset.tip=a.name;
+    el.innerHTML=a.icon;
+    el.onclick=()=>openApp(id);
+    dock.appendChild(el);
   });
 
+  const divider=document.createElement("div");
+  divider.className="divider";
+  dock.appendChild(divider);
+
+  const trash=document.createElement("div");
+  trash.className="dock-item";
+  trash.dataset.tip="Trash";
+  trash.innerHTML="🗑️";
+  trash.onclick=()=>openApp("trash");
+  dock.appendChild(trash);
 }
-
-function explorerBack(){
-
-  if(explorerHistory.length>1){
-
-    explorerHistory.pop();
-
-    const previous=
-      explorerHistory[
-        explorerHistory.length-1
-      ];
-
-    renderFolder(previous);
-
-  }
-
-}
-
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-function sp(page,button){
-
-  document
-    .querySelectorAll(".spage")
-    .forEach(p=>{
-      p.classList.remove("active");
-    });
-
-  document
-    .getElementById("sp-"+page)
-    .classList.add("active");
-
-  document
-    .querySelectorAll(".snav div")
-    .forEach(x=>{
-      x.classList.remove("sel");
-    });
-
-  button.classList.add("sel");
-
-}
-
-function toggle(element){
-
-  element.classList.toggle("on");
-
-  showToast(
-    "Settings",
-    element.classList.contains("on")
-      ?"Setting turned on"
-      :"Setting turned off"
-  );
-
-}
-
-function accent(color){
-
-  document.documentElement
-    .style
-    .setProperty("--accent",color);
-
-  showToast(
-    "Personalization",
-    "Accent color changed"
-  );
-
-}
-
-function dark(element){
-
-  element.classList.toggle("on");
-
-  const enabled=
-    element.classList.contains("on");
-
-  document.body.style.background=
-    enabled
-      ?"linear-gradient(135deg,#101010,#202020)"
-      :"linear-gradient(135deg,#0879bd,#004f91)";
-
-  showToast(
-    "Personalization",
-    enabled
-      ?"Dark mode enabled"
-      :"Light mode enabled"
-  );
-
-}
-
-
-/* =========================================================
-   BROWSER
-========================================================= */
-
-function home(){
-
-  document
-    .getElementById("url")
-    .value="home://start";
-
-  document
-    .getElementById("browserPage")
-    .innerHTML=`
-
-      <div class="home">
-
-        <div class="bigglobe">🌐</div>
-
-        <h1>Web Browser</h1>
-
-        <input
-          class="webSearch"
-          placeholder="Search the web or enter a URL"
-          onkeydown="if(event.key==='Enter')searchWeb(this.value)"
-        >
-
-        <p style="color:#777;margin-top:30px">
-          Try a website or search term.
-        </p>
-
-      </div>
-
-  `;
-
-}
-
-function navigate(){
-
-  const value=
-    document
-      .getElementById("url")
-      .value
-      .trim();
-
-  if(!value)return;
-
-  if(
-    value.includes(".") &&
-    !value.includes(" ")
-  ){
-
-    const url=
-      value.startsWith("http")
-        ?value
-        :"https://"+value;
-
-    window.open(url,"_blank");
-
-    showToast(
-      "Browser",
-      "Opened "+value
-    );
-
-  }else{
-
-    searchWeb(value);
-
-  }
-
-}
-
-function searchWeb(query){
-
-  if(!query.trim())return;
-
-  document
-    .getElementById("url")
-    .value=query;
-
-  document
-    .getElementById("browserPage")
-    .innerHTML=`
-
-      <div class="webpage">
-
-        <h2>Search</h2>
-
-        <p>
-          You searched for
-          <b>${escapeHTML(query)}</b>.
-        </p>
-
-        <div class="card">
-
-          <h3>Web search</h3>
-
-          <p>
-            Open a real search in a new browser tab.
-          </p>
-
-          <button
-            onclick="window.open(
-              'https://www.google.com/search?q='+
-              encodeURIComponent(${JSON.stringify(query)}),
-              '_blank'
-            )"
-          >
-            Search the web
-          </button>
-
-        </div>
-
-      </div>
-
-  `;
-
-}
-
-
-/* =========================================================
-   NOTEPAD
-========================================================= */
-
-function newNote(){
-
-  const note=
-    document.getElementById("note");
-
-  if(
-    !note.value ||
-    confirm("Clear the current document?")
-  ){
-
-    note.value="";
-
-  }
-
-}
-
-function selectNote(){
-
-  const note=
-    document.getElementById("note");
-
-  note.focus();
-  note.select();
-
-}
-
-function saveNote(){
-
-  const blob=
-    new Blob(
-      [document.getElementById("note").value],
-      {type:"text/plain"}
-    );
-
-  const link=
-    document.createElement("a");
-
-  link.href=
-    URL.createObjectURL(blob);
-
-  link.download="Notepad.txt";
-
-  link.click();
-
-  showToast(
-    "Notepad",
-    "Document saved"
-  );
-
-}
-
-
-/* =========================================================
-   CALCULATOR
-========================================================= */
-
-let expression="";
-
-function ci(value){
-
-  if(expression==="Error"){
-    expression="";
-  }
-
-  expression+=value;
-
-  updateDisplay();
-
-}
-
-function cc(){
-
-  expression="";
-
-  updateDisplay();
-
-}
-
-function back(){
-
-  expression=
-    expression.slice(0,-1);
-
-  updateDisplay();
-
-}
-
-function updateDisplay(){
-
-  document
-    .getElementById("display")
-    .textContent=
-      expression||"0";
-
-}
-
-function eq(){
-
-  try{
-
-    if(
-      !/^[0-9+*/().% -]+$/
-      .test(expression)
-    ){
-      throw new Error();
-    }
-
-    expression=
-      String(
-        Function(
-          "return "+expression
-        )()
-      );
-
-    updateDisplay();
-
-  }catch{
-
-    expression="Error";
-
-    updateDisplay();
-
-    setTimeout(cc,800);
-
-  }
-
-}
-
-
-/* =========================================================
-   PAINT
-========================================================= */
-
-const canvas=
-  document.getElementById("canvas");
-
-const ctx=
-  canvas.getContext("2d");
-
-let drawing=false;
-let tool="pen";
-
-function resizeCanvas(){
-
-  const rect=
-    canvas.getBoundingClientRect();
-
-  if(!rect.width || !rect.height)return;
-
-  const old=
-    document.createElement("canvas");
-
-  old.width=canvas.width;
-  old.height=canvas.height;
-
-  if(old.width && old.height){
-
-    old
-      .getContext("2d")
-      .drawImage(canvas,0,0);
-
-  }
-
-  canvas.width=
-    Math.max(300,rect.width);
-
-  canvas.height=
-    Math.max(250,rect.height);
-
-  ctx.fillStyle="#fff";
-
-  ctx.fillRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-  if(old.width){
-
-    ctx.drawImage(
-      old,
-      0,
-      0,
-      old.width,
-      old.height,
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
-
-  }
-
-}
-
-canvas.addEventListener(
-  "pointerdown",
-  e=>{
-
-    drawing=true;
-
-    canvas.setPointerCapture(
-      e.pointerId
-    );
-
-    const rect=
-      canvas.getBoundingClientRect();
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-      e.clientX-rect.left,
-      e.clientY-rect.top
-    );
-
-  }
-);
-
-canvas.addEventListener(
-  "pointermove",
-  e=>{
-
-    if(!drawing)return;
-
-    const rect=
-      canvas.getBoundingClientRect();
-
-    ctx.strokeStyle=
-      tool==="eraser"
-        ?"white"
-        :document.getElementById("color").value;
-
-    ctx.lineWidth=
-      document.getElementById("size").value;
-
-    ctx.lineCap="round";
-
-    ctx.lineTo(
-      e.clientX-rect.left,
-      e.clientY-rect.top
-    );
-
-    ctx.stroke();
-
-  }
-);
-
-canvas.addEventListener(
-  "pointerup",
-  ()=>drawing=false
-);
-
-canvas.addEventListener(
-  "pointercancel",
-  ()=>drawing=false
-);
-
-function clearCanvas(){
-
-  ctx.fillStyle="#fff";
-
-  ctx.fillRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-}
-
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-function taskSearch(event){
-
-  if(event.key!=="Enter")return;
-
-  const query=
-    event.target.value
-      .toLowerCase()
-      .trim();
-
-  const found=
-    Object.entries(apps)
-      .find(
-        ([id,name])=>
-          name.toLowerCase().includes(query)
-      );
-
-  if(found){
-
-    openApp(found[0]);
-
-  }else{
-
-    openApp("browser");
-
-    document.getElementById("url").value=
-      query;
-
-    searchWeb(query);
-
-  }
-
-}
-
-
-/* =========================================================
-   TOASTS
-========================================================= */
-
-function showToast(title,message){
-
-  const box=
-    document.getElementById("toasts");
-
-  const toast=
-    document.createElement("div");
-
-  toast.className="toast";
-
-  toast.innerHTML=`
-    <b>${escapeHTML(title)}</b>
-    <span>${escapeHTML(message)}</span>
-  `;
-
-  box.appendChild(toast);
-
-  setTimeout(()=>{
-
-    toast.style.opacity="0";
-    toast.style.transform="translateX(100%)";
-
-    setTimeout(
-      ()=>toast.remove(),
-      250
-    );
-
-  },3200);
-
-}
-
+buildDock();
 
 /* =========================================================
    CLOCK
 ========================================================= */
 
-function clock(){
-
-  const date=new Date();
-
-  let hours=
-    date.getHours();
-
-  const minutes=
-    String(date.getMinutes())
-      .padStart(2,"0");
-
-  const seconds=
-    String(date.getSeconds())
-      .padStart(2,"0");
-
-  const ampm=
-    hours>=12
-      ?"PM"
-      :"AM";
-
-  hours=
-    hours%12||12;
-
-  document
-    .getElementById("clock")
-    .innerHTML=
-      hours+":"+minutes+":"+seconds+
-      " "+ampm+
-      "<br>"+
-      (date.getMonth()+1)+
-      "/"+
-      date.getDate()+
-      "/"+
-      date.getFullYear();
-
+function updateClock(){
+  const d=new Date();
+  document.getElementById("clock").textContent=d.toLocaleString([],{
+    weekday:"short",
+    month:"short",
+    day:"numeric",
+    hour:"numeric",
+    minute:"2-digit"
+  });
 }
-
-setInterval(clock,1000);
-clock();
-
+setInterval(updateClock,1000);
+updateClock();
 
 /* =========================================================
-   ESCAPE HTML
+   TOAST
 ========================================================= */
 
-function escapeHTML(text){
-
-  return text.replace(
-    /[&<>"']/g,
-    character=>({
-
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#039;"
-
-    }[character])
-  );
-
+function showToast(message){
+  const el=document.createElement("div");
+  el.className="toast";
+  el.textContent=message;
+  document.getElementById("toastArea").appendChild(el);
+  setTimeout(()=>el.remove(),2600);
 }
 
+/* =========================================================
+   WINDOW MANAGER
+========================================================= */
+
+function openApp(id){
+  if(id==="launchpad"){
+    toggleLaunchpad(true);
+    return;
+  }
+
+  if(state.windows[id]){
+    const w=state.windows[id];
+    w.classList.remove("minimized");
+    focusWindow(w);
+    return;
+  }
+
+  const def=apps[id] || {name:id,icon:"📦"};
+
+  const w=document.createElement("div");
+  w.className="window active";
+  w.dataset.app=id;
+
+  const existing=Object.keys(state.windows).length;
+  w.style.left=Math.min(90+existing*28,window.innerWidth-390)+"px";
+  w.style.top=Math.min(65+existing*24,window.innerHeight-350)+"px";
+  w.style.zIndex=++state.z;
+
+  w.innerHTML=`
+    <div class="titlebar">
+      <div class="traffic">
+        <button class="close" title="Close"></button>
+        <button class="min" title="Minimize"></button>
+        <button class="max" title="Maximize"></button>
+      </div>
+      <div class="window-title">${def.icon} &nbsp; ${def.name}</div>
+    </div>
+    <div class="window-body" id="body-${id}"></div>
+  `;
+
+  document.getElementById("windows").appendChild(w);
+  state.windows[id]=w;
+
+  w.querySelector(".close").onclick=e=>{
+    e.stopPropagation();
+    closeWindow(id);
+  };
+  w.querySelector(".min").onclick=e=>{
+    e.stopPropagation();
+    w.classList.add("minimized");
+  };
+  w.querySelector(".max").onclick=e=>{
+    e.stopPropagation();
+    w.classList.toggle("maximized");
+  };
+
+  w.addEventListener("pointerdown",()=>focusWindow(w));
+  makeDraggable(w);
+
+  renderApp(id,w.querySelector(".window-body"));
+  focusWindow(w);
+  document.getElementById("activeMenu").textContent=def.name;
+}
+
+function closeWindow(id){
+  if(state.windows[id]){
+    state.windows[id].remove();
+    delete state.windows[id];
+  }
+}
+
+function focusWindow(w){
+  document.querySelectorAll(".window").forEach(x=>x.classList.remove("active"));
+  w.classList.add("active");
+  w.style.zIndex=++state.z;
+  const id=w.dataset.app;
+  if(apps[id]) document.getElementById("activeMenu").textContent=apps[id].name;
+}
+
+function makeDraggable(w){
+  const bar=w.querySelector(".titlebar");
+  let dragging=false,startX=0,startY=0,startL=0,startT=0;
+
+  bar.addEventListener("pointerdown",e=>{
+    if(e.target.closest("button"))return;
+    if(w.classList.contains("maximized"))return;
+
+    dragging=true;
+    startX=e.clientX;
+    startY=e.clientY;
+    startL=parseFloat(w.style.left)||0;
+    startT=parseFloat(w.style.top)||0;
+    bar.setPointerCapture(e.pointerId);
+  });
+
+  bar.addEventListener("pointermove",e=>{
+    if(!dragging)return;
+    w.style.left=(startL+e.clientX-startX)+"px";
+    w.style.top=Math.max(4,startT+e.clientY-startY)+"px";
+  });
+
+  bar.addEventListener("pointerup",()=>dragging=false);
+  bar.addEventListener("dblclick",e=>{
+    if(!e.target.closest("button"))w.classList.toggle("maximized");
+  });
+}
+
+/* =========================================================
+   APP RENDERER
+========================================================= */
+
+function renderApp(id,body){
+
+  if(id==="finder") renderFinder(body);
+  else if(id==="safari") renderSafari(body);
+  else if(id==="messages") renderMessages(body);
+  else if(id==="mail") renderMail(body);
+  else if(id==="photos") renderPhotos(body);
+  else if(id==="calendar") renderCalendar(body);
+  else if(id==="notes") renderNotes(body);
+  else if(id==="calculator") renderCalculator(body);
+  else if(id==="terminal") renderTerminal(body);
+  else if(id==="settings") renderSettings(body);
+  else if(id==="appstore") renderAppStore(body);
+  else if(id==="music") renderMusic(body);
+  else if(id==="weather") renderWeather(body);
+  else if(id==="maps") renderMaps(body);
+  else if(id==="clockapp") renderClock(body);
+  else if(id==="contacts") renderContacts(body);
+  else if(id==="reminders") renderReminders(body);
+  else if(id==="news") renderNews(body);
+  else if(id==="trash") renderTrash(body);
+  else renderGeneric(body,id);
+}
+
+/* =========================================================
+   FINDER
+========================================================= */
+
+const finderItems=[
+  ["Applications","📦","folder"],
+  ["Desktop","🖥️","folder"],
+  ["Documents","📄","folder"],
+  ["Downloads","⬇️","folder"],
+  ["Movies","🎬","folder"],
+  ["Music","🎵","folder"],
+  ["Pictures","🖼️","folder"],
+  ["iCloud Drive","☁️","folder"],
+  ["Read Me.txt","📃","file"],
+  ["Project.html","🌐","file"]
+];
+
+function renderFinder(body){
+  body.innerHTML=`
+    <div class="app">
+      <div class="sidebar">
+        <h4>Favorites</h4>
+        <button class="side-btn active">⭐ Recents</button>
+        <button class="side-btn">📱 AirDrop</button>
+        <button class="side-btn">☁️ iCloud Drive</button>
+        <button class="side-btn">🖥️ Desktop</button>
+        <button class="side-btn">📄 Documents</button>
+        <button class="side-btn">⬇️ Downloads</button>
+        <h4>Locations</h4>
+        <button class="side-btn">💻 Macintosh HD</button>
+        <button class="side-btn">🌐 Network</button>
+      </div>
+      <div style="flex:1;overflow:auto">
+        <div class="toolbar">
+          <button class="toolbtn">‹</button>
+          <button class="toolbtn">›</button>
+          <button class="toolbtn" onclick="newFolder()">＋</button>
+          <input class="search" id="finderSearch" placeholder="Search">
+        </div>
+        <div class="filegrid" id="finderGrid"></div>
+      </div>
+    </div>
+  `;
+
+  const grid=body.querySelector("#finderGrid");
+
+  function draw(filter=""){
+    grid.innerHTML="";
+    finderItems
+      .filter(x=>x[0].toLowerCase().includes(filter.toLowerCase()))
+      .forEach(item=>{
+        const el=document.createElement("div");
+        el.className="file";
+        el.innerHTML=`<div class="fi">${item[1]}</div><div class="fn">${item[0]}</div>`;
+        el.ondblclick=()=>{
+          if(item[2]==="folder"){
+            showToast("Opened "+item[0]);
+          }else{
+            showModal(`
+              <h2>${item[0]}</h2>
+              <p class="muted">This is a file inside your web desktop.</p>
+              <div class="modal-actions">
+                <button class="primary" onclick="closeModal()">Done</button>
+              </div>
+            `);
+          }
+        };
+        grid.appendChild(el);
+      });
+  }
+
+  draw();
+  body.querySelector("#finderSearch").oninput=e=>draw(e.target.value);
+}
+
+function newFolder(){
+  showModal(`
+    <h2>New Folder</h2>
+    <input id="newFolderName" class="search" style="width:100%;margin:10px 0" value="untitled folder">
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal()">Cancel</button>
+      <button class="primary" onclick="createFolder()">Create</button>
+    </div>
+  `);
+}
+function createFolder(){
+  const name=document.getElementById("newFolderName").value.trim()||"untitled folder";
+  finderItems.push([name,"📁","folder"]);
+  closeModal();
+  if(state.windows.finder)renderFinder(state.windows.finder.querySelector(".window-body"));
+  showToast("Created "+name);
+}
+
+/* =========================================================
+   SAFARI
+========================================================= */
+
+function renderSafari(body){
+  body.innerHTML=`
+    <div style="height:100%;display:flex;flex-direction:column">
+      <div class="browser-bar">
+        <button class="toolbtn" onclick="browserHome()">‹</button>
+        <button class="toolbtn">›</button>
+        <button class="toolbtn">↻</button>
+        <input class="browser-input" id="browserURL" placeholder="Search or enter website address">
+        <button class="toolbtn" onclick="goBrowser()">Go</button>
+      </div>
+      <div class="browser-page" id="browserPage">
+        <div class="browser-home">
+          <div class="browser-logo">🧭</div>
+          <h1>Safari</h1>
+          <p class="muted">A fast web browser inside your web desktop.</p>
+          <input id="homeSearch" placeholder="Search the web">
+          <div style="margin-top:15px">
+            <button class="primary" onclick="searchBrowser()">Search</button>
+            <button class="secondary" onclick="openExternal('https://www.google.com')">Open Google</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  body.querySelector("#browserURL").addEventListener("keydown",e=>{
+    if(e.key==="Enter")goBrowser();
+  });
+  body.querySelector("#homeSearch").addEventListener("keydown",e=>{
+    if(e.key==="Enter")searchBrowser();
+  });
+}
+
+function browserHome(){
+  const w=state.windows.safari;
+  if(w)renderSafari(w.querySelector(".window-body"));
+}
+
+function goBrowser(){
+  const input=document.getElementById("browserURL");
+  if(!input)return;
+  let value=input.value.trim();
+  if(!value)return;
+
+  if(!/^https?:\/\//i.test(value)){
+    if(value.includes(".")&&!value.includes(" "))value="https://"+value;
+    else{
+      openExternal("https://www.google.com/search?q="+encodeURIComponent(value));
+      return;
+    }
+  }
+  openExternal(value);
+}
+
+function searchBrowser(){
+  const input=document.getElementById("homeSearch");
+  if(!input.value.trim())return;
+  openExternal("https://www.google.com/search?q="+encodeURIComponent(input.value));
+}
+
+function openExternal(url){
+  window.open(url,"_blank");
+}
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+function renderMessages(body){
+  const contacts=Object.keys(state.chats);
+  body.innerHTML=`
+    <div class="chat">
+      <div class="contacts" id="contactsList"></div>
+      <div class="conversation">
+        <div style="padding:13px;text-align:center;border-bottom:1px solid var(--border);font-weight:600" id="chatTitle"></div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-compose">
+          <input id="chatInput" placeholder="iMessage">
+          <button class="primary" onclick="sendMessage()">↑</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const list=body.querySelector("#contactsList");
+  contacts.forEach(name=>{
+    const el=document.createElement("div");
+    el.className="contact"+(name===state.chat?" active":"");
+    el.innerHTML=`<div class="avatar">${name[0]}</div><div><b>${name}</b><div class="muted" style="font-size:11px">iMessage</div></div>`;
+    el.onclick=()=>{
+      state.chat=name;
+      renderMessages(body);
+    };
+    list.appendChild(el);
+  });
+
+  body.querySelector("#chatTitle").textContent=state.chat;
+
+  const messages=body.querySelector("#chatMessages");
+  state.chats[state.chat].forEach((m,i)=>{
+    const b=document.createElement("div");
+    b.className="bubble"+(i%2===1?" me":"");
+    b.textContent=m;
+    messages.appendChild(b);
+  });
+  messages.scrollTop=messages.scrollHeight;
+
+  body.querySelector("#chatInput").addEventListener("keydown",e=>{
+    if(e.key==="Enter")sendMessage();
+  });
+}
+
+function sendMessage(){
+  const w=state.windows.messages;
+  if(!w)return;
+  const input=w.querySelector("#chatInput");
+  const text=input.value.trim();
+  if(!text)return;
+  state.chats[state.chat].push(text);
+  input.value="";
+  renderMessages(w.querySelector(".window-body"));
+}
+
+/* =========================================================
+   MAIL
+========================================================= */
+
+const emails=[
+  ["Apple","Welcome to your new desktop","Everything is ready to go."],
+  ["Alex","That project","Bro this thing is crazy 😂"],
+  ["Updates","System update","Your web desktop has been updated."],
+  ["Sam","Photos","Check out these pictures."]
+];
+
+function renderMail(body){
+  body.innerHTML=`
+    <div class="app">
+      <div class="sidebar">
+        <button class="side-btn active">📥 Inbox <b style="margin-left:auto">4</b></button>
+        <button class="side-btn">⭐ VIP</button>
+        <button class="side-btn">✉️ Sent</button>
+        <button class="side-btn">🗑️ Trash</button>
+        <button class="primary" style="width:100%;margin-top:15px" onclick="composeMail()">Compose</button>
+      </div>
+      <div style="flex:1;overflow:auto">
+        <div class="mail-list" id="mailList"></div>
+      </div>
+    </div>
+  `;
+
+  const list=body.querySelector("#mailList");
+  emails.forEach(mail=>{
+    const el=document.createElement("div");
+    el.className="mail unread";
+    el.innerHTML=`
+      <div class="mail-subject">${mail[0]} — ${mail[1]}</div>
+      <div class="mail-preview">${mail[2]}</div>
+    `;
+    el.onclick=()=>{
+      showModal(`
+        <h2>${mail[1]}</h2>
+        <p><b>From:</b> ${mail[0]}</p>
+        <hr>
+        <p>${mail[2]}</p>
+        <div class="modal-actions">
+          <button class="primary" onclick="closeModal()">Close</button>
+        </div>
+      `);
+      el.classList.remove("unread");
+    };
+    list.appendChild(el);
+  });
+}
+
+function composeMail(){
+  showModal(`
+    <h2>New Message</h2>
+    <input id="mailTo" class="search" style="width:100%;margin:5px 0" placeholder="To">
+    <input id="mailSubject" class="search" style="width:100%;margin:5px 0" placeholder="Subject">
+    <textarea id="mailBody" style="width:100%;height:140px;border:0;border-radius:10px;padding:10px;background:rgba(100,100,100,.12);color:inherit;resize:none" placeholder="Message"></textarea>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal()">Cancel</button>
+      <button class="primary" onclick="showToast('Message sent');closeModal()">Send</button>
+    </div>
+  `);
+}
+
+/* =========================================================
+   PHOTOS
+========================================================= */
+
+function renderPhotos(body){
+  const pics=["🏔️","🌅","🌊","🌲","🌌","🏙️","🌴","🌸","🚗","🐶","🐱","🌎"];
+  body.innerHTML=`
+    <div class="content">
+      <h1>Photos</h1>
+      <p class="muted">Library · ${pics.length} photos</p>
+      <div class="grid" id="photoGrid"></div>
+    </div>
+  `;
+  const grid=body.querySelector("#photoGrid");
+  pics.forEach((p,i)=>{
+    const el=document.createElement("div");
+    el.className="photo";
+    el.textContent=p;
+    el.onclick=()=>{
+      showModal(`
+        <div style="font-size:120px;text-align:center">${p}</div>
+        <h2>Photo ${i+1}</h2>
+        <p class="muted">Stored in your local web photo library.</p>
+        <div class="modal-actions">
+          <button class="primary" onclick="closeModal()">Done</button>
+        </div>
+      `);
+    };
+    grid.appendChild(el);
+  });
+}
+
+/* =========================================================
+   CALENDAR
+========================================================= */
+
+let calDate=new Date();
+
+function renderCalendar(body){
+  function draw(){
+    const y=calDate.getFullYear();
+    const m=calDate.getMonth();
+    const first=new Date(y,m,1).getDay();
+    const days=new Date(y,m+1,0).getDate();
+    const today=new Date();
+
+    body.innerHTML=`
+      <div class="calendar-head">
+        <button class="toolbtn" onclick="calMove(-1)">‹</button>
+        <h2>${calDate.toLocaleString([], {month:"long",year:"numeric"})}</h2>
+        <button class="toolbtn" onclick="calMove(1)">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid">
+        ${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=>`<div class="cal-head">${d}</div>`).join("")}
+      </div>
+      <div style="padding:0 20px 20px">
+        <button class="primary" onclick="addCalendarEvent()">＋ Add Event</button>
+      </div>
+    `;
+
+    const grid=body.querySelector("#calGrid");
+
+    for(let i=0;i<first;i++){
+      const blank=document.createElement("div");
+      grid.appendChild(blank);
+    }
+
+    for(let d=1;d<=days;d++){
+      const el=document.createElement("div");
+      el.className="cal-day";
+      if(
+        d===today.getDate() &&
+        m===today.getMonth() &&
+        y===today.getFullYear()
+      )el.classList.add("today");
+      el.innerHTML=`<b>${d}</b>`;
+      grid.appendChild(el);
+    }
+  }
+
+  window.calMove=function(dir){
+    calDate.setMonth(calDate.getMonth()+dir);
+    draw();
+  };
+
+  window.addCalendarEvent=function(){
+    showModal(`
+      <h2>New Event</h2>
+      <input id="eventName" class="search" style="width:100%" placeholder="Event name">
+      <div class="modal-actions">
+        <button class="secondary" onclick="closeModal()">Cancel</button>
+        <button class="primary" onclick="saveCalendarEvent()">Add</button>
+      </div>
+    `);
+  };
+
+  window.saveCalendarEvent=function(){
+    const n=document.getElementById("eventName").value.trim()||"New Event";
+    closeModal();
+    showToast("Added: "+n);
+  };
+
+  draw();
+}
+
+/* =========================================================
+   NOTES
+========================================================= */
+
+function saveNotes(){
+  localStorage.setItem("macNotes",JSON.stringify(state.notes));
+}
+
+function renderNotes(body){
+  body.innerHTML=`
+    <div class="notes-layout">
+      <div class="notes-list">
+        <button class="primary" style="margin:10px;width:calc(100% - 20px)" onclick="newNote()">＋ New Note</button>
+        <div id="notesList"></div>
+      </div>
+      <div class="note-editor">
+        <input class="note-title" id="noteTitle">
+        <textarea class="note-text" id="noteText"></textarea>
+      </div>
+    </div>
+  `;
+
+  function draw(){
+    const list=body.querySelector("#notesList");
+    list.innerHTML="";
+
+    state.notes.forEach(note=>{
+      const el=document.createElement("div");
+      el.className="note-row"+(note.id===state.selectedNote?" active":"");
+      el.innerHTML=`<b>${note.title||"Untitled"}</b><small class="muted">${(note.text||"").slice(0,40)}</small>`;
+      el.onclick=()=>{
+        state.selectedNote=note.id;
+        draw();
+        loadEditor();
+      };
+      list.appendChild(el);
+    });
+  }
+
+  function loadEditor(){
+    const note=state.notes.find(n=>n.id===state.selectedNote);
+    if(!note)return;
+    body.querySelector("#noteTitle").value=note.title;
+    body.querySelector("#noteText").value=note.text;
+  }
+
+  body.querySelector("#noteTitle").oninput=e=>{
+    const n=state.notes.find(n=>n.id===state.selectedNote);
+    if(n){n.title=e.target.value;saveNotes();}
+    draw();
+  };
+
+  body.querySelector("#noteText").oninput=e=>{
+    const n=state.notes.find(n=>n.id===state.selectedNote);
+    if(n){n.text=e.target.value;saveNotes();}
+  };
+
+  draw();
+  loadEditor();
+}
+
+function newNote(){
+  const note={id:Date.now(),title:"New Note",text:""};
+  state.notes.unshift(note);
+  state.selectedNote=note.id;
+  saveNotes();
+  if(state.windows.notes)renderNotes(state.windows.notes.querySelector(".window-body"));
+}
+
+/* =========================================================
+   CALCULATOR
+========================================================= */
+
+function renderCalculator(body){
+  body.innerHTML=`
+    <div class="calc">
+      <input class="calc-display" id="calcDisplay" value="0" readonly>
+      <div class="calc-grid">
+        ${["AC","±","%","÷","7","8","9","×","4","5","6","−","1","2","3","+","0",".","⌫","="]
+        .map(x=>`<button class="calc-btn ${["÷","×","−","+","="].includes(x)?"op":""}" onclick="calcPress('${x}')">${x}</button>`).join("")}
+      </div>
+    </div>
+  `;
+}
+
+let calcValue="0";
+let calcExpression="";
+
+function calcPress(x){
+  const d=document.getElementById("calcDisplay");
+  if(!d)return;
+
+  if(x==="AC"){
+    calcValue="0";
+    calcExpression="";
+  }else if(x==="⌫"){
+    calcValue=calcValue.length>1?calcValue.slice(0,-1):"0";
+  }else if(x==="±"){
+    calcValue=String(Number(calcValue)*-1);
+  }else if(x==="%"){
+    calcValue=String(Number(calcValue)/100);
+  }else if(["+","−","×","÷"].includes(x)){
+    calcExpression+=calcValue+x;
+    calcValue="0";
+  }else if(x==="="){
+    try{
+      let expr=(calcExpression+calcValue)
+        .replaceAll("×","*")
+        .replaceAll("÷","/")
+        .replaceAll("−","-");
+      if(!/^[0-9+\-*/. ()]+$/.test(expr))throw Error();
+      calcValue=String(Function('"use strict";return ('+expr+')')());
+      calcExpression="";
+    }catch{
+      calcValue="Error";
+      calcExpression="";
+    }
+  }else{
+    if(calcValue==="Error")calcValue="0";
+    if(x==="." && calcValue.includes("."))return;
+    calcValue=calcValue==="0"&&x!=="."?x:calcValue+x;
+  }
+
+  d.value=calcValue;
+}
+
+/* =========================================================
+   TERMINAL
+========================================================= */
+
+function renderTerminal(body){
+  body.innerHTML=`
+    <div class="terminal" id="terminal">
+      <div class="term-output" id="termOutput">Last login: ${new Date().toLocaleString()}
+
+Welcome to Web Terminal.
+Type <b>help</b> to see available commands.
+
+</div>
+      <div class="term-line">
+        <span>user@web-mac ~ %</span>
+        <input class="term-input" id="termInput" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+  `;
+
+  const input=body.querySelector("#termInput");
+  input.focus();
+
+  input.addEventListener("keydown",e=>{
+    if(e.key!=="Enter")return;
+
+    const command=input.value.trim();
+    input.value="";
+    runTerminalCommand(command);
+  });
+}
+
+function runTerminalCommand(command){
+  const out=document.getElementById("termOutput");
+  if(!out)return;
+
+  const parts=command.split(" ");
+  const cmd=parts[0].toLowerCase();
+
+  let result="";
+
+  switch(cmd){
+    case "":
+      break;
+    case "help":
+      result=
+`Available commands:
+  help       Show this help
+  clear      Clear terminal
+  date       Show date
+  echo       Print text
+  pwd        Show current folder
+  ls         List files
+  open       Open an app
+  neofetch   Show system information`;
+      break;
+
+    case "clear":
+      out.textContent="";
+      return;
+
+    case "date":
+      result=new Date().toString();
+      break;
+
+    case "echo":
+      result=parts.slice(1).join(" ");
+      break;
+
+    case "pwd":
+      result="/Users/user";
+      break;
+
+    case "ls":
+      result="Desktop  Documents  Downloads  Movies  Music  Pictures";
+      break;
+
+    case "open":
+      if(!parts[1]){
+        result="Usage: open <app>";
+      }else{
+        const target=Object.keys(apps).find(x=>x===parts[1].toLowerCase());
+        if(target){
+          openApp(target);
+          result="Opening "+apps[target].name+"...";
+        }else{
+          result="Application not found.";
+        }
+      }
+      break;
+
+    case "neofetch":
+      result=
+`       .--.
+      |o_o |
+      |:_/ |
+     //   \\ \\
+    (|     | )
+   /'\\_   _/\\
+   \\___)=(___/
+
+Web macOS
+Browser: ${navigator.userAgent.split(" ").slice(-1)[0]}
+Resolution: ${window.innerWidth}x${window.innerHeight}
+Theme: ${state.dark?"Dark":"Light"}`;
+      break;
+
+    default:
+      result=`zsh: command not found: ${cmd}`;
+  }
+
+  out.textContent+=`user@web-mac ~ % ${command}\n${result}\n`;
+  const terminal=document.getElementById("terminal");
+  terminal.scrollTop=terminal.scrollHeight;
+}
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+function renderSettings(body){
+  body.innerHTML=`
+    <div class="settings">
+      <div class="settings-side">
+        <button class="side-btn active" onclick="settingsPage('general')">⚙️ General</button>
+        <button class="side-btn" onclick="settingsPage('appearance')">🎨 Appearance</button>
+        <button class="side-btn" onclick="settingsPage('network')">🌐 Network</button>
+        <button class="side-btn" onclick="settingsPage('sound')">🔊 Sound</button>
+        <button class="side-btn" onclick="settingsPage('desktop')">🖥️ Desktop</button>
+        <button class="side-btn" onclick="settingsPage('privacy')">🔒 Privacy</button>
+        <button class="side-btn" onclick="settingsPage('about')">ⓘ About</button>
+      </div>
+      <div class="settings-page" id="settingsPage"></div>
+    </div>
+  `;
+  settingsPage("general");
+}
+
+function settingsPage(page){
+  const p=document.getElementById("settingsPage");
+  if(!p)return;
+
+  if(page==="general"){
+    p.innerHTML=`
+      <h1>General</h1>
+      <div class="card">
+        <div class="setting-row">
+          <div><b>Dark Mode</b><div class="muted">Use a darker interface</div></div>
+          ${toggleHTML(state.dark,"toggleDark()")}
+        </div>
+        <div class="setting-row">
+          <div><b>Notifications</b><div class="muted">Allow desktop notifications</div></div>
+          ${toggleHTML(true,"showToast('Notifications enabled')")}
+        </div>
+        <div class="setting-row">
+          <div><b>Sound Effects</b></div>
+          ${toggleHTML(state.volume>0,"")}
+        </div>
+      </div>
+    `;
+  }
+
+  if(page==="appearance"){
+    p.innerHTML=`
+      <h1>Appearance</h1>
+      <div class="card">
+        <h3>Accent Color</h3>
+        <div class="color-row">
+          <div class="color" style="background:#0a84ff" onclick="setAccent('#0a84ff')"></div>
+          <div class="color" style="background:#ff375f" onclick="setAccent('#ff375f')"></div>
+          <div class="color" style="background:#bf5af2" onclick="setAccent('#bf5af2')"></div>
+          <div class="color" style="background:#30d158" onclick="setAccent('#30d158')"></div>
+          <div class="color" style="background:#ff9f0a" onclick="setAccent('#ff9f0a')"></div>
+        </div>
+        <hr>
+        <h3>Interface</h3>
+        <div class="setting-row">
+          <span>Transparency</span>
+          ${toggleHTML(true,"showToast('Transparency toggled')")}
+        </div>
+      </div>
+    `;
+  }
+
+  if(page==="network"){
+    p.innerHTML=`
+      <h1>Network</h1>
+      <div class="card">
+        <div class="setting-row">
+          <div><b>Wi-Fi</b><div class="muted">${state.wifi?"Connected":"Disconnected"}</div></div>
+          ${toggleHTML(state.wifi,"toggleCC('wifi')")}
+        </div>
+        <div class="setting-row">
+          <div><b>Bluetooth</b><div class="muted">${state.bluetooth?"On":"Off"}</div></div>
+          ${toggleHTML(state.bluetooth,"toggleCC('bluetooth')")}
+        </div>
+      </div>
+    `;
+  }
+
+  if(page==="sound"){
+    p.innerHTML=`
+      <h1>Sound</h1>
+      <div class="card">
+        <h3>Output Volume</h3>
+        <input class="slider" type="range" min="0" max="100" value="${state.volume}" oninput="state.volume=this.value">
+        <div class="setting-row">
+          <span>Output</span><b>Web Speakers</b>
+        </div>
+      </div>
+    `;
+  }
+
+  if(page==="desktop"){
+    p.innerHTML=`
+      <h1>Desktop & Dock</h1>
+      <div class="card">
+        <div class="setting-row">
+          <span>Dock Position</span><b>Bottom</b>
+        </div>
+        <div class="setting-row">
+          <span>Dock Magnification</span>${toggleHTML(true,"showToast('Dock magnification enabled')")}
+        </div>
+        <div class="setting-row">
+          <span>Show Desktop Icons</span>${toggleHTML(true,"document.getElementById('desktopIcons').style.display='none'")}
+        </div>
+      </div>
+    `;
+  }
+
+  if(page==="privacy"){
+    p.innerHTML=`
+      <h1>Privacy & Security</h1>
+      <div class="card">
+        <h3>Your Data</h3>
+        <p class="muted">This desktop stores settings and notes locally in your browser.</p>
+        <button class="secondary" onclick="localStorage.clear();location.reload()">Reset Local Data</button>
+      </div>
+    `;
+  }
+
+  if(page==="about"){
+    p.innerHTML=`
+      <h1>About This Mac</h1>
+      <div class="card" style="text-align:center">
+        <div style="font-size:70px">●</div>
+        <h2>Web Mac</h2>
+        <p>macOS-inspired web desktop</p>
+        <p class="muted">Single-file edition</p>
+        <hr>
+        <p>Processor: Web Runtime</p>
+        <p>Memory: Browser Managed</p>
+        <p>Display: ${innerWidth} × ${innerHeight}</p>
+      </div>
+    `;
+  }
+}
+
+function toggleHTML(on,action){
+  return `<button class="toggle ${on?"on":""}" onclick="${action}"><i></i></button>`;
+}
+
+function toggleDark(){
+  state.dark=!state.dark;
+  document.body.classList.toggle("dark",state.dark);
+  localStorage.setItem("macDark",state.dark?"1":"0");
+  updateCC();
+  if(state.windows.settings)settingsPage("general");
+}
+
+function setAccent(c){
+  state.accent=c;
+  document.documentElement.style.setProperty("--accent",c);
+  localStorage.setItem("macAccent",c);
+  showToast("Accent color changed");
+}
+
+/* =========================================================
+   APP STORE
+========================================================= */
+
+function renderAppStore(body){
+  const storeApps=[
+    ["Game Center","🎮","Play games"],
+    ["YouTube","▶️","Watch videos"],
+    ["Spotify","🎵","Music"],
+    ["Discord","💬","Chat with friends"],
+    ["GeForce NOW","☁️","Cloud gaming"],
+    ["Chrome","🌐","Browse the web"],
+    ["VS Code","💻","Code"],
+    ["Minecraft","⛏️","Build worlds"]
+  ];
+
+  body.innerHTML=`
+    <div class="content">
+      <h1>App Store</h1>
+      <p class="muted">Discover apps for your web Mac.</p>
+      <div class="grid" id="storeGrid"></div>
+    </div>
+  `;
+
+  const grid=body.querySelector("#storeGrid");
+
+  storeApps.forEach(a=>{
+    const el=document.createElement("div");
+    el.className="tile";
+    el.innerHTML=`
+      <div class="tile-icon">${a[1]}</div>
+      <div class="tile-name">${a[0]}</div>
+      <div class="muted" style="font-size:11px;margin:4px 0">${a[2]}</div>
+      <button class="primary" style="font-size:11px" onclick="installApp('${a[0]}')">GET</button>
+    `;
+    grid.appendChild(el);
+  });
+}
+
+function installApp(name){
+  showToast(name+" is ready to open");
+}
+
+/* =========================================================
+   OTHER APPS
+========================================================= */
+
+function renderMusic(body){
+  body.innerHTML=`
+    <div class="content">
+      <h1>Music</h1>
+      <div class="card" style="text-align:center">
+        <div style="font-size:80px">🎵</div>
+        <h2>Web Music</h2>
+        <p class="muted">Your music library</p>
+        <button class="primary" onclick="showToast('▶ Playing music')">▶ Play</button>
+      </div>
+      <h2 style="margin-top:25px">Recently Played</h2>
+      <div class="grid">
+        <div class="tile">🎶 Chill Mix</div>
+        <div class="tile">🔥 Favorites</div>
+        <div class="tile">🌙 Late Night</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderWeather(body){
+  body.innerHTML=`
+    <div class="content">
+      <h1>Weather</h1>
+      <div class="card" style="text-align:center">
+        <div style="font-size:80px">☀️</div>
+        <h1>72°</h1>
+        <p>Sunny</p>
+        <p class="muted">Feels like 74° · High 78° · Low 61°</p>
+      </div>
+    </div>
+  `;
+}
+
+function renderMaps(body){
+  body.innerHTML=`
+    <div style="height:100%;display:flex;flex-direction:column">
+      <div class="toolbar">
+        <input class="search" style="margin-left:0;width:100%" placeholder="Search Maps">
+      </div>
+      <div style="flex:1;background:
+        linear-gradient(25deg,transparent 48%,rgba(255,255,255,.8) 49%,rgba(255,255,255,.8) 51%,transparent 52%),
+        linear-gradient(100deg,transparent 48%,rgba(255,255,255,.7) 49%,rgba(255,255,255,.7) 51%,transparent 52%),
+        #b6d8a8;
+        background-size:130px 100px;
+        display:flex;align-items:center;justify-content:center">
+        <div class="card" style="text-align:center">
+          <div style="font-size:45px">📍</div>
+          <b>Map View</b>
+          <p class="muted">Interactive map simulation</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderClock(body){
+  body.innerHTML=`
+    <div class="content" style="text-align:center">
+      <h1>Clock</h1>
+      <div id="bigClock" style="font-size:65px;font-weight:700;margin-top:80px"></div>
+      <p class="muted">Local time</p>
+    </div>
+  `;
+  const tick=()=>{
+    const el=body.querySelector("#bigClock");
+    if(el)el.textContent=new Date().toLocaleTimeString();
+  };
+  tick();
+  setInterval(tick,1000);
+}
+
+function renderContacts(body){
+  body.innerHTML=`
+    <div class="content">
+      <h1>Contacts</h1>
+      <div class="grid">
+        <div class="tile"><div class="tile-icon">👤</div><b>Alex</b><p class="muted">alex@example.com</p></div>
+        <div class="tile"><div class="tile-icon">👤</div><b>Sam</b><p class="muted">sam@example.com</p></div>
+        <div class="tile"><div class="tile-icon">👤</div><b>Jordan</b><p class="muted">jordan@example.com</p></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderReminders(body){
+  body.innerHTML=`
+    <div class="content">
+      <h1>Reminders</h1>
+      <div class="card">
+        <div class="setting-row">
+          <span>☐ Finish project</span>
+          <button class="secondary" onclick="this.parentElement.style.textDecoration='line-through'">Complete</button>
+        </div>
+        <div class="setting-row">
+          <span>☐ Try the new apps</span>
+          <button class="secondary" onclick="this.parentElement.style.textDecoration='line-through'">Complete</button>
+        </div>
+        <div class="setting-row">
+          <span>☐ Build something awesome</span>
+          <button class="secondary" onclick="this.parentElement.style.textDecoration='line-through'">Complete</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderNews(body){
+  body.innerHTML=`
+    <div class="content">
+      <h1>News</h1>
+      <div class="grid">
+        <div class="tile"><div class="tile-icon">📰</div><b>Technology</b><p class="muted">The future of computing keeps moving.</p></div>
+        <div class="tile"><div class="tile-icon">🌎</div><b>World</b><p class="muted">Latest stories and updates.</p></div>
+        <div class="tile"><div class="tile-icon">🏀</div><b>Sports</b><p class="muted">Scores, games and highlights.</p></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderTrash(body){
+  body.innerHTML=`
+    <div class="content" style="text-align:center">
+      <div style="font-size:100px;margin-top:60px">🗑️</div>
+      <h1>Trash</h1>
+      <p class="muted">Trash is empty.</p>
+      <button class="secondary" onclick="showToast('Trash is already empty')">Empty Trash</button>
+    </div>
+  `;
+}
+
+function renderGeneric(body,id){
+  body.innerHTML=`
+    <div class="content">
+      <h1>${apps[id]?.icon||"📦"} ${apps[id]?.name||id}</h1>
+      <div class="card">
+        <h2>App Ready</h2>
+        <p>This app is running inside your web desktop.</p>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   LAUNCHPAD
+========================================================= */
+
+function buildLaunchpad(){
+  const grid=document.getElementById("launchGrid");
+  grid.innerHTML="";
+
+  Object.entries(apps).forEach(([id,a])=>{
+    const el=document.createElement("div");
+    el.className="launch-app";
+    el.dataset.name=a.name.toLowerCase();
+    el.innerHTML=`
+      <div class="launch-icon">${a.icon}</div>
+      <div class="launch-name">${a.name}</div>
+    `;
+    el.onclick=()=>{
+      toggleLaunchpad(false);
+      openApp(id);
+    };
+    grid.appendChild(el);
+  });
+}
+
+function toggleLaunchpad(show){
+  const lp=document.getElementById("launchpad");
+  if(show){
+    buildLaunchpad();
+    lp.classList.add("show");
+    setTimeout(()=>document.getElementById("launchSearch").focus(),50);
+  }else{
+    lp.classList.remove("show");
+  }
+}
+
+document.getElementById("launchSearch").addEventListener("input",e=>{
+  const q=e.target.value.toLowerCase();
+  document.querySelectorAll(".launch-app").forEach(a=>{
+    a.style.display=a.dataset.name.includes(q)?"block":"none";
+  });
+});
+
+document.getElementById("launchpad").addEventListener("pointerdown",e=>{
+  if(e.target.id==="launchpad")toggleLaunchpad(false);
+});
+
+/* =========================================================
+   CONTROL CENTER
+========================================================= */
+
+document.getElementById("ccButton").onclick=e=>{
+  e.stopPropagation();
+  document.getElementById("controlCenter").classList.toggle("show");
+};
+
+function toggleCC(type){
+  if(type==="wifi")state.wifi=!state.wifi;
+  if(type==="bluetooth")state.bluetooth=!state.bluetooth;
+  if(type==="focus")state.focus=!state.focus;
+  updateCC();
+}
+
+function updateCC(){
+  const w=document.getElementById("wifiCC");
+  const b=document.getElementById("bluetoothCC");
+  const f=document.getElementById("focusCC");
+
+  w.classList.toggle("on",state.wifi);
+  w.querySelector("span").textContent=state.wifi?"Connected":"Off";
+
+  b.classList.toggle("on",state.bluetooth);
+  b.querySelector("span").textContent=state.bluetooth?"On":"Off";
+
+  f.classList.toggle("on",state.focus);
+  f.querySelector("span").textContent=state.focus?"On":"Off";
+
+  document.getElementById("darkCC").classList.toggle("on",state.dark);
+}
+updateCC();
+
+document.getElementById("brightness").oninput=e=>{
+  state.brightness=e.target.value;
+  document.getElementById("desktop").style.filter=`brightness(${state.brightness/100})`;
+};
+
+document.getElementById("volume").oninput=e=>{
+  state.volume=e.target.value;
+};
+
+document.addEventListener("pointerdown",e=>{
+  const cc=document.getElementById("controlCenter");
+  const btn=document.getElementById("ccButton");
+  if(cc.classList.contains("show")&&!cc.contains(e.target)&&!btn.contains(e.target)){
+    cc.classList.remove("show");
+  }
+});
+
+/* =========================================================
+   CONTEXT MENU
+========================================================= */
+
+document.getElementById("desktop").addEventListener("contextmenu",e=>{
+  if(e.target.closest(".window")||e.target.closest("#dockWrap"))return;
+
+  e.preventDefault();
+
+  const menu=document.getElementById("contextMenu");
+  menu.style.display="block";
+
+  let x=e.clientX;
+  let y=e.clientY;
+
+  if(x+210>window.innerWidth)x=window.innerWidth-220;
+  if(y+180>window.innerHeight)y=window.innerHeight-190;
+
+  menu.style.left=x+"px";
+  menu.style.top=y+"px";
+});
+
+document.addEventListener("pointerdown",e=>{
+  if(!e.target.closest("#contextMenu")){
+    document.getElementById("contextMenu").style.display="none";
+  }
+});
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function showModal(html){
+  document.getElementById("modalBox").innerHTML=html;
+  document.getElementById("modal").classList.add("show");
+}
+
+function closeModal(){
+  document.getElementById("modal").classList.remove("show");
+}
+
+document.getElementById("modal").addEventListener("pointerdown",e=>{
+  if(e.target.id==="modal")closeModal();
+});
 
 /* =========================================================
    KEYBOARD SHORTCUTS
 ========================================================= */
 
-document.addEventListener(
-  "keydown",
-  event=>{
-
-    if(event.key==="Escape"){
-
-      document
-        .getElementById("startMenu")
-        .classList.remove("open");
-
-      document
-        .getElementById("actionCenter")
-        .classList.remove("open");
-
-      hideContext();
-
-    }
-
-    if(
-      event.ctrlKey &&
-      event.key==="Escape"
-    ){
-
-      event.preventDefault();
-
-      toggleStart();
-
-    }
-
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    toggleLaunchpad(false);
+    document.getElementById("controlCenter").classList.remove("show");
+    closeModal();
   }
-);
 
+  if((e.ctrlKey||e.metaKey)&&e.key===" "){
+    e.preventDefault();
+    toggleLaunchpad(true);
+  }
+});
 
 /* =========================================================
    STARTUP
 ========================================================= */
 
-renderFolder("This PC");
-
-setTimeout(
-  ()=>{
-    showToast(
-      "Welcome",
-      "Your upgraded Windows-style desktop is ready!"
-    );
-  },
-  600
-);
+setTimeout(()=>{
+  showToast("Welcome to Web Mac");
+},500);
 
 </script>
-
 </body>
   </html>
