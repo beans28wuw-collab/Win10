@@ -83,7 +83,9 @@ textarea.np{flex:1;border:0;outline:0;resize:none;padding:12px;background:var(--
 #w11lock input{width:100%;padding:13px 16px;border-radius:9px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);outline:0;margin:12px 0;color:#fff}
 #w11power{position:fixed;right:12px;bottom:58px;z-index:12001;display:none;min-width:220px;padding:8px;background:var(--win);border:1px solid var(--ln);border-radius:12px;box-shadow:var(--sh)}#w11power.on{display:block}
 .w11pow{padding:10px 12px;border-radius:7px;cursor:pointer}.w11pow:hover{background:var(--card)}
-</style></head><body>
+</style>
+<style id="gfn-enhance-css">.gfn-card{padding:18px;border-radius:16px;background:linear-gradient(135deg,#18212f,#0d1118);color:#fff}.gfn-btn{padding:11px 16px;border:0;border-radius:10px;background:#76b900;color:#071000;font-weight:800;cursor:pointer}.gfn-btn.alt{background:#fff;color:#111}.gfn-status{padding:10px 12px;border-radius:10px;background:#ffffff12;margin-top:12px}.gfn-frame{width:100%;height:100%;border:0;background:#0b0d10}</style>
+</head><body>
 <div id="wall"></div><div id="desk"></div>
 <div class="pop" id="start"><input class="si" id="q" placeholder="Search for apps, settings, and documents" autocomplete="off"><div class="sc" id="sc"></div><div class="sf"><span id="un">👤 User</span><button id="pb" title="Power">⏻</button></div><div id="pw"><button data-p="lock">🔒 Lock</button><button data-p="sleep">🌙 Sleep</button><button data-p="restart">🔄 Restart</button><button data-p="off">⏻ Shut down</button></div></div>
 <div class="pop" id="wd"></div><div class="pop" id="run"><b>Run</b><span style="color:var(--mut)">Type the name of an app or a website.</span><input id="ri" placeholder="notepad, calc, settings, example.com" autocomplete="off"><div style="text-align:right"><button class="bt" id="rok">OK</button></div></div><div id="tvw"></div><div class="pop" id="qs"></div><div class="pop" id="cal"></div><div class="pop" id="fly"></div><div class="pop" id="ctx"></div>
@@ -452,6 +454,14 @@ time:['🕐','Time & language',()=>row('24-hour clock','',tg('h24'))+row('Time z
 gaming:['🎮','Gaming',()=>row('Game Mode','Optimize for games',tg('game'))+row('Games','Find games in the Store',bt('data-st="1"','Open Store'))],
 access:['♿','Accessibility',()=>row('Text size','',bt('data-zm="100"','100%')+' '+bt('data-zm="125"','125%')+' '+bt('data-zm="150"','150%'))+row('Reduce motion','Turn off animations',tg('rm'))+row('High contrast','',tg('hc'))],
 privacy:['🔒','Privacy & security',()=>row('Location','',tg('loc'))+row('Camera','',tg('cam'))+row('Microphone','',tg('mic'))+row('Windows Security','Your device is protected')],
+display:['🖥️','Display',()=>row('Display brightness','Adjust screen brightness',`<input type="range" min=40 max=100 value="${Q.bri}" data-sl="bri">`)+row('Night light','Reduce blue light',tg('night'))+row('Scale','Change text and app size',bt('data-zm="100"','100%')+' '+bt('data-zm="125"','125%')+' '+bt('data-zm="150"','150%'))+row('Display resolution',`${innerWidth} × ${innerHeight}`)+row('Multiple displays','Connect another display',bt('data-toast="Display connection opened"','Detect'))],
+sound:['🔊','Sound',()=>row('Output volume','',`<input type="range" min=0 max=100 value="${Q.vol}" data-sl="vol">`)+row('Mute','',tg('mute'))+row('Audio enhancements','Improve sound quality',tg('enh'))+row('Output device',ST.get('w11.audio','Speakers (Virtual)'),bt('data-audio="1"','Change'))],
+notifications:['🔔','Notifications',()=>row('Notifications','Allow apps and system notifications',tg('notify'))+row('Do not disturb','Silence notifications',tg('dnd'))+row('Notification sounds','Play sounds for notifications',tg('nsound'))+row('Show notifications on lock screen','',tg('locknotif'))],
+storage:['💾','Storage',()=>row('Storage usage',((JSON.stringify(fs).length)/1024).toFixed(1)+' KB used')+row('Storage Sense','Automatically clean temporary files',tg('sense'))+row('Downloads','',ST.get('w11.downloads','0')+' files')+row('Temporary files','Safe to remove',bt('data-toast="Temporary files cleaned"','Clean now'))],
+multi:['🪟','Multitasking',()=>row('Snap windows','Arrange windows side by side',tg('snap'))+row('Show tabs in Alt+Tab','Include browser tabs',tg('alttab'))+row('Minimize windows when a monitor is disconnected','',tg('minmon'))+row('Shake to minimize','',tg('shake'))],
+clipboard:['📋','Clipboard',()=>row('Clipboard history','Press Win+V to access copied items',tg('clip'))+row('Sync across devices','Sync clipboard between devices',tg('clipsync'))+row('Clear clipboard history','Remove saved clipboard items',bt('data-toast="Clipboard history cleared"','Clear'))],
+recovery:['🛠️','Recovery',()=>row('Reset this PC','Erase virtual files and settings',bt('data-r="1"','Reset PC'))+row('Startup repair','Check virtual shell startup',bt('data-toast="Startup repair completed"','Run'))+row('Advanced startup','Restart into recovery options',bt('data-toast="Advanced startup opened"','Restart now'))],
+info:['ℹ️','System Info',()=>row('Device name',ST.get('w11.device','WIN11-WEB-PC'))+row('Processor','Virtual Web CPU')+row('Memory','Browser-managed memory')+row('Browser',navigator.userAgent.split(') ')[0]+')')+row('Platform',navigator.platform)+row('Build','Windows 11 Web 2.0')],
 update:['🔄','Windows Update',()=>row(upd===1?'Checking for updates…':"You're up to date",ST.get('w11.upd','')?'Last checked: '+ST.get('w11.upd',''):'Never checked',upd===1?'<span class="spin" style="width:20px;height:20px;border-width:2px;display:inline-block"></span>':bt('data-up="1"','Check for updates'))]};
 const nav=()=>Object.keys(SP).filter(k=>SP[k][1].toLowerCase().includes(qs.toLowerCase())).map(k=>`<div data-pg="${k}" class="${k===pg?'cur':''}">${SP[k][0]} ${SP[k][1]}</div>`).join('')||'<div style="color:var(--mut)">No results</div>';
 const draw=()=>{const P=SP[pg];bd.innerHTML=`<div class="sx"><div class="snav"><input class="sq" placeholder="Find a setting" value="${esc(qs)}"><div id="nl">${nav()}</div></div><div class="spg"><h2 style="margin:0 0 12px;font-weight:600">${P[1]}</h2>${P[2]()}</div></div>`};
@@ -467,6 +477,8 @@ else if(d.zm)setZoom(+d.zm);else if(d.ui)unin(d.ui);else if(d.st){open('store');
 else if(d.un){const v=await ask('Your name:',ST.get('w11.user','User'));if(v&&v.trim()){ST.set('w11.user',v.trim());$('#un').textContent='👤 '+v.trim()}}
 else if(d.ap==='set'){const v=await ask('New lock password:','','password');if(v){ST.set('w11.pw',v);toast('Password set')}}
 else if(d.ap==='rm'){ST.set('w11.pw','');toast('Password removed')}
+else if(d.audio){ST.set('w11.audio','Headphones (Virtual)');toast('Output device changed')}
+else if(d.toast){toast(d.toast)}
 else if(d.up){upd=1;draw();await new Promise(r=>setTimeout(r,1400));upd=2;ST.set('w11.upd',new Date().toLocaleString())}
 else if(d.r&&await yes('Erase all files and settings on this virtual PC?')){try{localStorage.clear()}catch(x){}location.reload();return}else return;
 if(w.e.isConnected)draw()};
@@ -633,4 +645,27 @@ $('#task')?.addEventListener('contextmenu',e=>{e.preventDefault();ctx.innerHTML=
 /* Window snap keyboard helpers */
 document.addEventListener('keydown',e=>{if(!(e.metaKey||e.ctrlKey)||!e.altKey&&!(e.metaKey))return;const w=typeof act!=='undefined'?act:null;if(!w)return;if(e.key==='ArrowLeft'){e.preventDefault();snapWin(w,'left')}if(e.key==='ArrowRight'){e.preventDefault();snapWin(w,'right')}if(e.key==='ArrowUp'){e.preventDefault();snapWin(w,'max')}if(e.key==='ArrowDown'){e.preventDefault();if(w.e.classList.contains('max')){w.e.classList.remove('max');}else snapWin(w,'bl')}});
 })();
-</script></body></html>
+</script>
+<script id="gfn-enhance-js">(()=>{
+const boot=()=>{
+ const root=document.body; if(!root||document.getElementById('gfn-enhance'))return;
+ const oldOpen=window.openApp;
+ window.openGeForceNOW=()=>{
+   const url='https://play.geforcenow.com/';
+   let w=document.getElementById('gfn-window');
+   if(w){w.style.display='block';w.style.zIndex=99999;return;}
+   w=document.createElement('div');w.id='gfn-window';w.className='window';w.style.cssText='position:fixed;left:5%;top:5%;width:90%;height:86%;z-index:99999;background:#111;border-radius:14px;overflow:hidden;box-shadow:0 30px 90px #0008';
+   w.innerHTML=`<div class="titlebar"><div class="titleIcon">🎮</div><div class="title">GeForce NOW</div><div class="controls"><button class="control" id="gfn-min">─</button><button class="control" id="gfn-max">□</button><button class="control close" id="gfn-close">✕</button></div></div><div style="height:calc(100% - 42px);display:flex;flex-direction:column"><div class="gfn-card" style="border-radius:0"><b>GeForce NOW Cloud Gaming</b><div style="opacity:.8;font-size:13px;margin-top:4px">Official NVIDIA web client</div><div class="gfn-status">If the embedded client is blocked by browser security, use <button class="gfn-btn alt" id="gfn-external">Open in browser</button></div></div><iframe class="gfn-frame" src="${url}" allow="fullscreen; autoplay; gamepad; microphone; camera" title="GeForce NOW"></iframe></div>`;
+   root.appendChild(w);
+   w.querySelector('#gfn-close').onclick=()=>w.remove();w.querySelector('#gfn-min').onclick=()=>w.style.display='none';w.querySelector('#gfn-max').onclick=()=>{w.style.left='0';w.style.top='0';w.style.width='100%';w.style.height='100%'};w.querySelector('#gfn-external').onclick=()=>window.open(url,'_blank','noopener');
+ };
+ const register=()=>{
+   if(window.APPS && !APPS.geforcenow){APPS.geforcenow={n:'GeForce NOW',i:'🎮',w:1000,h:680,r:()=>{window.openGeForceNOW()}};}
+   document.querySelectorAll('[data-app="geforcenow"], [data-id="geforcenow"]').forEach(e=>e.onclick=()=>window.openGeForceNOW());
+ };
+ register();
+ const obs=new MutationObserver(register);obs.observe(root,{childList:true,subtree:true});
+ const marker=document.createElement('div');marker.id='gfn-enhance';marker.hidden=true;root.appendChild(marker);
+}; if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();</script>
+</body></html>
