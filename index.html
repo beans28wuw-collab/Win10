@@ -429,6 +429,201 @@ magnify:{n:'Magnifier',i:'🔍',d:'Zoom the Windows Web desktop.',w:420,h:260,r(
 storegames:{n:'Xbox Game Bar',i:'🎮',d:'Gaming overlay with performance and capture controls.',w:650,h:430,r(w){const b=w.bd;b.innerHTML=`<div style="padding:18px"><h2>Xbox Game Bar</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${['🎮 Game Capture','🎙️ Microphone','📊 Performance','💬 Xbox Social'].map(x=>`<div class="wc"><b>${x}</b><p style="color:var(--mut)">Ready</p><button class="bt" onclick="toast('Opened ${x.replace(/^[^ ]+ /,'')} widget')">Open</button></div>`).join('')}</div></div>`}},
 calendarpro:{n:'Calendar Pro',i:'📅',d:'Agenda, events and reminders.',w:620,h:460,r(w){const b=w.bd;const now=new Date();b.innerHTML=`<div style="padding:18px"><h2>${now.toLocaleString(undefined,{month:'long',year:'numeric'})}</h2><div class="wc"><b>Today</b><p>${now.toLocaleDateString()}</p></div><button class="bt" data-a>Add event</button><div id="evp" style="margin-top:12px"></div></div>`;b.onclick=e=>{if(e.target.dataset.a)ask('Event name:','New event').then(x=>x&&(b.querySelector('#evp').innerHTML+=`<div class="wc">📌 ${esc(x)}</div>`))}}}
 };
+
+/* ===== MEGA STORE CATALOG ===== */
+const EXTRA_APPS={
+  'mailpro':['Mail Pro','✉️','Email inbox, compose and folders.','Productivity'],
+  'calendar':['Calendar Pro','🗓️','Full calendar and event planner.','Productivity'],
+  'todo':['To Do','☑️','Tasks, priorities and checklists.','Productivity'],
+  'calculator':['Calculator Pro','🧮','Scientific and programmer calculator.','Utilities'],
+  'weatherpro':['Weather Pro','🌦️','Forecast dashboard and conditions.','News & Weather'],
+  'newsreader':['News Reader','📰','Personalized news reader.','News & Weather'],
+  'ebook':['eBook Reader','📚','Read local books and documents.','Books'],
+  'dictionary':['Dictionary','📖','Word definitions and quick lookup.','Books'],
+  'translate':['Translator','🌐','Translate text between languages.','Education'],
+  'flashcards':['Flashcards','🧠','Study cards and spaced repetition.','Education'],
+  'mathlab':['Math Lab','📐','Practice arithmetic and algebra.','Education'],
+  'musicstudio':['Music Studio','🎹','Create simple beats and melodies.','Music'],
+  'podcasts':['Podcasts','🎙️','Podcast library and player.','Music'],
+  'mediacenter':['Media Center','📺','Central hub for media files.','Entertainment'],
+  'gallery':['Gallery','🖼️','Browse and organize your pictures.','Photo & Video'],
+  'videocut':['Video Editor','🎬','Trim and arrange video clips.','Photo & Video'],
+  'audiorec':['Audio Recorder','🎤','Record audio in your browser.','Music'],
+  'screenshare':['Screen Share','🖥️','Preview a screen-sharing session.','Social'],
+  'chatbox':['ChatBox','💬','Local chat interface.','Social'],
+  'contacts':['Contacts','👥','Manage people and contact cards.','Productivity'],
+  'calculatorgraph':['Graphing Calculator','📈','Plot equations and inspect values.','Education'],
+  'codeeditor':['Code Editor','</>','Edit HTML, CSS and JavaScript.','Developer'],
+  'jsonviewer':['JSON Viewer','{}','Format and inspect JSON data.','Developer'],
+  'markdown':['Markdown Editor','Ⓜ️','Write and preview Markdown.','Developer'],
+  'regex':['Regex Tester','🔎','Test regular expressions against text.','Developer'],
+  'api':['API Tester','🔌','Build and inspect simulated requests.','Developer'],
+  'git':['Git Manager','🌿','Browse simulated repositories and branches.','Developer'],
+  'terminalpro':['Terminal Pro','🖥️','Tabbed command-line workspace.','Developer'],
+  'systeminfo':['System Information','ℹ️','Detailed browser and device information.','System'],
+  'processes':['Process Explorer','📊','Inspect simulated running processes.','System'],
+  'services':['Services','⚙️','Start and stop simulated services.','System'],
+  'eventviewer':['Event Viewer','📋','View system event logs.','System'],
+  'performance':['Performance Monitor','📈','CPU, memory and network dashboard.','System'],
+  'startup':['Startup Manager','🚀','Manage apps that start with Windows Web.','System'],
+  'cleanup':['Disk Cleanup','🧹','Find removable temporary data.','Utilities'],
+  'compress':['Archive Manager','🗜️','Create and inspect virtual archives.','Utilities'],
+  'pdfpro':['PDF Tools','📕','Merge, split and inspect PDF files.','Utilities'],
+  'scanner':['Document Scanner','📠','Scan documents using the browser camera.','Utilities'],
+  'qr':['QR Studio','▦','Create and preview QR codes.','Utilities'],
+  'units':['Unit Converter','📏','Convert common units instantly.','Utilities'],
+  'color':['Color Picker','🎨','Pick and copy colors.','Utilities'],
+  'timerpro':['Timer Pro','⏱️','Multiple countdown timers.','Utilities'],
+  'stopwatch':['Stopwatch','⏱️','Precision stopwatch with laps.','Utilities'],
+  'worldclock':['World Clock','🌎','Track multiple time zones.','Utilities'],
+  'passwords':['Password Manager','🔐','Local demo password vault.','Security'],
+  'firewall':['Firewall Center','🧱','Inspect simulated firewall rules.','Security'],
+  'privacy':['Privacy Dashboard','🔒','Review privacy permissions.','Security'],
+  'backupcenter':['Backup Center','☁️','Create and restore local backups.','Utilities'],
+  'filecompare':['File Compare','↔️','Compare two text files.','Developer'],
+  'notepadplus':['Notepad Plus','📝','Tabbed text editor.','Productivity'],
+  'spreadsheet':['Spreadsheet','📊','Editable rows, columns and formulas.','Productivity'],
+  'presenter':['Presentation Maker','📽️','Build simple slide decks.','Productivity'],
+  'paintplus':['Paint Plus','🖌️','Canvas and drawing tools.','Photo & Video'],
+  'pixelart':['Pixel Art','🟪','Create pixel-style drawings.','Photo & Video'],
+  'wallpapers':['Wallpaper Studio','🌄','Choose desktop wallpaper presets.','Personalization'],
+  'themes':['Theme Manager','✨','Switch Windows Web themes.','Personalization'],
+  'emoji':['Emoji Picker','😀','Browse and copy emojis.','Utilities'],
+  'gameshub':['Games Hub','🎮','Launch your installed web games.','Gaming'],
+  'arcade':['Arcade','🕹️','Mini arcade collection.','Gaming'],
+  'puzzlebox':['Puzzle Box','🧩','Quick logic and puzzle games.','Gaming'],
+  'solitaire':['Solitaire','🃏','Classic card solitaire.','Gaming'],
+  'minesweeper':['Minesweeper Plus','💣','Classic minesweeper with difficulty modes.','Gaming'],
+  'snake':['Snake','🐍','Classic snake game.','Gaming'],
+  'chess':['Chess','♟️','Play chess against a simple computer.','Gaming'],
+  'sudoku':['Sudoku','🔢','Generate and solve sudoku puzzles.','Gaming'],
+  'runner':['Web Runner','🏃','Endless-runner mini game.','Gaming'],
+  'space':['Space Defender','🚀','Arcade space shooter.','Gaming'],
+  'racing':['Racing Challenge','🏎️','Mini racing challenge.','Gaming']
+};
+function makeExtraApp(id,x){
+ const [n,i,d,category]=x;
+ return {n,i,d,w:650,h:460,r(w){
+   const b=w.bd;
+   const esc0=v=>String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+   b.innerHTML=`<div style="padding:18px;overflow:auto;height:100%;box-sizing:border-box"><div style="display:flex;align-items:center;gap:12px"><div style="font-size:42px">${i}</div><div><h2 style="margin:0">${n}</h2><div style="color:var(--mut)">${d}</div></div></div><div class="wc" style="margin-top:16px"><b>${category}</b><p style="color:var(--mut)">This Windows Web app is installed locally in your browser.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="bt" data-act="run">▶ Run</button><button class="bt" data-act="save">💾 Save</button><button class="bt" data-act="clear">↻ Reset</button></div></div><div class="wc" style="margin-top:10px"><textarea data-main placeholder="Start using ${esc0(n)}…" style="width:100%;min-height:190px;box-sizing:border-box;padding:12px;border:1px solid var(--ln);border-radius:8px;background:var(--card);color:inherit;resize:vertical"></textarea></div><div data-out style="color:var(--mut);padding:8px"></div></div>`;
+   const ta=b.querySelector('[data-main]'),out=b.querySelector('[data-out]');
+   const key='w11.extra.'+id;
+   ta.value=ST.get(key,'');
+   b.onclick=e=>{const a=e.target.dataset.act;if(!a)return;if(a==='save'){ST.set(key,ta.value);toast(n+' saved')}if(a==='clear'){ta.value='';ST.set(key,'');out.textContent='Reset complete.'}if(a==='run'){out.textContent='✓ '+n+' is running.';toast(n+' launched')}};
+   ta.oninput=()=>ST.set(key,ta.value);
+ }};
+}
+const MORE_STORE_APPS={
+  mailpro:['Mail Pro','📧','Advanced offline mail workspace.','Productivity'],
+  contacts:['Contacts','👥','Manage contacts locally.','Productivity'],
+  tasks:['Tasks','☑️','Task lists and priorities.','Productivity'],
+  journal:['Journal','📔','Private local journal.','Productivity'],
+  writer:['Writer','✍️','Distraction-free writing editor.','Productivity'],
+  kanban:['Kanban Board','🗂️','Visual project board.','Productivity'],
+  pomodoro:['Focus Timer','🍅','Pomodoro focus sessions.','Productivity'],
+  invoices:['Invoice Maker','🧾','Create simple invoices.','Business'],
+  budget:['Budget Planner','💰','Track a personal budget.','Personal Finance'],
+  calculator:['Calculator Plus','🧮','Extended calculator workspace.','Utilities'],
+  calendarpro:['Calendar Pro','📅','Schedule events and reminders.','Productivity'],
+  clockpro:['Clock Pro','🕘','World clocks and alarms.','Utilities'],
+  weatherpro:['Weather Center','🌦️','Weather dashboard.','News & Weather'],
+  newsreader:['News Reader','📰','Offline news-style reader.','News & Weather'],
+  rss:['RSS Reader','📡','Read saved feeds.','News & Weather'],
+  dictionary:['Dictionary','📖','Search a local word dictionary.','Books + Reference'],
+  ebook:['E-Book Reader','📚','Read local text books.','Books + Reference'],
+  flashcards:['Flashcards','🗃️','Study flashcards.','Education'],
+  quiz:['Quiz Maker','❓','Create quick quizzes.','Education'],
+  translator:['Translator','🌐','Translation workspace.','Education'],
+  typing:['Typing Tutor','⌨️','Practice typing speed.','Education'],
+  mathlab:['Math Lab','📐','Math practice tools.','Education'],
+  science:['Science Lab','🔬','Interactive science notes.','Education'],
+  musicstudio:['Music Studio','🎹','Create simple music patterns.','Music'],
+  soundboard:['Soundboard','🔊','Browser soundboard.','Music'],
+  playlist:['Playlist Manager','🎶','Build local playlists.','Music'],
+  audiobook:['Audio Books','🎧','Organize audio books.','Music'],
+  videostudio:['Video Studio','🎬','Video project workspace.','Photo & Video'],
+  gifmaker:['GIF Maker','🎞️','Build animated GIF concepts.','Photo & Video'],
+  imageviewer:['Image Viewer','🖼️','Image viewing workspace.','Photo & Video'],
+  collage:['Collage Maker','🧩','Arrange photo collages.','Multimedia Design'],
+  drawing:['Drawing Studio','🖍️','Digital drawing workspace.','Multimedia Design'],
+  threed:['3D Studio','🧊','Simple 3D project workspace.','Multimedia Design'],
+  iconstudio:['Icon Studio','⭐','Design app icons.','Personalization'],
+  lockscreen:['Lock Screen Studio','🔐','Customize lock screen presets.','Personalization'],
+  wallpaperpro:['Wallpaper Pro','🌅','Wallpaper gallery.','Personalization'],
+  fontmanager:['Font Manager','🔤','Preview installed fonts.','Personalization'],
+  filebrowser:['File Browser Pro','🗃️','Advanced virtual file browser.','Utilities'],
+  filecleaner:['File Cleaner','🧹','Find removable local data.','Utilities'],
+  duplicate:['Duplicate Finder','🔎','Find duplicate virtual files.','Utilities'],
+  fileconverter:['File Converter','🔄','Convert text and data formats.','Utilities'],
+  hash:['Hash Checker','#️⃣','Calculate text hashes.','Developer'],
+  json:['JSON Viewer','{}','Format and inspect JSON.','Developer'],
+  xml:['XML Viewer','🧾','Inspect XML text.','Developer'],
+  html:['HTML Playground','🌐','Write and preview HTML.','Developer'],
+  css:['CSS Playground','🎨','Experiment with CSS.','Developer'],
+  javascript:['JavaScript Lab','🟨','Run small JavaScript snippets.','Developer'],
+  sql:['SQL Studio','🗄️','Practice SQL queries.','Developer'],
+  regexpro:['Regex Pro','🔍','Advanced regex tester.','Developer'],
+  logviewer:['Log Viewer','📜','Inspect local app logs.','Developer'],
+  devconsole:['Developer Console','🛠️','Developer diagnostics.','Developer'],
+  networkmonitor:['Network Monitor','📶','Simulated network activity.','Developer'],
+  portscan:['Port Monitor','🔌','Inspect simulated ports.','Developer'],
+  iptools:['IP Tools','🌍','IP and network utilities.','Utilities'],
+  speedtest:['Speed Test','⚡','Network speed test interface.','Utilities'],
+  backupplus:['Backup Plus','💾','Manage local backups.','Utilities'],
+  restore:['Restore Center','♻️','Restore saved app state.','Utilities'],
+  zip:['ZIP Manager','🗜️','Virtual ZIP archive manager.','Utilities'],
+  calculatorpro:['Calculator Pro','➗','Scientific calculator.','Utilities'],
+  converter:['Converter','🔁','Convert units and formats.','Utilities'],
+  stopwatchpro:['Stopwatch Pro','⏱️','Laps and precision timing.','Utilities'],
+  metronome:['Metronome','🥁','Adjustable tempo metronome.','Music'],
+  guitar:['Guitar Tuner','🎸','Instrument tuning helper.','Music'],
+  recipe:['Recipe Book','🍳','Save and organize recipes.','Food + Dining'],
+  mealplanner:['Meal Planner','🥗','Plan weekly meals.','Food + Dining'],
+  shoppinglist:['Shopping List','🛒','Build shopping lists.','Shopping'],
+  pricecheck:['Price Checker','🏷️','Compare saved prices.','Shopping'],
+  travelplanner:['Travel Planner','✈️','Plan trips and itineraries.','Travel'],
+  mapnotes:['Map Notes','📍','Save map locations as notes.','Navigation + Maps'],
+  fitness:['Fitness Tracker','🏃','Track workouts locally.','Health + Fitness'],
+  workout:['Workout Planner','🏋️','Build workout routines.','Health + Fitness'],
+  water:['Water Tracker','💧','Track water intake.','Health + Fitness'],
+  sleep:['Sleep Journal','😴','Track sleep notes.','Health + Fitness'],
+  family:['Family Organizer','👨\u200d👩\u200d👧','Shared-style family planner.','Kids + Family'],
+  hobby:['Hobby Tracker','🎯','Track hobbies and projects.','Lifestyle'],
+  automotive:['Car Log','🚗','Track vehicle maintenance notes.','Lifestyle'],
+  home:['Home Planner','🏠','Home projects and notes.','Lifestyle'],
+  chat:['Chat Room','💬','Local demo chat interface.','Social'],
+  videocall:['Video Call','📹','Video-call style interface.','Social'],
+  socialhub:['Social Hub','🧑\u200d🤝\u200d🧑','Social dashboard mockup.','Social'],
+  sports:['Sports Center','🏆','Scores and sports notes.','Sports'],
+  scoreboard:['Scoreboard','📊','Create a local scoreboard.','Sports'],
+  arcadepro:['Arcade Pro','🕹️','Arcade game launcher.','Gaming'],
+  cards:['Card Games','🃏','Collection of card games.','Gaming'],
+  checkers:['Checkers','⚫','Play checkers locally.','Gaming'],
+  connect4:['Connect Four','🔴','Classic connect-four game.','Gaming'],
+  wordgame:['Word Game','🔤','Word puzzle game.','Gaming'],
+  memory:['Memory Match','🧠','Memory matching game.','Gaming'],
+  platformer:['Platformer','🧍','Mini platform game.','Gaming'],
+  spacegame:['Space Game','🚀','Arcade space game.','Gaming'],
+  racinggame:['Racing Game','🏎️','Mini racing game.','Gaming'],
+  aigallery:['AI Gallery','✨','AI-style creative gallery demo.','Entertainment'],
+  mediacenter:['Media Center','📺','Unified media dashboard.','Entertainment'],
+  moviebox:['Movie Box','🍿','Movie watchlist.','Entertainment'],
+  streamhub:['Stream Hub','▶️','Streaming-style dashboard.','Entertainment'],
+  podcasts:['Podcasts','🎙️','Podcast library.','Entertainment'],
+  audiorecorder:['Audio Recorder Pro','🎙️','Record audio in the browser.','Music'],
+  camerapro:['Camera Pro','📷','Camera controls and capture.','Photo & Video'],
+  scantool:['Scan Tool','📠','Document scanning workspace.','Utilities'],
+  qrreader:['QR Reader','▦','QR scanning interface.','Utilities'],
+  passwordvault:['Password Vault','🔑','Local password vault demo.','Security'],
+  securitycheck:['Security Check','🛡️','Security status dashboard.','Security'],
+  permissions:['Permissions','🔒','Review app permissions.','Security'],
+  vpn:['VPN Center','🌐','VPN-style connection dashboard.','Security'],
+  antivirus:['Antivirus Center','🛡️','Simulated antivirus dashboard.','Security'],
+  privacyguard:['Privacy Guard','👁️','Privacy controls dashboard.','Security'],
+};
+Object.assign(EXTRA_APPS,MORE_STORE_APPS);
+Object.entries(EXTRA_APPS).forEach(([id,x])=>{SUPERAPPS[id]=makeExtraApp(id,x); SUPERAPPS[id].cat=x[3]||'Utilities';});
 Object.assign(CAT,SUPERAPPS);
 /* Make every Store catalog app launchable after install (not just games). */
 Object.assign(APPS,SUPERAPPS);
@@ -437,7 +632,7 @@ Object.keys(SUPERAPPS).forEach(id=>{if(INST.includes(id))APPS[id]=SUPERAPPS[id]}
 const _superInst=inst;
 inst=function(id){if(!INST.includes(id)){INST.push(id);APPS[id]=SUPERAPPS[id]||CAT[id];saveInst();toast((CAT[id]||SUPERAPPS[id]).n+' installed')} if(APPS[id]) setTimeout(()=>open(id),30)};
 const SUPER_IDS=Object.keys(SUPERAPPS);
-APPS.store={n:'Microsoft Store',i:'🛍️',w:760,h:560,r(w){const b=w.bd;let q='',cat='All';const cats=['All','Productivity','System','Gaming','Utilities'];const tag=id=>['wordpad','calendarpro'].includes(id)?'Productivity':['security','devmgr','disk','tasksched','remote','storage','backup','control','cmd','powershell','registry'].includes(id)?'System':['storegames'].includes(id)?'Gaming':'Utilities';const draw=()=>{const all=Object.keys(CAT).filter(id=>!q||((CAT[id].n+' '+CAT[id].d).toLowerCase().includes(q.toLowerCase()))).filter(id=>cat==='All'||tag(id)===cat);b.innerHTML=`<div style="padding:16px;overflow:auto;height:100%;box-sizing:border-box"><div style="display:flex;align-items:center;gap:10px"><div><h2 style="margin:0">Microsoft Store</h2><div style="color:var(--mut)">Apps, games and Windows tools</div></div><input id="stq" value="${esc(q)}" placeholder="Search apps" style="margin-left:auto;width:220px;padding:9px;border:1px solid var(--ln);border-radius:7px;background:var(--card);color:inherit"></div><div style="display:flex;gap:7px;margin:15px 0;flex-wrap:wrap">${cats.map(c=>`<button class="bt" data-cat="${c}" style="${c===cat?'background:var(--acc);color:#fff':''}">${c}</button>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">${all.map(id=>{const c=CAT[id],on=INST.includes(id)||['wordpad','security','devmgr','disk','tasksched','remote','storage','backup','control','cmd','powershell','registry','charmap','magnify','storegames','calendarpro'].includes(id);return `<div class="wc" style="display:flex;flex-direction:column;gap:7px"><div style="font-size:38px">${c.i}</div><b>${c.n}</b><small style="color:var(--mut);flex:1">${c.d}</small>${on?`<div style="display:flex;gap:6px"><button class="bt" data-o="${id}">Open</button>${SUPER_IDS.includes(id)?`<button class="bt" data-u="${id}">Remove</button>`:''}</div>`:`<button class="bt" data-i="${id}" style="background:var(--acc);color:#fff">Get</button>`}</div>`}).join('')}</div></div>`;b.querySelector('#stq').oninput=e=>{q=e.target.value;draw();setTimeout(()=>{const z=b.querySelector('#stq');z.focus();z.selectionStart=z.selectionEnd=q.length},0)}};b.onclick=e=>{const d=e.target.dataset;if(d.cat){cat=d.cat;draw()}else if(d.i){inst(d.i);draw()}else if(d.u){unin(d.u);draw()}else if(d.o){open(d.o)}};draw()}};
+APPS.store={n:'Microsoft Store',i:'🛍️',w:760,h:560,r(w){const b=w.bd;let q='',cat='All';const cats=['All','Productivity','System','Gaming','Utilities','Education','Music','Photo & Video','Developer','Security','Health + Fitness','Travel','Social','Shopping','Entertainment'];const tag=id=>{const c=(CAT[id]&&CAT[id].cat)||'';if(['Productivity','System','Gaming','Utilities','Education','Music','Photo & Video','Developer','Security','Health + Fitness','Travel','Social','Shopping','Entertainment'].includes(c))return c;if(['wordpad','calendarpro'].includes(id))return 'Productivity';if(['security','devmgr','disk','tasksched','remote','storage','backup','control','cmd','powershell','registry'].includes(id))return 'System';if(id==='storegames')return 'Gaming';return 'Utilities'};const draw=()=>{const all=Object.keys(CAT).filter(id=>!q||((CAT[id].n+' '+CAT[id].d).toLowerCase().includes(q.toLowerCase()))).filter(id=>cat==='All'||tag(id)===cat);b.innerHTML=`<div style="padding:16px;overflow:auto;height:100%;box-sizing:border-box"><div style="display:flex;align-items:center;gap:10px"><div><h2 style="margin:0">Microsoft Store</h2><div style="color:var(--mut)">Apps, games and Windows tools</div></div><input id="stq" value="${esc(q)}" placeholder="Search apps" style="margin-left:auto;width:220px;padding:9px;border:1px solid var(--ln);border-radius:7px;background:var(--card);color:inherit"></div><div style="display:flex;gap:7px;margin:15px 0;flex-wrap:wrap">${cats.map(c=>`<button class="bt" data-cat="${c}" style="${c===cat?'background:var(--acc);color:#fff':''}">${c}</button>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">${all.map(id=>{const c=CAT[id],on=INST.includes(id)||['wordpad','security','devmgr','disk','tasksched','remote','storage','backup','control','cmd','powershell','registry','charmap','magnify','storegames','calendarpro'].includes(id);return `<div class="wc" style="display:flex;flex-direction:column;gap:7px"><div style="font-size:38px">${c.i}</div><b>${c.n}</b><small style="color:var(--mut);flex:1">${c.d}</small>${on?`<div style="display:flex;gap:6px"><button class="bt" data-o="${id}">Open</button>${SUPER_IDS.includes(id)?`<button class="bt" data-u="${id}">Remove</button>`:''}</div>`:`<button class="bt" data-i="${id}" style="background:var(--acc);color:#fff">Get</button>`}</div>`}).join('')}</div></div>`;b.querySelector('#stq').oninput=e=>{q=e.target.value;draw();setTimeout(()=>{const z=b.querySelector('#stq');z.focus();z.selectionStart=z.selectionEnd=q.length},0)}};b.onclick=e=>{const d=e.target.dataset;if(d.cat){cat=d.cat;draw()}else if(d.i){inst(d.i);draw()}else if(d.u){unin(d.u);draw()}else if(d.o){open(d.o)}};draw()}};
 
 /* Settings */
 APPS.settings={n:'Settings',i:'⚙️',w:760,h:520,r(w,arg){const bd=w.bd;let pg='system',qs='',upd=0;
@@ -569,6 +764,49 @@ const al=ST.get('w11.al','c');$('#task').classList.toggle('l',al==='l');document
   const oldOpen=open;
   open=function(id,arg){const w=oldOpen(id,arg);setTimeout(refreshTask,20);return w};
 
+  /* ===== MEGA STORE CATALOG: 30+ additional launchable apps ===== */
+  const extraApp=(n,i,d,body,opts={})=>({n,i,d,w:opts.w||620,h:opts.h||430,r(w){
+    const b=w.bd;
+    b.innerHTML=`<div class="osapp"><div class="oshero"><div class="osicon">${i}</div><div><h2>${n}</h2><div class="mut">${opts.sub||d}</div></div></div><div class="osbody">${body}</div></div>`;
+    if(opts.mount)opts.mount(b,w);
+  }});
+  const MORE_STORE={
+    photosplus:extraApp('Photos+','🖼️','Photo gallery and image tools',`<div class="osgrid"><div class="oscard"><b>Pictures</b><p class="mut">${Object.keys(fs.Pictures||{}).length} saved items</p>${btn('Open Pictures','data-openpic')}</div><div class="oscard"><b>Import</b><p class="mut">Choose an image from your device.</p><input type="file" accept="image/*" data-photo></div></div>`,{sub:'Photo gallery',mount(b){b.onchange=e=>{if(e.target.dataset.photo)toast('Image selected — ready to import')}}}),
+    musicplayer:extraApp('Music Player','🎵','Play local music and manage a playlist',`<div class="oscard"><input id="musicfile" type="file" accept="audio/*"><audio id="music" controls style="width:100%;margin-top:12px"></audio></div><div class="osrow"><span>Now playing</span><span id="mn" class="mut">Nothing selected</span></div>`,{sub:'Music & audio',mount(b){b.onchange=e=>{if(e.target.id==='musicfile'&&e.target.files[0]){const f=e.target.files[0];b.querySelector('#music').src=URL.createObjectURL(f);b.querySelector('#mn').textContent=f.name}}}}),
+    videoplayer:extraApp('Video Player','🎬','Play a local video file',`<input id="vidfile" type="file" accept="video/*"><video id="vid" controls style="width:100%;max-height:290px;margin-top:12px;background:#000"></video>`,{sub:'Video playback',mount(b){b.onchange=e=>{if(e.target.id==='vidfile'&&e.target.files[0])b.querySelector('#vid').src=URL.createObjectURL(e.target.files[0])}}}),
+    pdfreader:extraApp('PDF Reader','📕','Open PDF documents in a reader window',`<input type="file" accept="application/pdf" data-pdf><div class="oscard" id="pdfmsg" style="margin-top:12px">Choose a PDF to open it in your browser.</div>`,{sub:'Documents',mount(b){b.onchange=e=>{if(e.target.dataset.pdf&&e.target.files[0]){const u=URL.createObjectURL(e.target.files[0]);b.querySelector('#pdfmsg').innerHTML='<b>'+esc(e.target.files[0].name)+'</b><br><button class="bt" data-pdfgo>Open PDF</button>';b.querySelector('[data-pdfgo]').onclick=()=>window.open(u,'_blank','noopener')}}}}),
+    codestudio:extraApp('Code Studio','💻','Write and preview HTML, CSS and JavaScript',`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><textarea id="codein" style="min-height:250px;width:100%;box-sizing:border-box;background:#111;color:#eee;border:1px solid var(--ln);border-radius:8px;padding:12px;font:13px monospace"><!doctype html><html><body><h1>Hello!</h1></body></html></textarea><iframe id="codeout" style="width:100%;min-height:250px;border:1px solid var(--ln);border-radius:8px;background:#fff"></iframe></div>${btn('Run code','data-run')}`,{sub:'Developer tools',mount(b){b.onclick=e=>{if(e.target.dataset.run)b.querySelector('#codeout').srcdoc=b.querySelector('#codein').value}}}),
+    notespro:extraApp('Notes Pro','📝','Fast notes with browser persistence',`<textarea id="np" style="width:100%;min-height:280px;box-sizing:border-box;padding:12px;background:var(--card);color:inherit;border:1px solid var(--ln);border-radius:8px">${esc(ST.get('w11.notespro',''))}</textarea><p>${btn('Save note','data-save')}</p>`,{sub:'Productivity',mount(b){b.onclick=e=>{if(e.target.dataset.save){ST.set('w11.notespro',b.querySelector('#np').value);toast('Note saved')}}}}),
+    contacts:extraApp('Contacts','👥','Keep a simple local contacts list',`<div style="display:flex;gap:8px"><input id="cn" placeholder="Name" style="flex:1;padding:9px"><input id="cp" placeholder="Phone or email" style="flex:1;padding:9px">${btn('Add','data-addc')}</div><div id="cl" style="margin-top:12px"></div>`,{sub:'People',mount(b){let a=J('w11.contacts',[]);const draw=()=>b.querySelector('#cl').innerHTML=a.map((x,i)=>`<div class="osrow"><span>👤 <b>${esc(x.n)}</b><br><small>${esc(x.p)}</small></span><button class="bt" data-dc="${i}">Delete</button></div>`).join('')||'<div class="mut">No contacts yet.</div>';b.onclick=e=>{if(e.target.dataset.addc){const n=b.querySelector('#cn').value.trim(),p=b.querySelector('#cp').value.trim();if(n){a.push({n,p});ST.set('w11.contacts',JSON.stringify(a));draw()}}if(e.target.dataset.dc!=null){a.splice(+e.target.dataset.dc,1);ST.set('w11.contacts',JSON.stringify(a));draw()}};draw()}}),
+    news:extraApp('News','📰','Local news-style dashboard',`<div class="osgrid">${['Technology','Gaming','World','Science','Sports','Entertainment'].map((x,i)=>`<div class="oscard"><b>${x}</b><p class="mut">Latest ${x.toLowerCase()} stories and updates.</p>${btn('Read','data-news="'+x+'"')}</div>`).join('')}</div>`,{sub:'News & interests',mount(b){b.onclick=e=>{if(e.target.dataset.news)toast('Opening '+e.target.dataset.news+' stories')}}}),
+    weatherpro:extraApp('Weather Pro','🌤️','Weather dashboard with simulated local conditions',`<div class="oscard"><h1>72°</h1><b>Partly cloudy</b><p class="mut">Feels like 74° · Wind 8 mph · Humidity 48%</p></div><div class="osgrid">${['Today','Tomorrow','Friday','Saturday'].map((x,i)=>`<div class="oscard"><b>${x}</b><div style="font-size:28px">${['🌤️','☀️','🌧️','⛅'][i]}</div><span>${70+i*2}° / ${54+i}°</span></div>`).join('')}</div>`,{sub:'Weather'}),
+    paint3d:extraApp('Paint 3D','🎨','Simple 3D-style drawing canvas',`<canvas id="p3" width="520" height="280" style="width:100%;background:#fff;border-radius:8px;touch-action:none"></canvas><p>${btn('Clear','data-clear')} <input id="pc" type="color" value="#107c10"> <input id="ps" type="range" min="1" max="30" value="6"></p>`,{sub:'Creativity',mount(b){const c=b.querySelector('#p3'),x=c.getContext('2d');let down=false;x.lineCap='round';c.onpointerdown=e=>{down=true;const r=c.getBoundingClientRect();x.beginPath();x.moveTo((e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height)};c.onpointermove=e=>{if(!down)return;const r=c.getBoundingClientRect();x.strokeStyle=b.querySelector('#pc').value;x.lineWidth=+b.querySelector('#ps').value;x.lineTo((e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height);x.stroke()};c.onpointerup=()=>down=false;b.onclick=e=>{if(e.target.dataset.clear)x.clearRect(0,0,c.width,c.height)}}}),
+    stickynotes:extraApp('Sticky Notes+','🟨','Quick desktop notes',`<div class="osgrid">${[1,2,3].map(i=>`<div class="oscard"><textarea data-sn="${i}" placeholder="Sticky note ${i}" style="width:100%;min-height:120px;box-sizing:border-box;background:transparent;color:inherit;border:0;resize:vertical">${esc(ST.get('w11.sn'+i,''))}</textarea></div>`).join('')}</div>${btn('Save all notes','data-savenotes')}`,{sub:'Notes',mount(b){b.onclick=e=>{if(e.target.dataset.savenotes){b.querySelectorAll('[data-sn]').forEach(x=>ST.set('w11.sn'+x.dataset.sn,x.value));toast('Sticky notes saved')}}}}),
+    stopwatch:extraApp('Stopwatch','⏱️','Precise stopwatch',`<div style="text-align:center"><div id="swtime" style="font-size:54px;font-variant-numeric:tabular-nums">00:00.00</div>${btn('Start','data-start')} ${btn('Stop','data-stop')} ${btn('Reset','data-reset')}</div>`,{sub:'Clock',mount(b,w){let t=0,st=null,iv=null;const out=b.querySelector('#swtime'),fmt=()=>{const q=t/1000;out.textContent=String(Math.floor(q/60)).padStart(2,'0')+':'+String(Math.floor(q%60)).padStart(2,'0')+'.'+String(Math.floor(q%1*100)).padStart(2,'0')};b.onclick=e=>{if(e.target.dataset.start&&!iv){st=Date.now()-t;iv=setInterval(()=>{t=Date.now()-st;fmt()},30)}if(e.target.dataset.stop){clearInterval(iv);iv=null}if(e.target.dataset.reset){clearInterval(iv);iv=null;t=0;fmt()}};w.onclose=()=>clearInterval(iv);fmt()}}),
+    timerpro:extraApp('Timer','⏲️','Countdown timer',`<div style="text-align:center"><input id="mins" type="number" min="1" value="5" style="width:100px;padding:10px"><div id="tim" style="font-size:50px;margin:20px">05:00</div>${btn('Start','data-ts')} ${btn('Reset','data-tr')}</div>`,{sub:'Clock',mount(b){let sec=300,iv=null;const o=b.querySelector('#tim'),draw=()=>o.textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');b.onclick=e=>{if(e.target.dataset.ts&&!iv){sec=Math.max(1,+b.querySelector('#mins').value*60);iv=setInterval(()=>{sec--;draw();if(sec<=0){clearInterval(iv);iv=null;toast('⏲️ Timer finished')}} ,1000)}if(e.target.dataset.tr){clearInterval(iv);iv=null;sec=300;draw()}};draw()}}),
+    compressfiles:extraApp('File Compressor','🗜️','Create a downloadable ZIP-style manifest of selected files',`<div class="oscard"><b>Downloads</b><p class="mut">${Object.keys(fs.Downloads||{}).length} files available.</p>${btn('Prepare archive','data-zip')}</div><div id="zipmsg" class="mut"></div>`,{sub:'Utilities',mount(b){b.onclick=e=>{if(e.target.dataset.zip)b.querySelector('#zipmsg').textContent='Archive manifest prepared. Browser-only builds cannot create native ZIP archives without a library.'}}}),
+    qrtool:extraApp('QR Generator','▦','Generate a QR code from text or a URL',`<input id="qrtext" value="https://example.com" style="width:100%;padding:10px;box-sizing:border-box"><div id="qrbox" style="margin:18px auto;width:180px;height:180px;background:repeating-linear-gradient(45deg,#111 0 8px,#fff 8px 16px);border:12px solid #fff"></div>${btn('Generate','data-qr')}`,{sub:'Utilities',mount(b){b.onclick=e=>{if(e.target.dataset.qr){const v=b.querySelector('#qrtext').value;b.querySelector('#qrbox').title=v;toast('QR preview generated')}}}}),
+    vault:extraApp('Password Vault','🔐','Local demo vault for saved labels',`<input id="vn" placeholder="Account name" style="width:100%;padding:10px;box-sizing:border-box"><input id="vp" type="password" placeholder="Password" style="width:100%;padding:10px;box-sizing:border-box;margin-top:8px">${btn('Save entry','data-vsave')}<div id="vl" style="margin-top:12px"></div>`,{sub:'Security',mount(b){let a=J('w11.vault',[]);const draw=()=>b.querySelector('#vl').innerHTML=a.map(x=>`<div class="osrow"><span>🔑 ${esc(x)}</span><span>••••••</span></div>`).join('');b.onclick=e=>{if(e.target.dataset.vsave){const n=b.querySelector('#vn').value.trim();if(n){a.push(n);ST.set('w11.vault',JSON.stringify(a));draw();toast('Vault entry saved locally')}}};draw()}}),
+    networktools:extraApp('Network Tools','📡','Basic browser network diagnostics',`<div class="osgrid"><div class="oscard"><b>Online</b><p id="online">Checking…</p></div><div class="oscard"><b>Connection</b><p>${navigator.connection?.effectiveType||'Unknown'}</p></div><div class="oscard"><b>Downlink</b><p>${navigator.connection?.downlink||'Unknown'} Mbps</p></div></div>${btn('Run check','data-net')}`,{sub:'Network & internet',mount(b){b.querySelector('#online').textContent=navigator.onLine?'Connected':'Offline';b.onclick=e=>{if(e.target.dataset.net)toast(navigator.onLine?'Network check passed':'You are offline')}}}),
+    restorepoint:extraApp('System Restore','♻️','Manage simulated restore points',`<div id="rp"></div>${btn('Create restore point','data-rp')} ${btn('Restore latest','data-rr')}`,{sub:'Recovery',mount(b){let a=J('w11.restore',[]);const draw=()=>b.querySelector('#rp').innerHTML=a.map(x=>`<div class="osrow"><span>🕘 ${new Date(x).toLocaleString()}</span><span>Restore point</span></div>`).join('')||'<p class="mut">No restore points.</p>';b.onclick=e=>{if(e.target.dataset.rp){a.unshift(Date.now());ST.set('w11.restore',JSON.stringify(a));draw();toast('Restore point created')}if(e.target.dataset.rr)toast(a.length?'Restore point selected — no files changed.':'No restore point available.')};draw()}}),
+    diskusage:extraApp('Disk Analyzer','📊','Analyze browser storage usage',`<div class="oscard"><h2 id="du">0 KB</h2><p class="mut">Virtual Windows file system</p><div class="osbar"><i id="dub" style="width:0%"></i></div></div>${btn('Analyze','data-du')}`,{sub:'Storage',mount(b){b.onclick=e=>{if(e.target.dataset.du){const k=JSON.stringify(fs).length/1024;b.querySelector('#du').textContent=k.toFixed(1)+' KB';b.querySelector('#dub').style.width=Math.min(100,k/50)+'%'}}}}),
+    tasks:extraApp('Task Scheduler+','🗓️','Schedule simulated Windows Web tasks',`<input id="taskn" placeholder="Task name" style="width:100%;padding:10px;box-sizing:border-box">${btn('Schedule task','data-task')}<div id="tasklist"></div>`,{sub:'System tools',mount(b){let a=J('w11.tasks',[]);const draw=()=>b.querySelector('#tasklist').innerHTML=a.map(x=>`<div class="osrow"><span>🗓️ ${esc(x)}</span><span class="mut">Ready</span></div>`).join('');b.onclick=e=>{if(e.target.dataset.task){const x=b.querySelector('#taskn').value.trim();if(x){a.push(x);ST.set('w11.tasks',JSON.stringify(a));draw();toast('Task scheduled')}}};draw()}}),
+    remotedesktop:extraApp('Remote Desktop','🖥️','Remote desktop-style connection launcher',`<input id="rdhost" placeholder="PC name or address" style="width:100%;padding:10px;box-sizing:border-box">${btn('Connect','data-rd')}<div class="oscard" style="margin-top:12px">For safety, this web OS does not create native RDP connections.</div>`,{sub:'Remote access',mount(b){b.onclick=e=>{if(e.target.dataset.rd)toast('Remote Desktop request prepared for '+(b.querySelector('#rdhost').value||'this PC'))}}}),
+    bluetooth:extraApp('Bluetooth Manager','🟦','Manage simulated Bluetooth devices',`<div id="bl"></div>${btn('Scan for devices','data-bl')}`,{sub:'Bluetooth & devices',mount(b){const draw=(items=['Wireless Headphones','Xbox Controller','Magic Mouse'])=>b.querySelector('#bl').innerHTML=items.map(x=>`<div class="osrow"><span>🟦 ${x}</span><span class="green">Available</span></div>`).join('');b.onclick=e=>{if(e.target.dataset.bl){draw(['Wireless Headphones','Xbox Controller','Magic Mouse','Living Room Speaker']);toast('Bluetooth scan complete')}};draw()}}),
+    wifi:extraApp('Wi-Fi Analyzer','📶','View simulated nearby wireless networks',`<div class="oscard">${['Home Wi-Fi','Office 5G','Coffee Shop','Guest Network'].map((x,i)=>`<div class="osrow"><span>📶 ${x}</span><span>${i===0?'★★★★★':'★★★☆☆'}</span></div>`).join('')}</div>${btn('Refresh','data-wifi')}`,{sub:'Network & internet',mount(b){b.onclick=e=>{if(e.target.dataset.wifi)toast('Wi-Fi networks refreshed')}}}),
+    emoji:extraApp('Emoji Keyboard','😀','Pick emojis and copy them',`<div style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px">${'😀 😃 😄 😁 😆 😅 😂 🙂 🙃 😉 😊 😎 🥳 🤖 👻 👽 ❤️ 💙 💚 💛 💜 ⭐ 🔥 🎉 🚀 🎮 🪟 💻 📱'.split(' ').map(x=>`<button class="bt" style="font-size:24px" data-em="${x}">${x}</button>`).join('')}</div><input id="emout" readonly style="width:100%;margin-top:12px;padding:10px;box-sizing:border-box">`,{sub:'Accessibility & input',mount(b){b.onclick=e=>{if(e.target.dataset.em){b.querySelector('#emout').value=e.target.dataset.em;navigator.clipboard?.writeText(e.target.dataset.em);toast('Emoji copied')}}}}),
+    converter:extraApp('Unit Converter','📏','Convert common units',`<input id="cv" type="number" value="1" style="width:100%;padding:10px;box-sizing:border-box"><select id="ct" style="width:100%;padding:10px;margin-top:8px"><option value="mi">Miles → Kilometers</option><option value="km">Kilometers → Miles</option><option value="f">Fahrenheit → Celsius</option><option value="c">Celsius → Fahrenheit</option><option value="lb">Pounds → Kilograms</option></select><h2 id="co">1</h2>`,{sub:'Calculator & utilities',mount(b){const cv=()=>{const v=+b.querySelector('#cv').value,t=b.querySelector('#ct').value, m={mi:v=>v*1.609344,km:v=>v/1.609344,f:v=>(v-32)*5/9,c:v=>v*9/5+32,lb:v=>v*.45359237};b.querySelector('#co').textContent=(m[t](v)).toFixed(3)};b.querySelector('#cv').oninput=cv;b.querySelector('#ct').onchange=cv;cv()}}),
+    clipboardpro:extraApp('Clipboard Manager','📋','Manage copied snippets locally',`<textarea id="clipin" placeholder="Type a snippet…" style="width:100%;min-height:130px;box-sizing:border-box"></textarea>${btn('Save to clipboard history','data-clip')}<div id="cliplist" style="margin-top:10px"></div>`,{sub:'Clipboard',mount(b){let a=J('w11.clippro',[]);const draw=()=>b.querySelector('#cliplist').innerHTML=a.map((x,i)=>`<div class="osrow"><span>${esc(x)}</span><button class="bt" data-cp="${i}">Copy</button></div>`).join('');b.onclick=e=>{if(e.target.dataset.clip){const v=b.querySelector('#clipin').value.trim();if(v){a.unshift(v);a=a.slice(0,20);ST.set('w11.clippro',JSON.stringify(a));draw()}}if(e.target.dataset.cp!=null){navigator.clipboard?.writeText(a[+e.target.dataset.cp]);toast('Copied')}};draw()}}),
+    calendarlite:extraApp('Calendar Lite','📅','Simple monthly calendar',`<h2 id="calh"></h2><div id="calg" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px"></div>`,{sub:'Calendar',mount(b){const d=new Date(),y=d.getFullYear(),m=d.getMonth(),days=new Date(y,m+1,0).getDate(),first=new Date(y,m,1).getDay();b.querySelector('#calh').textContent=d.toLocaleString(undefined,{month:'long',year:'numeric'});b.querySelector('#calg').innerHTML=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>`<b style="text-align:center;padding:6px">${x}</b>`).join('')+Array(first).fill('<span></span>').join('')+Array.from({length:days},(_,i)=>`<div style="padding:8px;text-align:center;border:1px solid var(--ln);border-radius:5px">${i+1}</div>`).join('')}}),
+    calculatorpro:extraApp('Calculator Pro','🧮','Extended calculator',`<input id="calcpro" readonly value="0" style="width:100%;padding:14px;font-size:24px;box-sizing:border-box;text-align:right"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px">${['7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+','C'].map(x=>`<button class="bt" style="padding:14px" data-k="${x}">${x}</button>`).join('')}</div>`,{sub:'Calculator',mount(b){let v='';b.onclick=e=>{const k=e.target.dataset.k;if(!k)return;if(k==='C')v='';else if(k==='='){try{v=String(Function('return '+v)())}catch{v='Error'}}else v+=k;b.querySelector('#calcpro').value=v||'0'}}}),
+    downloads:extraApp('Downloads','⬇️','Browse downloaded files',`<div class="oscard"><b>Downloads folder</b><p class="mut">${Object.keys(fs.Downloads||{}).length} items</p></div><div>${Object.keys(fs.Downloads||{}).map(x=>`<div class="osrow">⬇️ ${esc(x)}</div>`).join('')||'<p class="mut">No downloads yet.</p>'}</div>`,{sub:'File management'}),
+    recyclebin:extraApp('Recycle Bin','♻️','View and manage deleted virtual files',`<div class="oscard"><b>Recycle Bin</b><p class="mut">${Object.keys(fs['Recycle Bin']||{}).length} items</p></div>${btn('Empty Recycle Bin','data-empty')}`,{sub:'File management',mount(b){b.onclick=e=>{if(e.target.dataset.empty){fs['Recycle Bin']={};save();toast('Recycle Bin emptied');b.querySelector('.oscard p').textContent='0 items'}}}}),
+    systemsettings:extraApp('Advanced System Settings','⚙️','Advanced Windows Web configuration',`<div class="osgrid">${[['Performance','Animations and visual effects'],['Environment','Browser environment variables'],['Startup','Startup app simulation'],['Virtualization','Browser sandbox status'],['Developer mode','Development features']].map(x=>`<div class="oscard"><b>${x[0]}</b><p class="mut">${x[1]}</p>${tg('advanced')}</div>`).join('')}</div>`,{sub:'System'}),
+    feedbackpro:extraApp('Help & Support','❓','Windows help center',`<input id="helpq" placeholder="Search help" style="width:100%;padding:10px;box-sizing:border-box"><div id="helpa" class="oscard" style="margin-top:12px">Try searching for “settings”, “files”, or “apps”.</div>`,{sub:'Support',mount(b){b.querySelector('#helpq').oninput=e=>b.querySelector('#helpa').textContent='Help results for “'+e.target.value+'”: Windows Web provides local simulated settings and apps.'}})
+  };
+  Object.assign(APPS,MORE_STORE);
+  Object.assign(CAT,MORE_STORE);
+  if(typeof SUPER_IDS!=='undefined'&&Array.isArray(SUPER_IDS))SUPER_IDS.push(...Object.keys(MORE_STORE).filter(x=>!SUPER_IDS.includes(x)));
   /* Better Start search: search every registered app, not only pinned apps. */
   const si=document.querySelector('#si')||document.querySelector('#startSearch');
   if(si){si.addEventListener('input',()=>{const q=si.value.trim().toLowerCase();document.querySelectorAll('.di,.start-app').forEach(x=>{const hit=!q||x.textContent.toLowerCase().includes(q);x.style.display=hit?'':'none'})})}
