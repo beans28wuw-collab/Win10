@@ -1336,6 +1336,57 @@ body.nb .pop,body.nb #tbar {
   }
   
 }
+
+/* Expansion Pack 3 layout refinements */
+.p3-app{padding:14px;height:100%;overflow:auto;box-sizing:border-box;color:var(--wf);background:var(--wb)}
+.p3-app h2{font:300 25px "Segoe UI",system-ui,sans-serif;margin:0 0 6px}
+.p3-app p{line-height:1.45}
+.p3-head{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.p3-entry{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0}
+.p3-entry input:not([type=range]):not([type=file]),.p3-entry select,.p3-label select,.p3-label input:not([type=range]){min-width:0;padding:8px;border:1px solid var(--bd);background:var(--wb);color:var(--wf)}
+.p3-entry input[type=file]{max-width:100%}
+.p3-entry>input:first-child{flex:1}
+.p3-muted{font-size:12px;color:var(--wf);opacity:.7}
+.p3-status{padding:8px 10px;margin:10px 0;background:var(--ws);border-left:3px solid var(--ac);font-size:13px}
+.p3-label{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0}
+.p3-label>span{flex:1}
+.p3-label input[type=range]{width:min(55%,280px)}
+.p3-kanban{display:grid;grid-template-columns:repeat(3,minmax(170px,1fr));gap:10px;align-items:start;overflow:auto;padding:3px 1px 10px}
+.p3-column{min-height:180px;border:1px solid var(--bd);background:var(--ws);border-radius:7px;overflow:hidden}
+.p3-column.p3-drop{outline:3px dashed var(--ac);outline-offset:-3px}
+.p3-column-head{display:flex;justify-content:space-between;padding:10px;background:var(--wb)}
+.p3-column-head span{opacity:.65}
+.p3-cards{padding:7px;min-height:120px}
+.p3-task{padding:10px;background:var(--wb);border:1px solid var(--bd);border-radius:6px;margin-bottom:7px;cursor:grab;box-shadow:0 1px 3px #0001}
+.p3-task-title{font-weight:600;overflow-wrap:anywhere;margin-bottom:8px}
+.p3-task small{font-size:11px;opacity:.7}
+.p3-task-controls{display:flex;gap:5px;margin-top:9px}
+.p3-task-controls select{min-width:0;flex:1;width:0;padding:5px;background:var(--ws);color:var(--wf);border:1px solid var(--bd);font-size:11px}
+.p3-task-controls .bt{padding:3px 8px}
+.p3-canvas-wrap{height:min(50vh,390px);min-height:170px;background:repeating-conic-gradient(#ddd 0 25%,#f4f4f4 0 50%) 50%/18px 18px;border:1px solid #999;display:flex;align-items:center;justify-content:center;overflow:auto}
+.p3-canvas-wrap canvas{max-width:100%;max-height:100%;object-fit:contain}
+.p3-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.p3-two label,.p3-code-editors label{display:flex;flex-direction:column;gap:6px;min-width:0;font-weight:600}
+.p3-two textarea,.p3-code-editors textarea{width:100%;box-sizing:border-box;padding:9px;resize:vertical;font:12px/1.5 Consolas,monospace;background:var(--wb);color:var(--wf);border:1px solid var(--bd);min-height:150px}
+.p3-diff{font:12px/1.5 Consolas,monospace;overflow:auto;border:1px solid var(--bd);max-height:260px}
+.p3-diff-line{display:flex;gap:8px;white-space:pre;min-width:max-content;padding:3px 8px;border-bottom:1px solid #7772}
+.p3-diff-num{opacity:.5;min-width:28px;text-align:right}
+.p3-diff-line.same{background:var(--wb)}
+.p3-diff-line.changed,.p3-diff-line.removed{background:#ffe7e7;color:#7e2020}
+.p3-diff-line.added{background:#e2f8e7;color:#18552b}
+.p3-button-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0}
+.p3-flex-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.p3-flex-preview{margin:12px 0}
+.p3-flex-item{min-width:35px;min-height:35px;padding:8px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:#0078d7;color:white;border-radius:4px;font-weight:600}
+.p3-storage-row{border-bottom:1px solid var(--bd);padding:9px 0;display:flex;justify-content:space-between;gap:9px;align-items:flex-start}
+.p3-storage-main{min-width:0;flex:1}
+.p3-storage-main b{display:block;overflow-wrap:anywhere}
+.p3-storage-main small{display:block;opacity:.65;margin:3px 0}
+.p3-storage-value{white-space:pre-wrap;overflow-wrap:anywhere;max-height:120px;overflow:auto;background:var(--ws);padding:7px;font-size:11px}
+.p3-code-editors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.p3-code-editors textarea{height:190px;min-height:130px}
+@media(max-width:720px){.p3-kanban{grid-template-columns:repeat(3,minmax(190px,1fr))}.p3-two{grid-template-columns:1fr}.p3-code-editors{grid-template-columns:1fr}.p3-code-editors textarea{height:110px}.p3-button-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.p3-flex-controls{grid-template-columns:1fr}.p3-storage-row{flex-direction:column}.p3-app{padding:10px}}
+
 </style>
 </head>
 <body>
@@ -4216,6 +4267,243 @@ catch (expansionPackTwoError) { console.warn('Expansion Pack 2 could not refresh
 
 
 /* End of Power Tools Expansion Pack. */
+
+/* =====================================================================
+   WINDOWS 10 REMAKE — EXPANSION PACK 3
+   Eight additional working apps, wired into Start search and live tiles.
+   All processing stays in the browser except when the user chooses to
+   download a file or explicitly runs code in the sandboxed playground.
+   ===================================================================== */
+
+const P3 = {
+  esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); },
+  button(text, action) { return `<button class="bt" data-xaction="${action}">${text}</button>`; },
+  row(label, control) { return `<label class="p3-label"><span>${label}</span>${control}</label>`; },
+  copy(text, success = 'Copied to clipboard.') {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) { toast('Clipboard access is unavailable here. Select the text and copy it manually.'); return; }
+    navigator.clipboard.writeText(text).then(() => toast(success)).catch(() => toast('Clipboard blocked. Select the text and copy it manually.'));
+  }
+};
+
+function kanbanDeskTool(b, w) {
+  w.t('Kanban Desk');
+  const key = 'win10.kanban.v1';
+  let tasks = [];
+  try { tasks = JSON.parse(localStorage.getItem(key) || '[]'); if (!Array.isArray(tasks)) tasks = []; } catch (_) { tasks = []; }
+  const states = [{id:'todo',name:'To do',color:'#547dbf'},{id:'doing',name:'In progress',color:'#b17a13'},{id:'done',name:'Done',color:'#27864a'}];
+  b.innerHTML = `<div class="p3-app"><div class="p3-head"><div><h2>Kanban Desk</h2><p>Organize work into columns. Drag cards across columns or use the move menu.</p></div></div>
+    <div class="p3-entry"><input id="kbTitle" placeholder="Add a task…" maxlength="180"><select id="kbState"><option value="todo">To do</option><option value="doing">In progress</option><option value="done">Done</option></select>${P3.button('＋ Add task','add')}${P3.button('Export JSON','export')}</div>
+    <div id="kbBoard" class="p3-kanban"></div><p id="kbCount" class="p3-muted"></p></div>`;
+  const persist = () => { try { localStorage.setItem(key, JSON.stringify(tasks)); } catch (_) { toast('Storage is full; export the board to keep a copy.'); } };
+  const render = () => {
+    const board = b.querySelector('#kbBoard'); board.innerHTML = '';
+    states.forEach(state => {
+      const col = document.createElement('section'); col.className = 'p3-column'; col.dataset.state = state.id;
+      col.innerHTML = `<div class="p3-column-head" style="border-top:4px solid ${state.color}"><b>${state.name}</b><span>${tasks.filter(t=>t.state===state.id).length}</span></div><div class="p3-cards"></div>`;
+      const cards = col.querySelector('.p3-cards');
+      tasks.filter(t=>t.state===state.id).forEach(task => {
+        const card = document.createElement('article'); card.className = 'p3-task'; card.draggable = true; card.dataset.id = task.id;
+        const title = document.createElement('div'); title.className='p3-task-title'; title.textContent=task.title;
+        const meta = document.createElement('small'); meta.textContent = 'Added ' + new Date(task.created).toLocaleDateString();
+        const controls = document.createElement('div'); controls.className='p3-task-controls';
+        const move = document.createElement('select'); move.setAttribute('aria-label','Move task'); move.dataset.moveId=task.id;
+        states.forEach(s=>{const op=document.createElement('option');op.value=s.id;op.textContent='Move: '+s.name;op.selected=s.id===task.state;move.append(op);});
+        const del=document.createElement('button');del.className='bt';del.textContent='×';del.title='Delete task';del.dataset.deleteId=task.id;
+        controls.append(move,del); card.append(title,meta,controls); cards.append(card);
+      });
+      col.addEventListener('dragover',e=>{e.preventDefault();col.classList.add('p3-drop');});
+      col.addEventListener('dragleave',()=>col.classList.remove('p3-drop'));
+      col.addEventListener('drop',e=>{e.preventDefault();col.classList.remove('p3-drop');const id=e.dataTransfer.getData('text/plain');const task=tasks.find(t=>String(t.id)===id);if(task){task.state=state.id;persist();render();}});
+      cards.querySelectorAll('.p3-task').forEach(card=>card.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',card.dataset.id)));
+      board.append(col);
+    });
+    b.querySelector('#kbCount').textContent = `${tasks.length} task(s) · ${tasks.filter(t=>t.state==='done').length} completed · saved in this browser`;
+  };
+  XTOOLS.bindButtons(b,action=>{
+    if(action==='add') { const input=b.querySelector('#kbTitle'),title=input.value.trim();if(!title){input.focus();return;}tasks.push({id:Date.now()+Math.random(),title,state:b.querySelector('#kbState').value,created:Date.now()});input.value='';persist();render();input.focus(); }
+    if(action==='export') XTOOLS.download('kanban-board.json',JSON.stringify(tasks,null,2),'application/json');
+  });
+  b.addEventListener('change',e=>{const id=e.target.dataset.moveId;if(id){const t=tasks.find(x=>String(x.id)===id);if(t){t.state=e.target.value;persist();render();}}});
+  b.addEventListener('click',e=>{const id=e.target.dataset.deleteId;if(id){tasks=tasks.filter(t=>String(t.id)!==id);persist();render();}});
+  b.querySelector('#kbTitle').addEventListener('keydown',e=>{if(e.key==='Enter')b.querySelector('[data-xaction="add"]').click();});
+  render();
+}
+
+function imageLabTool(b, w) {
+  w.t('Image Lab');
+  b.innerHTML = `<div class="p3-app"><h2>Image Lab</h2><p>Open a local image, rotate it, apply grayscale, and download a PNG. The image stays in this page.</p>
+    <div class="p3-entry"><input id="ilFile" type="file" accept="image/*"><span id="ilInfo" class="p3-muted">No image loaded</span></div>
+    <div class="p3-entry">${P3.button('↶ Rotate left','left')}${P3.button('↷ Rotate right','right')}${P3.button('Grayscale','gray')}${P3.button('Reset','reset')}${P3.button('Download PNG','download')}</div>
+    <div class="p3-canvas-wrap"><canvas id="ilCanvas" width="640" height="360"></canvas></div><p id="ilStatus" class="p3-muted">Choose an image to begin.</p></div>`;
+  const canvas=b.querySelector('#ilCanvas'),ctx=canvas.getContext('2d'),file=b.querySelector('#ilFile');
+  let image=null,rotation=0,gray=false,objectUrl='';
+  const draw=()=>{
+    if(!image)return;const scale=Math.min(1,1400/image.naturalWidth,900/image.naturalHeight),iw=Math.max(1,Math.round(image.naturalWidth*scale)),ih=Math.max(1,Math.round(image.naturalHeight*scale)),odd=Math.abs(rotation%180)===90;
+    canvas.width=odd?ih:iw;canvas.height=odd?iw:ih;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.save();ctx.filter=gray?'grayscale(1)':'none';ctx.translate(canvas.width/2,canvas.height/2);ctx.rotate(rotation*Math.PI/180);ctx.drawImage(image,-iw/2,-ih/2,iw,ih);ctx.restore();
+    b.querySelector('#ilInfo').textContent=`${image.naturalWidth} × ${image.naturalHeight} pixels`;
+    b.querySelector('#ilStatus').textContent=`Rotation ${((rotation%360)+360)%360}° · Grayscale ${gray?'on':'off'}`;
+  };
+  file.addEventListener('change',()=>{const f=file.files&&file.files[0];if(!f)return;if(!f.type.startsWith('image/')){toast('Choose a supported image file.');return;}if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=URL.createObjectURL(f);const next=new Image();next.onload=()=>{image=next;rotation=0;gray=false;draw();};next.onerror=()=>toast('That image could not be opened.');next.src=objectUrl;});
+  XTOOLS.bindButtons(b,action=>{
+    if(action==='left'&&image){rotation-=90;draw();}
+    if(action==='right'&&image){rotation+=90;draw();}
+    if(action==='gray'&&image){gray=!gray;draw();}
+    if(action==='reset'&&image){rotation=0;gray=false;draw();}
+    if(action==='download'&&image){canvas.toBlob(blob=>{if(!blob){toast('Could not create the PNG.');return;}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='image-lab.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);},'image/png');}
+  });
+  const oldClose=w.close;w.close=()=>{if(objectUrl)URL.revokeObjectURL(objectUrl);oldClose();};
+}
+
+function toneStudioTool(b, w) {
+  w.t('Tone Studio');
+  b.innerHTML = `<div class="p3-app"><h2>Tone Studio</h2><p>Generate a simple test tone with your browser's Web Audio API. Start at low volume.</p>
+    ${P3.row('Frequency (Hz)','<input id="tsFrequency" type="range" min="60" max="2000" value="440">')}
+    <div class="p3-entry"><b id="tsFreqLabel">440 Hz</b><select id="tsWave"><option value="sine">Sine</option><option value="triangle">Triangle</option><option value="square">Square</option><option value="sawtooth">Sawtooth</option></select></div>
+    ${P3.row('Volume (keep it low)','<input id="tsVolume" type="range" min="0" max="20" value="8">')}
+    <div class="p3-entry">${P3.button('▶ Start tone','start')}${P3.button('■ Stop tone','stop')}</div><div id="tsStatus" class="p3-status">Stopped</div>
+    <p class="p3-muted">Audio starts only after you press Start. Your volume may differ from the slider setting.</p></div>`;
+  let ac=null,osc=null,gain=null;
+  const frequency=b.querySelector('#tsFrequency'),volume=b.querySelector('#tsVolume'),wave=b.querySelector('#tsWave'),status=b.querySelector('#tsStatus');
+  const sync=()=>{b.querySelector('#tsFreqLabel').textContent=frequency.value+' Hz';if(osc)osc.frequency.setTargetAtTime(Number(frequency.value),ac.currentTime,.03);if(gain)gain.gain.setTargetAtTime(Number(volume.value)/100,ac.currentTime,.03);if(osc)osc.type=wave.value;};
+  const stop=()=>{if(osc){try{osc.stop();}catch(_){}try{osc.disconnect();gain.disconnect();}catch(_){}osc=null;gain=null;}status.textContent='Stopped';};
+  frequency.addEventListener('input',sync);volume.addEventListener('input',sync);wave.addEventListener('change',sync);
+  XTOOLS.bindButtons(b,action=>{
+    if(action==='start'){
+      if(osc)return;
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx){status.textContent='Web Audio is not supported in this browser.';return;}
+      try{ac=ac||new AudioCtx();if(ac.state==='suspended')ac.resume();osc=ac.createOscillator();gain=ac.createGain();osc.type=wave.value;osc.frequency.value=Number(frequency.value);gain.gain.value=Number(volume.value)/100;osc.connect(gain);gain.connect(ac.destination);osc.start();status.textContent='Playing · '+frequency.value+' Hz';}catch(error){stop();status.textContent='Could not start audio: '+error.message;}
+    }
+    if(action==='stop')stop();
+  });
+  const oldClose=w.close;w.close=()=>{stop();if(ac)ac.close().catch(()=>{});oldClose();};
+}
+
+function diffCheckerTool(b, w) {
+  w.t('Diff Checker');
+  b.innerHTML = `<div class="p3-app"><h2>Diff Checker</h2><p>Compare two text snippets line by line. Lines that differ at the same position are shown in red and green.</p>
+    <div class="p3-two"><label>Original<textarea id="dfA" rows="10" spellcheck="false">Windows 10\nFile Explorer\nSettings\nNotepad</textarea></label><label>Modified<textarea id="dfB" rows="10" spellcheck="false">Windows 10 Remake\nFile Explorer\nNew Settings\nNotepad</textarea></label></div>
+    <div class="p3-entry">${P3.button('Compare text','compare')}${P3.button('Swap sides','swap')}${P3.button('Download report','download')}</div><div id="dfSummary" class="p3-status">Ready to compare.</div><div id="dfResults" class="p3-diff"></div></div>`;
+  const a=b.querySelector('#dfA'),z=b.querySelector('#dfB'),summary=b.querySelector('#dfSummary'),results=b.querySelector('#dfResults');let report='';
+  const compare=()=>{
+    const aa=a.value.replace(/\r/g,'').split('\n'),zz=z.value.replace(/\r/g,'').split('\n'),max=Math.max(aa.length,zz.length);let changed=0,added=0,removed=0;results.innerHTML='';const lines=[];
+    for(let i=0;i<max;i++){
+      const av=aa[i],zv=zz[i];let kind='same',prefix=' ';
+      if(av===undefined){kind='added';prefix='+';added++;}else if(zv===undefined){kind='removed';prefix='−';removed++;}else if(av!==zv){kind='changed';prefix='~';changed++;}
+      const row=document.createElement('div');row.className='p3-diff-line '+kind;const num=document.createElement('span');num.className='p3-diff-num';num.textContent=String(i+1).padStart(3,'0');const mark=document.createElement('b');mark.textContent=prefix;const content=document.createElement('code');content.textContent=av===undefined?zv:av;row.append(num,mark,content);results.append(row);
+      if(kind==='changed'){const alt=document.createElement('div');alt.className='p3-diff-line added';const n=document.createElement('span');n.className='p3-diff-num';n.textContent=String(i+1).padStart(3,'0');const m=document.createElement('b');m.textContent='+';const c=document.createElement('code');c.textContent=zv;alt.append(n,m,c);results.append(alt);}
+      lines.push(`${prefix} ${av===undefined?zv:av}`);if(kind==='changed')lines.push(`+ ${zv}`);
+    }
+    report=lines.join('\n');summary.textContent=`${changed} changed line(s), ${added} added, ${removed} removed.`;
+  };
+  XTOOLS.bindButtons(b,action=>{if(action==='compare')compare();if(action==='swap'){const v=a.value;a.value=z.value;z.value=v;compare();}if(action==='download'){if(!report)compare();XTOOLS.download('text-diff.txt',report,'text/plain');}});compare();
+}
+
+function textToolkitTool(b, w) {
+  w.t('Text Toolkit');
+  b.innerHTML = `<div class="p3-app"><h2>Text Toolkit</h2><p>Transform text without uploading it anywhere.</p>
+    <textarea id="txSource" rows="9" spellcheck="false" placeholder="Paste text here…">Windows 10 Remake\nMore apps\nMore features\nWindows 10 Remake</textarea>
+    <div class="p3-button-grid">${[['Uppercase','upper'],['lowercase','lower'],['Title Case','title'],['Sentence case','sentence'],['Trim lines','trim'],['Remove blank lines','nonblank'],['Sort A → Z','sort'],['Sort Z → A','sortrev'],['Remove duplicates','unique'],['Reverse lines','reverse'],['Clear','clear']].map(x=>P3.button(x[0],x[1])).join('')}</div>
+    <div class="p3-entry">${P3.button('Copy result','copy')}${P3.button('Download .txt','download')}</div><p id="txStats" class="p3-status"></p>
+  </div>`;
+  const input=b.querySelector('#txSource'),stats=b.querySelector('#txStats');let output=input.value;
+  const updateStats=()=>{output=input.value;const words=output.trim()?output.trim().split(/\s+/).length:0;stats.textContent=`${output.length} characters · ${words} words · ${output.split(/\n/).length} lines`;};
+  input.addEventListener('input',updateStats);
+  XTOOLS.bindButtons(b,action=>{
+    const lines=input.value.replace(/\r/g,'').split('\n');
+    if(action==='upper')input.value=input.value.toUpperCase();
+    if(action==='lower')input.value=input.value.toLowerCase();
+    if(action==='title')input.value=input.value.toLowerCase().replace(/\b[\p{L}\p{N}]/gu,ch=>ch.toUpperCase());
+    if(action==='sentence')input.value=input.value.toLowerCase().replace(/(^\s*|[.!?]\s+)([a-z])/g,(m,a,c)=>a+c.toUpperCase());
+    if(action==='trim')input.value=lines.map(x=>x.trim()).join('\n');
+    if(action==='nonblank')input.value=lines.filter(x=>x.trim()).join('\n');
+    if(action==='sort')input.value=lines.slice().sort((a,z)=>a.localeCompare(z)).join('\n');
+    if(action==='sortrev')input.value=lines.slice().sort((a,z)=>z.localeCompare(a)).join('\n');
+    if(action==='unique')input.value=[...new Set(lines)].join('\n');
+    if(action==='reverse')input.value=lines.reverse().join('\n');
+    if(action==='clear')input.value='';
+    if(action==='copy')P3.copy(input.value);
+    if(action==='download')XTOOLS.download('text-toolkit.txt',input.value,'text/plain');
+    updateStats();
+  });updateStats();
+}
+
+function flexboxStudioTool(b, w) {
+  w.t('Flexbox Studio');
+  b.innerHTML = `<div class="p3-app"><h2>Flexbox Studio</h2><p>Adjust the controls and see the flex layout update live.</p>
+    <div class="p3-flex-controls">
+      ${P3.row('Direction','<select id="fxDirection"><option>row</option><option>row-reverse</option><option>column</option><option>column-reverse</option></select>')}
+      ${P3.row('Justify content','<select id="fxJustify"><option>flex-start</option><option>center</option><option>flex-end</option><option>space-between</option><option>space-around</option><option>space-evenly</option></select>')}
+      ${P3.row('Align items','<select id="fxAlign"><option>stretch</option><option>flex-start</option><option>center</option><option>flex-end</option><option>baseline</option></select>')}
+      ${P3.row('Wrap','<select id="fxWrap"><option>nowrap</option><option>wrap</option><option>wrap-reverse</option></select>')}
+      ${P3.row('Gap','<input id="fxGap" type="range" min="0" max="40" value="10">')}
+      ${P3.row('Items','<input id="fxItems" type="range" min="2" max="12" value="6">')}
+    </div><div id="fxPreview" class="p3-flex-preview"></div><textarea id="fxCode" rows="6" readonly spellcheck="false" style="width:100%;font:13px Consolas,monospace"></textarea>
+    <div class="p3-entry">${P3.button('Copy CSS','copy')}${P3.button('Download CSS','download')}${P3.button('Reset','reset')}</div></div>`;
+  const ids=['fxDirection','fxJustify','fxAlign','fxWrap','fxGap','fxItems'],controls=ids.map(id=>b.querySelector('#'+id)),preview=b.querySelector('#fxPreview'),code=b.querySelector('#fxCode');
+  const update=()=>{const [dir,justify,align,wrap,gap,count]=controls.map(x=>x.value);preview.style.cssText=`display:flex;flex-direction:${dir};justify-content:${justify};align-items:${align};flex-wrap:${wrap};gap:${gap}px;min-height:190px;max-height:360px;overflow:auto;padding:10px;background:var(--ws);border:1px solid var(--bd);`;
+    preview.innerHTML='';for(let i=1;i<=Number(count);i++){const item=document.createElement('div');item.className='p3-flex-item';item.textContent=i;preview.append(item);}code.value=`.container {\n  display: flex;\n  flex-direction: ${dir};\n  justify-content: ${justify};\n  align-items: ${align};\n  flex-wrap: ${wrap};\n  gap: ${gap}px;\n}`;};
+  controls.forEach(x=>x.addEventListener('input',update));
+  XTOOLS.bindButtons(b,action=>{if(action==='copy')P3.copy(code.value,'Flexbox CSS copied.');if(action==='download')XTOOLS.download('flexbox-layout.css',code.value,'text/css');if(action==='reset'){controls[0].value='row';controls[1].value='flex-start';controls[2].value='stretch';controls[3].value='nowrap';controls[4].value='10';controls[5].value='6';update();}});update();
+}
+
+function storageInspectorTool(b, w) {
+  w.t('Storage Inspector');
+  b.innerHTML = `<div class="p3-app"><h2>Storage Inspector</h2><p>Inspect localStorage keys visible to this HTML file's browser origin. Values can contain private notes, so review before exporting.</p>
+    <div class="p3-entry"><input id="siFilter" placeholder="Filter by key…"><button class="bt" data-xaction="refresh">Refresh</button><button class="bt" data-xaction="export">Export JSON</button></div>
+    <div id="siStatus" class="p3-status"></div><div id="siList"></div><p class="p3-muted">Deleting a key can remove saved data from an app. There is no bulk-delete button.</p></div>`;
+  const render=()=>{const list=b.querySelector('#siList'),filter=b.querySelector('#siFilter').value.toLowerCase();list.innerHTML='';let count=0,total=0,rows=[];
+    try{for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key===null)continue;const value=localStorage.getItem(key)||'';total+=key.length+value.length;rows.push({key,value});}}catch(error){b.querySelector('#siStatus').textContent='Storage could not be read: '+error.message;return;}
+    const shown=rows.filter(row=>row.key.toLowerCase().includes(filter));count=shown.length;b.querySelector('#siStatus').textContent=`${count} key(s) shown · ${rows.length} total · approximately ${total.toLocaleString()} UTF-16 characters`;
+    shown.forEach(row=>{const item=document.createElement('div');item.className='p3-storage-row';const main=document.createElement('div');main.className='p3-storage-main';const name=document.createElement('b');name.textContent=row.key;const size=document.createElement('small');size.textContent=`${row.value.length.toLocaleString()} characters`;const value=document.createElement('pre');value.className='p3-storage-value';value.textContent=row.value.length>800?row.value.slice(0,800)+'… (preview truncated)':row.value;value.hidden=true;const reveal=document.createElement('button');reveal.className='bt';reveal.textContent='Show value';reveal.onclick=()=>{value.hidden=!value.hidden;reveal.textContent=value.hidden?'Show value':'Hide value';};const del=document.createElement('button');del.className='bt';del.textContent='Delete key';del.onclick=()=>{if(confirm(`Delete localStorage key "${row.key}"?`)){try{localStorage.removeItem(row.key);render();}catch(error){toast('Could not delete key: '+error.message);}}};main.append(name,size,value);const actions=document.createElement('div');actions.className='p3-entry';actions.append(reveal,del);item.append(main,actions);list.append(item);});
+    if(!shown.length)list.textContent='No matching keys.';
+  };
+  b.querySelector('#siFilter').addEventListener('input',render);
+  XTOOLS.bindButtons(b,action=>{if(action==='refresh')render();if(action==='export'){try{const data={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k!==null)data[k]=localStorage.getItem(k);}XTOOLS.download('local-storage-export.json',JSON.stringify(data,null,2),'application/json');}catch(error){toast('Could not export storage: '+error.message);}}});render();
+}
+
+function webPlaygroundTool(b, w) {
+  w.t('Web Playground');
+  b.innerHTML = `<div class="p3-app"><h2>Web Playground</h2><p>Write a small HTML, CSS, and JavaScript demo and preview it in a sandboxed frame.</p>
+    <div class="p3-code-editors"><label>HTML<textarea id="wpHtml" spellcheck="false"><h1>Hello, Windows!</h1>\n<p>Edit the HTML, CSS, or JavaScript, then press Run.</p>\n<button onclick="document.getElementById('out').textContent='It works!'">Test button</button>\n<p id="out"></p></textarea></label>
+      <label>CSS<textarea id="wpCss" spellcheck="false">body { font: 16px system-ui; padding: 20px; color: #18324a; }\nbutton { background: #0078d7; color: white; border: 0; padding: 9px 14px; border-radius: 5px; }</textarea></label>
+      <label>JavaScript<textarea id="wpJs" spellcheck="false">console.log('Hello from the sandbox');</textarea></label></div>
+    <div class="p3-entry">${P3.button('▶ Run preview','run')}${P3.button('Load example','sample')}${P3.button('Download HTML','download')}</div>
+    <iframe id="wpFrame" title="Sandboxed preview" sandbox="allow-scripts" referrerpolicy="no-referrer" style="display:block;width:100%;height:230px;background:white;border:1px solid #888;border-radius:5px"></iframe>
+    <p class="p3-muted">Preview runs with scripts enabled inside an isolated iframe. Do not paste code you do not trust.</p></div>`;
+  const h=b.querySelector('#wpHtml'),c=b.querySelector('#wpCss'),j=b.querySelector('#wpJs'),frame=b.querySelector('#wpFrame');
+  const source=()=>`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${c.value.replace(/<\/style/gi,'<\\/style')}</style></head><body>${h.value}<script>${j.value.replace(/<\/script/gi,'<\\/script')}<\/script></body></html>`;
+  const run=()=>{frame.srcdoc=source();};
+  XTOOLS.bindButtons(b,action=>{if(action==='run')run();if(action==='sample'){h.value='<h1>My mini web page</h1>\n<p>This preview is running in a sandbox.</p>\n<button id="hello">Say hello</button>\n<p id="message"></p>';c.value='body { font: 16px system-ui; padding: 20px; }\nbutton { background: #0078d7; color: white; border: 0; border-radius: 5px; padding: 10px; }';j.value="document.getElementById('hello').onclick = () => document.getElementById('message').textContent = 'Hello there!';";run();}if(action==='download')XTOOLS.download('web-playground.html',source(),'text/html');});run();
+}
+
+function registerExpansionPackThree() {
+  const apps = {
+    kanban:{n:'Kanban Desk',i:'🗂️',w:780,h:570,f:kanbanDeskTool},
+    imagelab:{n:'Image Lab',i:'🖼️',w:700,h:570,f:imageLabTool},
+    tonestudio:{n:'Tone Studio',i:'🎵',w:430,h:460,f:toneStudioTool},
+    diffchecker:{n:'Diff Checker',i:'🆚',w:760,h:570,f:diffCheckerTool},
+    texttoolkit:{n:'Text Toolkit',i:'🔠',w:600,h:570,f:textToolkitTool},
+    flexboxstudio:{n:'Flexbox Studio',i:'📦',w:640,h:600,f:flexboxStudioTool},
+    storageinspector:{n:'Storage Inspector',i:'🧰',w:650,h:570,f:storageInspectorTool},
+    webplayground:{n:'Web Playground',i:'🌐',w:820,h:680,f:webPlaygroundTool}
+  };
+  Object.assign(APPS, apps);
+  Object.assign(RM, {kanban:'kanban',board:'kanban',imagelab:'imagelab',tone:'tonestudio',audio:'tonestudio',diff:'diffchecker',texttools:'texttoolkit',flexbox:'flexboxstudio',storage:'storageinspector',webplayground:'webplayground',playground:'webplayground'});
+  const tiles = [
+    ['kanban','🗂️','Kanban Desk','#315b83'],['imagelab','🖼️','Image Lab','#6c3483'],
+    ['tonestudio','🎵','Tone Studio','#117864'],['diffchecker','🆚','Diff Checker','#7d3c98'],
+    ['texttoolkit','🔠','Text Toolkit','#2874a6'],['flexboxstudio','📦','Flexbox Studio','#b9770e'],
+    ['storageinspector','🧰','Storage Inspector','#515a5a'],['webplayground','🌐','Web Playground','#1f618d']
+  ];
+  tiles.forEach(tile=>TL.push(tile));
+  $('#tl').innerHTML = TL.map(([k,i,n,c,s])=>'<div class="tl" data-k="'+k+'" style="background:'+c+';grid-column:span '+(s||1)+'"><b>'+i+'</b>'+(n||new Date().toLocaleDateString([], {weekday:'long',month:'long',day:'numeric'}))+'</div>').join('');
+  alist();
+}
+
+try { registerExpansionPackThree(); }
+catch (expansionPackThreeError) { console.warn('Expansion Pack 3 could not refresh all launch surfaces.', expansionPackThreeError); }
+
+/* End of Expansion Pack 3. */
 
 </script>
 </body>
