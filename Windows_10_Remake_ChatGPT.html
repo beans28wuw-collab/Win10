@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Windows 10</title>
+<style>
+:root{--ac:#0078d7;--wb:#fff;--wf:#111;--ws:#f2f2f2;--bd:#d0d0d0;--hv:#e5e5e5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--wb:#1f1f1f;--wf:#f0f0f0;--ws:#2b2b2b;--bd:#444;--hv:#3a3a3a}}
+:root[data-theme="dark"]{--wb:#1f1f1f;--wf:#f0f0f0;--ws:#2b2b2b;--bd:#444;--hv:#3a3a3a}
+html,body{height:100%;margin:0;overflow:hidden}
+html{background:#101014}
+body{position:relative;background:#101014;font:13px/1.3 "Segoe UI",system-ui,sans-serif;color:#fff;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+input,textarea{font:inherit;color:inherit;user-select:text;-webkit-user-select:text}
+#desk{position:absolute;inset:0 0 40px 0;overflow:hidden;background:#0a58b8}
+#ic{position:absolute;inset:0;padding:6px;display:grid;grid-auto-flow:column;grid-template-rows:repeat(auto-fill,86px);grid-auto-columns:82px;align-content:start}
+.ic{width:76px;height:80px;text-align:center;font-size:12px;text-shadow:0 1px 3px #000;border:1px solid transparent;padding:3px 2px;overflow:hidden}
+.ic b,.fi b{display:block;font-size:34px;font-weight:400;line-height:40px}
+.ic.s{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.4)}
+.win{position:absolute;display:flex;flex-direction:column;background:var(--wb);color:var(--wf);border:1px solid var(--bd);box-shadow:0 8px 30px rgba(0,0,0,.4);animation:pp .12s;min-width:260px;min-height:160px}
+.win.a{border-color:var(--ac)}.win.h{display:none}
+.win.m{inset:0!important;width:auto!important;height:auto!important}.win.m .rz{display:none}
+@keyframes pp{from{opacity:0;transform:scale(.95)}}
+.tb{display:flex;align-items:center;height:32px;flex:none;touch-action:none}
+.ti{padding:0 8px;font-size:15px}.tt{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px}
+.tb button{border:0;background:none;color:inherit;width:46px;height:32px;font:13px sans-serif}
+.tb button:hover{background:var(--hv)}.tb .x:hover{background:#e81123;color:#fff}
+.bd{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;background:var(--wb)}
+.rz{position:absolute;right:0;bottom:0;width:16px;height:16px;cursor:nwse-resize;touch-action:none}
+.mb{display:flex;flex:none;background:var(--ws);border-bottom:1px solid var(--bd);align-items:center}
+.mb button,.bt{border:0;background:none;color:inherit;padding:5px 10px;font:inherit}
+.mb button:hover{background:var(--hv)}
+.bt{border:1px solid var(--bd);background:var(--ws);padding:6px 16px}.bt:hover{border-color:var(--ac)}
+.st{flex:none;padding:2px 8px;background:var(--ws);border-top:1px solid var(--bd);font-size:12px}
+.bd textarea{flex:1;min-height:0;border:0;outline:0;resize:none;background:var(--wb);padding:6px;font:15px Consolas,monospace}
+.xn{display:flex;gap:4px;padding:4px;flex:none;background:var(--ws);border-bottom:1px solid var(--bd)}
+.xn button{border:0;background:none;color:inherit;width:30px;font-size:16px}.xn button:hover,.sl:hover,.fi:hover{background:var(--hv)}
+.ad{flex:1;border:1px solid var(--bd);background:var(--wb);padding:3px 8px;overflow:hidden;white-space:nowrap}
+.xm{flex:1;display:flex;min-height:0}.sd2{width:130px;flex:none;border-right:1px solid var(--bd);padding:6px 0;overflow:auto}
+.sl{padding:5px 12px}
+.fl{flex:1;overflow:auto;padding:8px;display:grid;grid-template-columns:repeat(auto-fill,88px);grid-auto-rows:92px;gap:4px;align-content:start}
+.fi{text-align:center;font-size:12px;padding:4px;overflow:hidden;word-break:break-word}.fi.s{background:rgba(0,120,215,.25);outline:1px solid var(--ac)}
+.cd{flex:none;padding:10px 14px;text-align:right;background:var(--ws)}.ce{height:18px;font-size:13px;opacity:.7}.cr{font-size:38px;font-weight:300;overflow:hidden}
+.cl{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:2px;background:var(--ws)}
+.cl button{border:0;background:var(--hv);color:var(--wf);font:18px "Segoe UI",sans-serif}.cl .nm{background:var(--wb);font-weight:600}
+.cl button:hover{filter:brightness(.92)}.cl .eq{background:var(--ac);color:#fff}
+.sg{padding:16px}.sg h2{margin:0 0 8px;font:300 26px "Segoe UI",sans-serif}.sg h4{margin:16px 0 8px;font-size:14px}
+.sw{display:inline-block;width:42px;height:42px;margin:0 6px 6px 0;border:2px solid transparent;cursor:pointer}.sw:hover{border-color:var(--wf)}.wp{width:84px}
+.cm{background:#0c0c0c;color:#ccc;font:14px Consolas,monospace;padding:6px}.cm .o{white-space:pre-wrap;margin:0;flex:none}
+.ln{display:flex}.ln input{flex:1;background:none;border:0;outline:0;color:#ccc;font:14px Consolas,monospace}
+#tbar{position:absolute;left:0;right:0;bottom:0;height:40px;background:rgba(18,18,22,.96);display:flex;z-index:9999}
+#tbar>*{height:40px;display:flex;align-items:center;justify-content:center;flex:none;position:relative}
+.tbtn{width:46px;font-size:19px}.tbtn:hover,#sb:hover{background:rgba(255,255,255,.14)}
+.tbtn.on::after{content:"";position:absolute;bottom:0;left:10px;right:10px;height:2px;background:#999}
+.tbtn.fo{background:rgba(255,255,255,.18)}.tbtn.fo::after{background:var(--ac)}
+.lg{display:grid;grid-template-columns:1fr 1fr;gap:2px;width:18px;height:18px}.lg i{background:#fff}
+#sb{width:240px;height:32px!important;margin:0 6px;background:#f3f3f3;color:#555;justify-content:flex-start!important;gap:8px;padding:0 10px}
+#apps{flex:1;min-width:0;overflow:hidden;justify-content:flex-start}
+.tray{gap:10px;padding:0 8px}
+#clk{display:block;text-align:center;line-height:20px;padding:0 8px;font-size:12px}
+#sd{width:7px;border-left:1px solid #777}
+.pop{position:absolute;bottom:40px;z-index:9998;background:rgba(28,28,32,.97);color:#fff;display:none}
+.pop.o{display:flex}
+#start{left:0;width:min(100%,650px);height:min(580px,calc(100% - 40px))}
+.rail{width:48px;flex:none;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(0,0,0,.25)}
+.rail div{height:48px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.rail div:hover,.li:hover,#pw div:hover{background:rgba(255,255,255,.15)}
+.lst{width:250px;flex:none;display:flex;flex-direction:column;min-height:0}
+#q{margin:8px;padding:8px;border:0;background:#fff;color:#111}
+#al{flex:1;overflow:auto}#al h6{margin:0;padding:8px 14px 2px;font-size:12px;color:#aaa}
+.li{display:flex;gap:12px;align-items:center;height:40px;padding:0 14px}
+.tls{flex:1;padding:12px;display:grid;grid-template-columns:repeat(3,92px);grid-auto-rows:92px;gap:4px;align-content:start;overflow:auto}
+.tl{display:flex;flex-direction:column;justify-content:space-between;padding:8px;font-size:12px}.tl b{font-size:28px;font-weight:400}.tl:hover{outline:2px solid rgba(255,255,255,.5)}
+#pw{left:48px;bottom:42px;width:150px;flex-direction:column}#pw div{padding:10px 14px}
+#ac{right:0;width:min(100%,360px);height:calc(100% - 40px);flex-direction:column;padding:10px;gap:8px}
+.ah{display:flex;justify-content:space-between;font-size:15px}.ah u{font-size:12px;cursor:pointer}
+#nt{flex:1;overflow:auto}#nt:empty::before{content:"No new notifications";opacity:.6}
+.nc{background:#3a3a3e;padding:10px;margin-bottom:6px;font-size:12px}
+#qa{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.qt{background:#3a3a3e;height:70px;font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center}
+.qt.on{background:var(--ac)}.qt b{font-size:20px;font-weight:400}
+.br{display:flex;gap:8px;align-items:center}.br input{flex:1}
+#cal{right:0;width:min(100%,300px);padding:14px;flex-direction:column;gap:8px}
+#ct{font-size:44px;font-weight:200}.cn{display:flex;justify-content:space-between;align-items:center}.cn b{padding:2px 12px;cursor:pointer}
+#cg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}#cg span{padding:7px 0}.dw{opacity:.6;font-size:11px}.td{background:var(--ac)}
+#cx{position:fixed;z-index:99000;background:var(--ws);color:var(--wf);border:1px solid var(--bd);box-shadow:0 4px 14px #0006;display:none;min-width:190px;padding:2px 0}
+#cx.o{display:block}#cx div{padding:7px 28px}#cx div:hover{background:var(--hv)}
+#ts{position:absolute;right:8px;bottom:48px;width:min(300px,calc(100% - 16px));padding:12px;background:#2b2b2b;color:#fff;border-left:3px solid var(--ac);transform:translateX(110%);transition:transform .25s;z-index:9997}
+#ts.o{transform:none}
+#lock{position:fixed;inset:0;z-index:99998;display:flex;flex-direction:column;justify-content:flex-end;padding:8vh 6vw;transition:transform .5s;cursor:pointer;text-shadow:0 2px 8px #0008;box-shadow:inset 0 0 0 100vmax rgba(0,0,0,.25)}
+#lock.u{transform:translateY(-100%)}#lt{font-size:min(20vw,110px);font-weight:200;line-height:1}#ld{font-size:min(7vw,34px);font-weight:300;margin-bottom:12px}
+#off{position:fixed;inset:0;background:#000;color:#fff;z-index:99999;display:none;flex-direction:column;align-items:center;justify-content:center;font-size:22px}
+.sp{width:34px;height:34px;border:3px solid #fff3;border-top-color:#fff;border-radius:50%;animation:rt 1s linear infinite;margin-bottom:16px}@keyframes rt{to{transform:rotate(360deg)}}
+#dim,#nl{position:fixed;inset:0;pointer-events:none}#dim{background:#000;opacity:0;z-index:99990}#nl{background:rgba(255,150,0,.2);mix-blend-mode:multiply;z-index:99989;display:none}
+.pop,#tbar{backdrop-filter:blur(24px) saturate(1.5);-webkit-backdrop-filter:blur(24px) saturate(1.5)}
+.pop{background:rgba(24,24,30,.82)}#tbar{background:rgba(14,14,18,.8)}
+body.nb .pop,body.nb #tbar{backdrop-filter:none;-webkit-backdrop-filter:none;background:#1c1c20}
+.win.sl2{inset:0 50% 0 0!important;width:auto!important;height:auto!important}.win.sr2{inset:0 0 0 50%!important;width:auto!important;height:auto!important}.win.sl2 .rz,.win.sr2 .rz{display:none}
+#boot{position:fixed;inset:0;background:#000;z-index:100001;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px}
+.lg.big{width:88px;height:88px;gap:5px}.lg.big i{background:#2f95ea}
+#tvw{position:absolute;left:0;right:0;top:0;bottom:40px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:9990;display:none;flex-wrap:wrap;gap:16px;padding:24px;align-content:center;justify-content:center;overflow:auto}
+.tvc{width:210px;height:140px;background:var(--wb);color:var(--wf);border:1px solid var(--bd);display:flex;flex-direction:column}.tvc:hover{outline:2px solid var(--ac)}
+.tvc b{display:flex;justify-content:space-between;padding:6px 8px;font-size:12px;font-weight:400}.tvc u{padding:0 6px;text-decoration:none}.tvc u:hover{background:#e81123;color:#fff}.tvc span{flex:1;display:flex;align-items:center;justify-content:center;font-size:44px}
+.dlg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99500;display:flex;align-items:center;justify-content:center}
+.dbox{background:var(--wb);color:var(--wf);border:1px solid var(--ac);padding:16px;min-width:260px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 40px #0008}.dbox input{padding:6px;border:1px solid var(--bd);background:var(--wb)}
+.bs{position:fixed;inset:0;background:#0078d7;color:#fff;z-index:100000;padding:8vh 8vw;font-size:20px;cursor:none}
+.mg{display:grid;grid-template-columns:repeat(9,1fr);gap:1px;padding:6px;background:#808080;flex:1;min-height:0;align-content:start;overflow:auto}
+.mc{aspect-ratio:1;background:#c0c0c0;border:3px outset #fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;color:#000}.mc.o{border:1px solid #888;background:#d6d6d6}
+.mc[data-n="1"]{color:#00f}.mc[data-n="2"]{color:#080}.mc[data-n="3"]{color:#e00}.mc[data-n="4"]{color:#008}.mc[data-n="5"]{color:#800}.mi{padding:0 12px}
+.tr{display:flex;padding:5px 10px;border-bottom:1px solid var(--bd)}.tr span{flex:1}.tr.s{background:rgba(0,120,215,.3)}.th{font-weight:600;background:var(--ws)}
+.sn{width:140px;flex:none;background:var(--ws);padding:8px 0}.sn div{padding:9px 14px}.sn div:hover{background:var(--hv)}.sn .on{border-left:3px solid var(--ac);background:var(--hv)}.sc{flex:1;padding:16px;overflow:auto}.sc h2{margin:0 0 8px;font:300 26px "Segoe UI",sans-serif}.sc h4{margin:16px 0 8px;font-size:14px}
+.xs{width:110px;border:1px solid var(--bd);background:var(--wb)}
+.ph{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#000;overflow:auto;color:#fff}.ph img{max-width:100%;max-height:100%;transition:transform .15s}
+.fy{right:0;width:min(100%,300px);padding:16px;flex-direction:column;gap:10px}.fy h3{margin:0;font:300 22px "Segoe UI",sans-serif}.fy input[type=range]{width:100%}
+.wf{display:flex;justify-content:space-between;padding:10px 8px}.wf:hover{background:rgba(255,255,255,.12)}.wf.on{background:var(--ac)}
+.tray span{cursor:default;padding:0 2px}.tray span:hover{background:rgba(255,255,255,.14)}
+.sk{background:#fff7a8;color:#222;border:0;flex:1;resize:none;padding:12px;font:17px "Segoe Print","Comic Sans MS",cursive;outline:0}.sk.k1{background:#ffd1e6}.sk.k2{background:#c9f0ff}.sk.k3{background:#d5f5c4}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px;background:#bbada0;touch-action:none;flex:1;min-height:0;align-content:start}.t4{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:700 24px sans-serif;border-radius:3px}
+.tt3{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:8px;flex:1;min-height:0;align-content:start}.tt3 div{aspect-ratio:1;background:var(--ws);display:flex;align-items:center;justify-content:center;font-size:44px;border:1px solid var(--bd)}
+.pn{position:relative;display:flex;flex:1;min-height:140px;margin:8px;touch-action:none}.pn b{flex:1;background:#fff;color:#333;border:1px solid #333;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;font-weight:400}.pn b.on{background:#9ecbff}
+.pn i{position:absolute;top:0;width:8%;height:60%;margin-left:-4%;background:#111;color:#fff;font:10px sans-serif;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;z-index:1}.pn i.on{background:var(--ac)}
+.ck{flex:1;overflow:auto;padding:12px;text-align:center}.big{font:200 48px "Segoe UI",sans-serif;text-align:center;padding:20px 0}
+.cg2{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:6px;flex:1;min-height:0;align-content:start;text-align:center;overflow:auto}.cg2 div,.cg2 b{padding:8px 0}.cg2 div{border:1px solid var(--bd)}.cg2 .td{background:var(--ac);color:#fff}.cg2 .sl3{outline:2px solid var(--ac)}.cg2 small{display:block;font-size:8px}
+.cvw{padding:16px;display:flex;flex-direction:column;gap:10px}.cvw select,.cvw input:not([type=range]):not([type=checkbox]),.tpi{padding:8px;background:var(--wb);color:var(--wf);border:1px solid var(--bd)}.cvr{font:300 30px "Segoe UI",sans-serif;padding:10px 0}
+.wpd{flex:1;min-height:0;overflow:auto;padding:16px;background:#fff;color:#111;outline:0;font:16px Calibri,"Segoe UI",sans-serif}
+.tpt{font:20px/1.6 Consolas,monospace}.tpi{min-height:90px;font:16px Consolas,monospace}
+@media(max-width:700px){.tls,.sd2,.tray,.sx{display:none}#sb{width:40px;margin:0;padding:0;justify-content:center!important;background:none;color:#fff}.tbtn{width:40px}#start{width:min(100%,300px)}}
+
+/* ChatGPT remake polish */
+:root{--ac:#0078d7}#desk{background-size:cover;background-position:center;transition:background .25s}
+.win{border-radius:5px 5px 0 0;overflow:hidden;box-shadow:0 18px 48px #0005,0 2px 8px #0002}.tb{min-height:34px;background:var(--wb)}.win.a .tb{background:color-mix(in srgb,var(--wb) 92%,var(--ac))}.tb button{width:42px}.win .bd{overscroll-behavior:contain}
+#start{box-shadow:0 18px 45px #0007;border:1px solid #ffffff22}#sb{border-radius:3px}#sb:hover{background:#fff;color:#222}#sbtn{width:48px}.ic{border-radius:3px;transition:background .12s}.ic:hover{background:#ffffff20}.li,.tl,.qt,.tbtn,.bt,.mb button{cursor:pointer;transition:background .12s,filter .12s}.tl{border-radius:2px}.bt{border-radius:2px}.bt:active,.qt:active{filter:brightness(.85)}
+.apphead{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--bd);background:var(--ws)}.apphead strong{font-size:18px;font-weight:400}.appbody{padding:14px;overflow:auto;flex:1;min-height:0}.field{width:100%;box-sizing:border-box;padding:9px;border:1px solid var(--bd);background:var(--wb);color:var(--wf);border-radius:2px}.primary{background:var(--ac)!important;color:white!important;border:0!important;padding:9px 14px;cursor:pointer}.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;padding:12px}.storecard{border:1px solid var(--bd);padding:12px;min-height:116px;display:flex;flex-direction:column;gap:8px}.storecard .emoji{font-size:30px}.storecard button{margin-top:auto}.browserbar{display:flex;gap:6px;padding:7px;background:var(--ws);border-bottom:1px solid var(--bd)}.browserbar input{flex:1;min-width:0}.browserframe{flex:1;min-height:0;border:0;width:100%;background:white}.hint{opacity:.7;font-size:12px}.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}.statbox{padding:12px;background:var(--ws);border:1px solid var(--bd)}
+@media(max-width:700px){.win{left:0!important;top:0!important;width:100%!important;height:calc(100% - 40px)!important;border-radius:0}.win .rz{display:none}#start{height:calc(100% - 40px)}.tls{display:none}#sb{width:42px}.tbtn{width:40px}}
+</style></head><body>
+<div id="desk"><div id="ic"></div></div>
+<div id="tbar">
+<div class="tbtn" id="sbtn"><span class="lg"><i></i><i></i><i></i><i></i></span></div>
+<div id="sb"><span>🔍</span><span class="sx">Type here to search</span></div>
+<div id="apps"></div>
+<div class="tray">⌃ 📶 🔊 ENG</div>
+<div id="clk"></div>
+<div class="tbtn" id="nbtn">💬</div><div id="sd"></div>
+</div>
+<div id="start" class="pop">
+<div class="rail" id="rl"><div data-a="d">📄</div><div data-a="p">🖼️</div><div data-a="s">⚙️</div><div data-a="w">⏻</div></div>
+<div class="lst"><input id="q" placeholder="Search apps"><div id="al"></div></div>
+<div class="tls" id="tl"></div>
+</div>
+<div id="pw" class="pop"><div data-a="l">🔒 Lock</div><div data-a="s">⏻ Shut down</div><div data-a="r">🔄 Restart</div></div>
+<div id="ac" class="pop"><div class="ah">Notifications <u id="clr">Clear all</u></div><div id="nt"></div><div id="qa"></div><div class="br">☀️ <input id="br" type="range" min="20" max="100" value="100"></div></div>
+<div id="cal" class="pop"><div id="ct"></div><div id="cd2"></div><div class="cn"><span id="cmn"></span><span id="cnv"><b data-d="-1">▲</b><b data-d="1">▼</b></span></div><div id="cg"></div></div>
+<div id="cx"><div data-a="r">Refresh</div><div data-a="f">New folder</div><div data-a="t">New text document</div><div data-a="d">Display settings</div><div data-a="p">Personalize</div></div>
+<div id="ts"></div><div id="nl"></div><div id="dim"></div>
+<div id="lock"><div id="lt"></div><div id="ld"></div><small>Click anywhere to sign in</small></div>
+<div id="off"></div>
+<script>
+const $=(s,e=document)=>e.querySelector(s),
+el=(t,c,h)=>{const e=document.createElement(t);e.className=c||'';if(h!=null)e.innerHTML=h;return e},
+CO=matchMedia('(pointer:coarse)').matches,
+AC=['#0078d7','#e74856','#10893e','#8e8cd8','#ca5010','#00b7c3','#c239b3','#7a7574'],
+WP=['linear-gradient(105deg,transparent 38%,rgba(130,205,255,.35) 50%,transparent 62%),radial-gradient(ellipse at 65% 55%,#2f95ea,#0a58b8 38%,#04204f 78%,#020b1f)','linear-gradient(135deg,#ff7e5f,#6a1b9a 55%,#1a0b3a)','linear-gradient(160deg,#12a67a,#065a60 55%,#0b1d2a)','linear-gradient(135deg,#232526,#4b4f52)'],
+FS={'This PC':{Desktop:{},Documents:{'Resume.txt':'Jane Doe\nFront-end developer\n\nSkills: HTML, CSS, JavaScript','Shopping list.txt':'Milk\nEggs\nBread\nCoffee'},Downloads:{'setup.exe':null,'notes.txt':'Downloaded notes.'},Pictures:{Vacation:{},Screenshots:{}},Music:{},Videos:{},'Local Disk (C:)':{Windows:{},'Program Files':{},Users:{}}},'Recycle Bin':{}},
+PIN=['explorer','notepad','calc','settings','cmd'],
+APPS={explorer:{n:'File Explorer',i:'📁',w:660,h:430,f:explorer},notepad:{n:'Notepad',i:'📝',w:520,h:380,f:notepad},calc:{n:'Calculator',i:'🧮',w:320,h:480,f:calc},settings:{n:'Settings',i:'⚙️',w:620,h:460,f:settings,one:1},cmd:{n:'Command Prompt',i:'⌨️',w:620,h:360,f:cmd},paint:{n:'Paint',i:'🎨',w:700,h:480,f:paint}};
+let Z=10,N=0,NC=0,act=null,tm,cm=new Date();const W=[];
+
+/* ---------- window manager ---------- */
+function launch(id,arg){
+ const A=APPS[id],ex=A.one&&W.find(x=>x.id==id);if(ex){foc(ex);return ex}
+ const e=el('div','win','<div class="tb"><span class="ti">'+A.i+'</span><span class="tt">'+A.n+'</span><button class="n">–</button><button class="z">▢</button><button class="x">✕</button></div><div class="bd"></div><i class="rz"></i>'),
+ w={id,e,b:$('.bd',e),t:s=>{$('.tt',e).textContent=s},close:()=>{e.remove();W.splice(W.indexOf(w),1);foc(topw())}};
+ e.style.cssText='left:'+(30+N%8*26)+'px;top:'+(20+N%8*26)+'px;width:'+Math.min(A.w,innerWidth-16)+'px;height:'+Math.min(A.h,innerHeight-90)+'px';N++;
+ if(innerWidth<700)e.classList.add('m');
+ W.push(w);$('#desk').append(e);
+ e.onpointerdown=()=>foc(w);
+ const tb=$('.tb',e),mx=()=>e.classList.toggle('m');
+ $('.n',e).onclick=()=>mini(w);$('.z',e).onclick=mx;$('.x',e).onclick=w.close;
+ tb.ondblclick=v=>{if(v.target.tagName!='BUTTON')mx()};
+ tb.onpointerdown=v=>{if(v.target.tagName=='BUTTON'||e.classList.contains('m'))return;const ox=v.clientX-e.offsetLeft,oy=v.clientY-e.offsetTop;tb.setPointerCapture(v.pointerId);tb.onpointermove=m=>{e.style.left=m.clientX-ox+'px';e.style.top=Math.max(0,m.clientY-oy)+'px'};tb.onpointerup=()=>tb.onpointermove=null};
+ const r=$('.rz',e);r.onpointerdown=v=>{const sx=v.clientX,sy=v.clientY,sw=e.offsetWidth,sh=e.offsetHeight;r.setPointerCapture(v.pointerId);r.onpointermove=m=>{e.style.width=Math.max(260,sw+m.clientX-sx)+'px';e.style.height=Math.max(160,sh+m.clientY-sy)+'px'};r.onpointerup=()=>r.onpointermove=null};
+ A.f(w.b,w,arg);foc(w);return w}
+const topw=()=>W.filter(x=>!x.e.classList.contains('h')).sort((a,b)=>a.e.style.zIndex-b.e.style.zIndex).pop();
+function foc(w){act=w||null;W.forEach(x=>x.e.classList.toggle('a',x==w));if(w){w.e.classList.remove('h');w.e.style.zIndex=++Z}tbr()}
+function mini(w){w.e.classList.add('h');foc(topw())}
+function tbr(){const a=$('#apps');a.innerHTML='';
+ [...new Set([...PIN,...W.map(x=>x.id)])].forEach(id=>{const ws=W.filter(x=>x.id==id),b=el('div','tbtn'+(ws.length?' on':'')+(ws.includes(act)?' fo':''),APPS[id].i);b.title=APPS[id].n;
+  b.onclick=()=>{closeAll();const w=ws[ws.length-1];if(!w)launch(id);else if(w==act)mini(w);else foc(w)};a.append(b)})}
+const ob=(e,f)=>{e.ondblclick=f;e.onclick=()=>{[...e.parentNode.children].forEach(c=>c.classList.remove('s'));e.classList.add('s');if(CO)f()}};
+
+/* ---------- apps ---------- */
+function explorer(b,w,a){
+ let p=a||['This PC'];const H=[];
+ b.innerHTML='<div class="xn"><button data-a="b">←</button><button data-a="u">↑</button><div class="ad"></div></div><div class="xm"><div class="sd2"></div><div class="fl"></div></div><div class="st"></div>';
+ const get=q=>q.reduce((o,k)=>o&&o[k],FS),fl=$('.fl',b),go=(q,h=1)=>{if(h)H.push(p);p=q;draw()};
+ function draw(){const o=get(p),ks=Object.keys(o);fl.innerHTML='';$('.ad',b).textContent=p.join(' › ');w.t(p[p.length-1]);
+  ks.forEach(k=>{const v=o[k],d=el('div','fi','<b>'+(typeof v=='string'?'📄':v===null?'⚙️':/Disk/.test(k)?'💽':'📁')+'</b>'+k);
+   ob(d,()=>typeof v=='string'?launch('notepad',{f:k,t:v,d:o}):v===null?toast('Windows cannot open this file.'):go([...p,k]));fl.append(d)});
+  $('.st',b).textContent=ks.length+' items'}
+ $('.sd2',b).append(...[['This PC'],['This PC','Desktop'],['This PC','Documents'],['This PC','Downloads'],['This PC','Pictures'],['Recycle Bin']].map(q=>{const d=el('div','sl',q[q.length-1]);d.onclick=()=>go(q);return d}));
+ $('.xn',b).onclick=e=>{const k=e.target.dataset.a;if(k=='b'&&H.length)go(H.pop(),0);if(k=='u'&&p.length>1)go(p.slice(0,-1))};
+ draw()}
+function notepad(b,w,a={}){
+ let f=a.f,fs=15;const dir=a.d||FS['This PC'].Documents;
+ b.innerHTML='<div class="mb"><button data-a="n">New</button><button data-a="s">Save</button><button data-a="w">Wrap</button><button data-a="p">A+</button><button data-a="m">A−</button></div><textarea wrap="soft" spellcheck="false"></textarea><div class="st">Ln 1, Col 1</div>';
+ const t=$('textarea',b),T=()=>w.t((f||'Untitled')+' - Notepad');t.value=a.t||'';T();
+ const pos=()=>{const s=t.value.slice(0,t.selectionStart).split('\n');$('.st',b).textContent='Ln '+s.length+', Col '+(s[s.length-1].length+1)};
+ t.oninput=t.onkeyup=t.onclick=pos;
+ $('.mb',b).onclick=e=>{const k=e.target.dataset.a;
+  if(k=='n'){t.value='';f=null;T()}
+  if(k=='s'){f=f||'Note '+(++NC)+'.txt';dir[f]=t.value;T();toast('Saved '+f+' to '+(a.d?'this folder':'Documents'),1)}
+  if(k=='w')t.wrap=t.wrap=='off'?'soft':'off';
+  if(k=='p'||k=='m')t.style.fontSize=(fs+=k=='p'?2:-2)+'px'}}
+function calc(b,w){
+ w.t('Calculator');
+ const K='% CE C ⌫ 1/x x² √ ÷ 7 8 9 × 4 5 6 − 1 2 3 + ± 0 . ='.split(' ');
+ b.innerHTML='<div class="cd"><div class="ce"></div><div class="cr">0</div></div><div class="cl">'+K.map(k=>'<button'+(k=='='?' class="eq"':/^\d$/.test(k)?' class="nm"':'')+'>'+k+'</button>').join('')+'</div>';
+ let cur='0',acc=null,op=null,nw=1,ex='';const d=$('.cr',b),x2=$('.ce',b),
+ f=n=>String(+(+n).toPrecision(12)),ev=(x,o,y)=>o=='+'?x+y:o=='−'?x-y:o=='×'?x*y:o=='÷'?x/y:y;
+ const k=t=>{
+  if(!isFinite(cur)){cur='0';acc=op=null;ex='';nw=1}
+  if(/^\d$/.test(t)){cur=nw||cur=='0'?t:cur+t;nw=0}
+  else if(t=='.'){if(nw){cur='0.';nw=0}else if(!cur.includes('.'))cur+='.'}
+  else if('+−×÷='.includes(t)){const c=parseFloat(cur);
+   if(op&&(!nw||t=='=')){acc=ev(acc,op,c);cur=f(acc)}else acc=c;
+   ex=t=='='?'':cur+' '+t;op=t=='='?null:t;nw=1}
+  else if(t=='C'){cur='0';acc=op=null;ex='';nw=1}
+  else if(t=='CE'){cur='0';nw=1}
+  else if(t=='⌫'){if(!nw)cur=cur.length>1?cur.slice(0,-1):'0'}
+  else if(t=='±')cur=f(-cur);
+  else if(t=='%')cur=f(cur*(acc||0)/100);
+  else if(t=='1/x')cur=f(1/cur);
+  else if(t=='x²')cur=f(cur*cur);
+  else if(t=='√')cur=f(Math.sqrt(cur));
+  d.textContent=isFinite(cur)?cur:'Cannot divide by zero';x2.textContent=ex};
+ b.onclick=e=>{if(e.target.tagName=='BUTTON')k(e.target.textContent)}}
+function settings(b,w){
+ w.t('Settings');
+ b.innerHTML='<div class="sg"><h2>Settings</h2><h4>Choose your color mode</h4><button class="bt" data-m="light">Light</button> <button class="bt" data-m="dark">Dark</button><h4>Accent color</h4>'+AC.map(c=>'<i class="sw" data-c="'+c+'" style="background:'+c+'"></i>').join('')+'<h4>Background</h4>'+WP.map((v,i)=>'<i class="sw wp" data-b="'+i+'" style="background:'+v+'"></i>').join('')+'<h4>About</h4><p>Device name: DESKTOP-WEB10<br>Edition: Windows 10 Pro (HTML remake)<br>Version: 22H2<br>Screen: '+innerWidth+' × '+innerHeight+'</p></div>';
+ b.onclick=e=>{const d=e.target.dataset;if(d.m)document.documentElement.dataset.theme=d.m;if(d.c)document.documentElement.style.setProperty('--ac',d.c);if(d.b)wp(+d.b)}}
+function cmd(b,w){
+ w.t('Command Prompt');b.classList.add('cm');
+ b.innerHTML='<pre class="o">Microsoft Windows [Version 10.0.19045.1]\n(c) Microsoft Corporation. All rights reserved.\n</pre><div class="ln"><span>C:\\Users\\User&gt;</span><input spellcheck="false" autocapitalize="off" autocomplete="off"></div>';
+ const o=$('.o',b),i=$('input',b),H=[];let hi=0;
+ const AP={notepad:'notepad',calc:'calc',mspaint:'paint',paint:'paint',explorer:'explorer',cmd:'cmd',control:'settings'},
+ R={help:()=>'help  dir  cls  echo  date  time  ver  whoami  hostname  ipconfig  start <app>  exit',
+ dir:()=>' Directory of C:\\Users\\User\n\n'+Object.keys(FS['This PC']).map(k=>'10/09/2026  09:00 AM    <DIR>          '+k).join('\n'),
+ cls:()=>{o.textContent=''},echo:r=>r.join(' '),
+ date:()=>'The current date is: '+new Date().toLocaleDateString('en-US'),time:()=>'The current time is: '+new Date().toLocaleTimeString(),
+ ver:()=>'\nMicrosoft Windows [Version 10.0.19045.1]',whoami:()=>'desktop-web10\\user',hostname:()=>'DESKTOP-WEB10',
+ ipconfig:()=>'Windows IP Configuration\n\nEthernet adapter Ethernet:\n   IPv4 Address. . . . . : 192.168.1.42',
+ exit:()=>{w.close()},start:r=>AP[(r[0]||'').toLowerCase()]?launch(AP[r[0].toLowerCase()]):'The system cannot find the file '+(r[0]||'')+'.'};
+ i.onkeydown=e=>{
+  if(e.key=='Enter'){const c=i.value.trim(),[m='',...r]=c.split(/\s+/),x=m.toLowerCase();H.push(c);hi=H.length;i.value='';o.textContent+='C:\\Users\\User>'+c+'\n';
+   const f=R[x]||(AP[x]?()=>launch(AP[x]):null),s=f?f(r):c?"'"+m+"' is not recognized as an internal or external command,\noperable program or batch file.":'';
+   if(typeof s=='string'&&s)o.textContent+=s+'\n'}
+  if(e.key=='ArrowUp'&&hi>0)i.value=H[--hi];
+  if(e.key=='ArrowDown'){hi=Math.min(hi+1,H.length);i.value=H[hi]||''}
+  b.scrollTop=b.scrollHeight};
+ b.onclick=()=>i.focus();if(!CO)i.focus()}
+function paint(b,w){
+ w.t('Untitled - Paint');
+ b.innerHTML='<div class="mb"><input type="color" value="#000000"><input type="range" min="1" max="40" value="4"><button data-e="1">Eraser</button><button data-c="1">Clear</button></div><div style="flex:1;min-height:0;overflow:auto;background:#808080"><canvas width="900" height="600" style="background:#fff;display:block;touch-action:none"></canvas></div>';
+ const c=$('canvas',b),x=c.getContext('2d'),[col,sz]=b.querySelectorAll('input');let er=0,d=0,lp;
+ x.fillStyle='#fff';x.fillRect(0,0,900,600);x.lineCap='round';
+ const P=e=>{const r=c.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]},
+ dr=p=>{x.strokeStyle=er?'#fff':col.value;x.lineWidth=sz.value;x.beginPath();x.moveTo(lp[0],lp[1]);x.lineTo(p[0]+.01,p[1]);x.stroke();lp=p};
+ c.onpointerdown=e=>{d=1;c.setPointerCapture(e.pointerId);lp=P(e);dr(lp)};
+ c.onpointermove=e=>{if(d)dr(P(e))};c.onpointerup=()=>d=0;
+ $('.mb',b).onclick=e=>{const t=e.target.dataset;if(t.e){er=!er;e.target.style.background=er?'var(--ac)':''}if(t.c){x.fillStyle='#fff';x.fillRect(0,0,900,600)}}}
+
+/* ---------- shell: start, popups, desktop ---------- */
+function closeAll(x){['start','ac','cal','pw'].forEach(p=>p!=x&&$('#'+p).classList.remove('o'));$('#cx').classList.remove('o')}
+function tog(p){const e=$('#'+p),on=e.classList.contains('o');closeAll(p=='pw'?'start':p);e.classList.toggle('o',!on);
+ if(p=='start'&&!on){$('#q').value='';alist()}if(p=='cal'&&!on){cm=new Date();cm.setDate(1);calr()}}
+function alist(q=''){let h='',L='';Object.entries(APPS).sort((a,b)=>a[1].n.localeCompare(b[1].n)).forEach(([k,a])=>{if(q&&!a.n.toLowerCase().includes(q))return;if(a.n[0]!=L){L=a.n[0];h+='<h6>'+L+'</h6>'}h+='<div class="li" data-k="'+k+'"><span>'+a.i+'</span>'+a.n+'</div>'});$('#al').innerHTML=h||'<div class="li">No apps found</div>'}
+function calr(){const y=cm.getFullYear(),m=cm.getMonth(),n=new Date(y,m+1,0).getDate(),t=new Date();
+ let h=['S','M','T','W','T','F','S'].map(d=>'<span class="dw">'+d+'</span>').join('')+'<span></span>'.repeat(cm.getDay());
+ for(let d=1;d<=n;d++)h+='<span'+(t.getFullYear()==y&&t.getMonth()==m&&t.getDate()==d?' class="td"':'')+'>'+d+'</span>';
+ $('#cg').innerHTML=h;$('#cmn').textContent=cm.toLocaleDateString([],{month:'long',year:'numeric'})}
+function icons(){const D=FS['This PC'].Desktop,B=[['💻','This PC',()=>launch('explorer',['This PC'])],['🗑️','Recycle Bin',()=>launch('explorer',['Recycle Bin'])],['📝','Notepad',()=>launch('notepad')],['🧮','Calculator',()=>launch('calc')],['🎨','Paint',()=>launch('paint')]];
+ Object.entries(D).forEach(([k,v])=>B.push([typeof v=='string'?'📄':'📁',k,()=>typeof v=='string'?launch('notepad',{f:k,t:v,d:D}):launch('explorer',['This PC','Desktop',k])]));
+ const c=$('#ic');c.innerHTML='';B.forEach(([i,n,f])=>{const d=el('div','ic','<b>'+i+'</b>'+n);ob(d,f);c.append(d)})}
+const wp=i=>{$('#desk').style.background=$('#lock').style.background=WP[i]},
+uniq=(D,b,x='')=>{let n=b+x,i=1;while(n in D)n=b+' ('+ ++i+')'+x;return n},
+lk=()=>$('#lock').classList.remove('u'),
+tf={hour:'numeric',minute:'2-digit'};
+function toast(m,keep){const s=$('#ts');s.textContent=m;s.classList.add('o');clearTimeout(tm);tm=setTimeout(()=>s.classList.remove('o'),3000);
+ if(keep)$('#nt').prepend(el('div','nc','<b>Windows 10</b><br>'+m))}
+function tick(){const n=new Date(),t=n.toLocaleTimeString([],tf);
+ $('#clk').innerHTML=t+'<br>'+n.toLocaleDateString('en-US');$('#lt').textContent=t.replace(/\s?[AP]M/i,'');
+ $('#ld').textContent=n.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});$('#ct').textContent=n.toLocaleTimeString();$('#cd2').textContent=n.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
+
+$('#sbtn').onclick=()=>tog('start');
+$('#sb').onclick=()=>{if(!$('#start').classList.contains('o'))tog('start');$('#q').focus()};
+$('#nbtn').onclick=()=>tog('ac');$('#clk').onclick=()=>tog('cal');
+$('#sd').onclick=()=>{W.forEach(x=>x.e.classList.add('h'));foc(null)};
+$('#q').oninput=e=>alist(e.target.value.toLowerCase());
+$('#q').onkeydown=e=>{if(e.key=='Enter'){const f=$('#al .li[data-k]');if(f){closeAll();launch(f.dataset.k)}}};
+$('#al').onclick=e=>{const k=e.target.closest('.li[data-k]');if(k){closeAll();launch(k.dataset.k)}};
+$('#rl').onclick=e=>{const a=e.target.dataset.a;if(a=='w')return tog('pw');closeAll();
+ if(a=='d')launch('explorer',['This PC','Documents']);if(a=='p')launch('explorer',['This PC','Pictures']);if(a=='s')launch('settings')};
+const TL=[['cal','📅','','#0063b1',2],['explorer','📁','File Explorer','#c88b00'],['notepad','📝','Notepad','#2d7d9a'],['calc','🧮','Calculator','#515c6b'],['paint','🎨','Paint','#b146c2'],['cmd','⌨️','Command Prompt','#333'],['settings','⚙️','Settings','#4c4a48']];
+$('#tl').innerHTML=TL.map(([k,i,n,c,s])=>'<div class="tl" data-k="'+k+'" style="background:'+c+';grid-column:span '+(s||1)+'"><b>'+i+'</b>'+(n||new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'}))+'</div>').join('');
+$('#tl').onclick=e=>{const t=e.target.closest('.tl');if(!t)return;closeAll();t.dataset.k=='cal'?tog('cal'):launch(t.dataset.k)};
+$('#pw').onclick=e=>{const a=e.target.dataset.a;if(!a)return;closeAll();if(a=='l')return lk();
+ W.slice().forEach(w=>w.close());const o=$('#off');o.style.display='flex';o.innerHTML=a=='r'?'<div class="sp"></div>Restarting':'Shutting down';
+ setTimeout(()=>{if(a=='r'){o.style.display='none';lk()}else{o.innerHTML='<small>Click anywhere to power on</small>';o.onclick=()=>{o.onclick=null;o.style.display='none';lk()}}},1800)};
+$('#cnv').onclick=e=>{const d=e.target.dataset.d;if(d){cm.setMonth(cm.getMonth()+ +d);calr()}};
+const QA=[['📶','Wi‑Fi',1],['🔵','Bluetooth',1],['🌙','Night light'],['✈️','Airplane mode'],['🔋','Battery saver'],['🎯','Focus assist'],['📍','Location',1],['🖥️','Project']];
+$('#qa').innerHTML=QA.map(([i,n,o])=>'<div class="qt'+(o?' on':'')+'" data-n="'+n+'"><b>'+i+'</b>'+n+'</div>').join('');
+$('#qa').onclick=e=>{const q=e.target.closest('.qt');if(!q)return;const on=q.classList.toggle('on');if(q.dataset.n=='Night light')$('#nl').style.display=on?'block':'none';toast(q.dataset.n+(on?' on':' off'))};
+$('#clr').onclick=()=>$('#nt').innerHTML='';
+$('#br').oninput=e=>$('#dim').style.opacity=(100-e.target.value)/125;
+$('#desk').oncontextmenu=e=>{if(e.target.closest('.win'))return;e.preventDefault();closeAll();const c=$('#cx');c.style.left=Math.min(e.clientX,innerWidth-200)+'px';c.style.top=Math.min(e.clientY,innerHeight-210)+'px';c.classList.add('o')};
+$('#cx').onclick=e=>{const a=e.target.dataset.a,D=FS['This PC'].Desktop;closeAll();
+ if(a=='r')icons();if(a=='f'){D[uniq(D,'New folder')]={};icons()}if(a=='t'){D[uniq(D,'New Text Document','.txt')]='';icons()}if(a=='d'||a=='p')launch('settings')};
+$('#lock').onclick=()=>{const l=$('#lock');l.classList.add('u');if(!l.dataset.s){l.dataset.s=1;setTimeout(()=>toast('Welcome! Open Start, or right-click the desktop.',1),700)}};
+document.addEventListener('keydown',e=>{if(e.key=='Escape')closeAll();else if(!$('#lock').classList.contains('u'))$('#lock').click()});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.pop,#tbar,#cx'))closeAll()});
+wp(0);icons();alist();tbr();tick();setInterval(tick,1000);
+
+/* ---------- v2: state, file system actions, dialogs ---------- */
+const S={},sv=()=>{try{localStorage.w10=JSON.stringify({...S,fs:FS})}catch(e){}},
+applyS=()=>{const r=document.documentElement;if(S.th)r.dataset.theme=S.th;if(S.ac)r.style.setProperty('--ac',S.ac);if(S.wp!=null)wp(S.wp);tf.hour12=S.h24?false:undefined;document.body.classList.toggle('nb',!!S.nb)};
+try{const j=JSON.parse(localStorage.w10||'{}');if(j.fs)Object.assign(FS,j.fs);delete j.fs;Object.assign(S,j)}catch(e){}
+const fsx=()=>{icons();sv();document.querySelectorAll('.win .bd').forEach(x=>x.dispatchEvent(new Event('fs')))},
+del=(d,k)=>{const B=FS['Recycle Bin'];B[uniq(B,k)]=d[k];delete d[k];fsx()},
+restore=k=>{const B=FS['Recycle Bin'],D=FS['This PC'].Desktop;D[uniq(D,k)]=B[k];delete B[k];fsx()},
+RM={notepad:'notepad',calc:'calc',mspaint:'paint',explorer:'explorer',cmd:'cmd',control:'settings',taskmgr:'tm',winmine:'mines'},
+runcmd=c=>{const k=RM[c.toLowerCase().replace(/\.exe$/,'')];k?launch(k):c&&toast("Windows cannot find '"+c+"'. Check the name and try again.")};
+function ctx(e,items){e.preventDefault();e.stopPropagation();closeAll();const c=$('#cx');c.innerHTML='';
+ items.forEach(([n,f])=>{const d=el('div','',n);d.onclick=v=>{v.stopPropagation();closeAll();f()};c.append(d)});
+ c.style.left=Math.min(e.clientX,innerWidth-200)+'px';c.style.top=Math.max(0,Math.min(e.clientY,innerHeight-items.length*34-50))+'px';c.classList.add('o')}
+function ask(t,v,cb){const o=el('div','dlg','<div class="dbox"><b>'+t+'</b><input><div><button class="bt">OK</button> <button class="bt">Cancel</button></div></div>'),i=$('input',o);i.value=v||'';document.body.append(o);i.focus();i.select();
+ const done=ok=>{o.remove();if(ok)cb(i.value.trim())};o.onclick=e=>{if(e.target.textContent=='OK')done(1);else if(e.target.textContent=='Cancel'||e.target==o)done(0)};i.onkeydown=e=>{if(e.key=='Enter')done(1);if(e.key=='Escape')done(0)}}
+function bsod(){const o=el('div','bs','<div style="font-size:96px">:(</div><p>Your PC ran into a problem and needs to restart. We\'re just collecting some error info, and then we\'ll restart for you.</p><p><span>0</span>% complete</p><small>Stop code: CRITICAL_PROCESS_DIED</small>');document.body.append(o);let n=0;
+ const t=setInterval(()=>{n+=Math.random()*14;$('span',o).textContent=Math.min(100,n|0);if(n>=100){clearInterval(t);o.remove();W.slice().forEach(w=>w.close());lk()}},350)}
+const t0=toast;toast=function(m,k){t0(m,k);if(k)fsx()};
+
+icons=function(){const D=FS['This PC'].Desktop,B=[['💻','This PC',()=>launch('explorer',['This PC'])],[Object.keys(FS['Recycle Bin']).length?'♻️':'🗑️','Recycle Bin',()=>launch('explorer',['Recycle Bin'])],['📝','Notepad',()=>launch('notepad')],['🧮','Calculator',()=>launch('calc')],['🎨','Paint',()=>launch('paint')],['💣','Minesweeper',()=>launch('mines')]];
+ Object.entries(D).forEach(([k,v])=>B.push([typeof v=='string'?'📄':'📁',k,()=>typeof v=='string'?launch('notepad',{f:k,t:v,d:D}):launch('explorer',['This PC','Desktop',k]),1]));
+ const c=$('#ic');c.innerHTML='';B.forEach(([i,n,f,u])=>{const d=el('div','ic','<b>'+i+'</b>'+n);d.dataset.k=n;if(u)d.dataset.u=1;ob(d,f);c.append(d)})};
+$('#desk').oncontextmenu=e=>{if(e.target.closest('.win'))return;const D=FS['This PC'].Desktop,ic=e.target.closest('.ic'),k=ic&&ic.dataset.k;
+ if(ic&&ic.dataset.u)return ctx(e,[['Open',()=>ic.ondblclick()],['Rename',()=>ask('Rename',k,n=>{if(n&&!(n in D)){D[n]=D[k];delete D[k];fsx()}})],['Delete',()=>del(D,k)]]);
+ if(k=='Recycle Bin')return ctx(e,[['Open',()=>ic.ondblclick()],['Empty Recycle Bin',()=>{const B=FS['Recycle Bin'];Object.keys(B).forEach(x=>delete B[x]);fsx()}]]);
+ if(ic)return ctx(e,[['Open',()=>ic.ondblclick()]]);
+ ctx(e,[['Refresh',fsx],['New folder',()=>{D[uniq(D,'New folder')]={};fsx()}],['New text document',()=>{D[uniq(D,'New Text Document','.txt')]='';fsx()}],['Display settings',()=>launch('settings')],['Personalize',()=>launch('settings')]])};
+$('#tbar').oncontextmenu=e=>ctx(e,[['Task Manager',()=>launch('tm')],['Show the desktop',()=>$('#sd').click()],['Run…',()=>ask('Run — type a program name (e.g. notepad, calc, cmd)','',runcmd)],['Settings',()=>launch('settings')]]);
+document.addEventListener('keydown',e=>{if(e.key=='Delete'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){const i=$('.ic.s[data-u]');if(i)del(FS['This PC'].Desktop,i.dataset.k)}});
+document.addEventListener('keyup',e=>{if(e.key=='Meta')tog('start')});
+
+/* ---------- v2: File Explorer ---------- */
+function explorer2(b,w,a){
+ let p=a||['This PC'];const H=[],F=[];
+ b.innerHTML='<div class="xn"><button data-a="b">←</button><button data-a="f">→</button><button data-a="u">↑</button><div class="ad"></div><input class="xs" placeholder="Search"></div><div class="xm"><div class="sd2"></div><div class="fl"></div></div><div class="st"></div>';
+ const get=q=>q.reduce((o,k)=>o&&o[k],FS),fl=$('.fl',b),xs=$('.xs',b),go=(q,h=1)=>{if(h){H.push(p);F.length=0}p=q;xs.value='';draw()};
+ function draw(){let o=get(p);if(!o||typeof o!='object'){p=['This PC'];o=FS['This PC']}
+  const ks=Object.keys(o).filter(k=>k.toLowerCase().includes(xs.value.toLowerCase())),bin=p[0]=='Recycle Bin';fl.innerHTML='';$('.ad',b).textContent=p.join(' › ');w.t(p[p.length-1]);
+  ks.forEach(k=>{const v=o[k],d=el('div','fi','<b>'+(typeof v=='string'?'📄':v===null?'⚙️':/Disk/.test(k)?'💽':'📁')+'</b>'+k),op=()=>typeof v=='string'?launch('notepad',{f:k,t:v,d:o}):v===null?toast('Windows cannot open this file.'):go([...p,k]);
+   ob(d,op);d.oncontextmenu=e=>ctx(e,bin?[['Restore',()=>restore(k)],['Delete permanently',()=>{delete o[k];fsx()}]]:[['Open',op],['Rename',()=>ask('Rename',k,n=>{if(n&&!(n in o)){o[n]=v;delete o[k];fsx()}})],['Delete',()=>del(o,k)]]);fl.append(d)});
+  fl.oncontextmenu=e=>{if(e.target==fl)ctx(e,bin?[['Empty Recycle Bin',()=>{Object.keys(o).forEach(k=>delete o[k]);fsx()}]]:[['New folder',()=>{o[uniq(o,'New folder')]={};fsx()}],['New text document',()=>{o[uniq(o,'New Text Document','.txt')]='';fsx()}]])};
+  $('.st',b).textContent=ks.length+' items'}
+ $('.sd2',b).append(...[['This PC'],['This PC','Desktop'],['This PC','Documents'],['This PC','Downloads'],['This PC','Pictures'],['Recycle Bin']].map(q=>{const d=el('div','sl',q[q.length-1]);d.onclick=()=>go(q);return d}));
+ $('.xn',b).onclick=e=>{const k=e.target.dataset.a;if(k=='b'&&H.length){F.push(p);go(H.pop(),0)}if(k=='f'&&F.length){H.push(p);go(F.pop(),0)}if(k=='u'&&p.length>1)go(p.slice(0,-1))};
+ xs.oninput=draw;b.addEventListener('fs',draw);draw()}
+
+/* ---------- v2: Command Prompt with a real working directory ---------- */
+function cmd2(b,w){
+ w.t('Command Prompt');b.classList.add('cm');let cw=['This PC'],hi=0;const H=[];
+ const pr=()=>'C:\\Users\\User'+(cw.length>1?'\\'+cw.slice(1).join('\\'):'')+'>',cur=()=>cw.reduce((x,k)=>x[k],FS);
+ b.innerHTML='<pre class="o">Microsoft Windows [Version 10.0.19045.1]\n(c) Microsoft Corporation. All rights reserved.\nType help to see commands.\n</pre><div class="ln"><span></span><input spellcheck="false" autocapitalize="off" autocomplete="off"></div>';
+ const o=$('.o',b),i=$('input',b),ps=$('.ln span',b);ps.textContent=pr();
+ const AP={notepad:'notepad',calc:'calc',mspaint:'paint',paint:'paint',explorer:'explorer',cmd:'cmd',control:'settings',taskmgr:'tm',winmine:'mines'},
+ R={help:()=>'help dir cd mkdir type del echo cls date time ver whoami hostname ipconfig ping systeminfo shutdown bsod start <app> exit',
+ dir:()=>{const d=cur();return ' Directory of '+pr().slice(0,-1)+'\n\n'+(Object.keys(d).map(k=>'10/09/2026  09:00 AM    '+(d[k]&&typeof d[k]=='object'?'<DIR>          ':String((d[k]||'').length).padStart(10)+' ')+k).join('\n')||'File Not Found')},
+ cd:r=>{const t=r.join(' ');if(!t)return pr().slice(0,-1);if(t=='..'){if(cw.length>1)cw.pop()}else if(t=='\\'||t=='/')cw=['This PC'];else{const c=cur(),k=Object.keys(c).find(x=>x.toLowerCase()==t.toLowerCase());if(k&&c[k]&&typeof c[k]=='object')cw.push(k);else return 'The system cannot find the path specified.'}ps.textContent=pr()},
+ mkdir:r=>{if(r[0]){cur()[r.join(' ')]={};fsx()}},type:r=>{const v=cur()[r.join(' ')];return typeof v=='string'?v:'The system cannot find the file specified.'},
+ del:r=>{const k=r.join(' ');if(typeof cur()[k]=='string')del(cur(),k);else return 'Could Not Find '+k},
+ cls:()=>{o.textContent=''},echo:r=>r.join(' '),date:()=>'The current date is: '+new Date().toLocaleDateString('en-US'),time:()=>'The current time is: '+new Date().toLocaleTimeString(),
+ ver:()=>'\nMicrosoft Windows [Version 10.0.19045.1]',whoami:()=>'desktop-web10\\user',hostname:()=>'DESKTOP-WEB10',
+ ipconfig:()=>'Windows IP Configuration\n\nEthernet adapter Ethernet:\n   IPv4 Address. . . . . : 192.168.1.42',
+ systeminfo:()=>'Host Name:         DESKTOP-WEB10\nOS Name:           Microsoft Windows 10 Pro\nOS Version:        10.0.19045 Build 19045\nSystem Type:       x64-based PC\nTotal Memory:      16,384 MB',
+ ping:r=>{let n=0;o.textContent+='\nPinging '+(r[0]||'localhost')+' with 32 bytes of data:\n';const t=setInterval(()=>{o.textContent+='Reply from 127.0.0.1: bytes=32 time<1ms TTL=128\n';b.scrollTop=b.scrollHeight;if(++n==4)clearInterval(t)},400)},
+ shutdown:r=>{$('#pw [data-a="'+(r.includes('/r')?'r':'s')+'"]').click()},bsod:()=>{bsod()},exit:()=>{w.close()},
+ start:r=>AP[(r[0]||'').toLowerCase()]?launch(AP[r[0].toLowerCase()]):'The system cannot find the file '+(r[0]||'')+'.'};
+ i.onkeydown=e=>{
+  if(e.key=='Enter'){const c=i.value.trim(),[m='',...r]=c.split(/\s+/),x=m.toLowerCase();H.push(c);hi=H.length;i.value='';o.textContent+=pr()+c+'\n';
+   const f=R[x]||(AP[x]?()=>launch(AP[x]):null),s=f?f(r):c?"'"+m+"' is not recognized as an internal or external command,\noperable program or batch file.":'';
+   if(typeof s=='string'&&s)o.textContent+=s+'\n'}
+  if(e.key=='ArrowUp'&&hi>0)i.value=H[--hi];
+  if(e.key=='ArrowDown'){hi=Math.min(hi+1,H.length);i.value=H[hi]||''}
+  b.scrollTop=b.scrollHeight};
+ b.onclick=()=>i.focus();if(!CO)i.focus()}
+
+/* ---------- v2: Settings with pages ---------- */
+function settings2(b,w){
+ w.t('Settings');b.style.flexDirection='row';
+ const PG={Personalization:()=>'<h2>Personalization</h2><h4>Choose your color mode</h4><button class="bt" data-m="light">Light</button> <button class="bt" data-m="dark">Dark</button><h4>Accent color</h4>'+AC.map(c=>'<i class="sw" data-c="'+c+'" style="background:'+c+'"></i>').join('')+'<input type="color" data-cc="1" value="#0078d7"><h4>Background</h4>'+WP.map((v,i)=>'<i class="sw wp" data-b="'+i+'" style="background:'+v+'"></i>').join('')+'<h4>Transparency effects</h4><button class="bt" data-t="1">'+(S.nb?'Off':'On')+' (tap to toggle)</button>',
+ System:()=>'<h2>System</h2><h4>Brightness</h4><input type="range" min="20" max="100" data-br="1" value="'+(100-($('#dim').style.opacity||0)*125|0)+'"><h4>About</h4><p>Device name: DESKTOP-WEB10<br>Edition: Windows 10 Pro (HTML remake)<br>Version: 22H2 (OS Build 19045)<br>Screen: '+innerWidth+' × '+innerHeight+'</p>',
+ Clock:()=>'<h2>Date &amp; time</h2><h4>24-hour clock</h4><button class="bt" data-h="1">'+(S.h24?'On':'Off')+' (tap to toggle)</button><p>'+new Date().toLocaleString()+'</p>',
+ Update:()=>'<h2>Windows Update</h2><p id="us">You\'re up to date. Last checked: today</p><button class="bt" data-u="1">Check for updates</button>'};
+ b.innerHTML='<div class="sn">'+Object.keys(PG).map(k=>'<div data-p="'+k+'">'+k+'</div>').join('')+'</div><div class="sc"></div>';
+ const sc=$('.sc',b),pg=k=>{sc.innerHTML=PG[k]();b.querySelectorAll('.sn div').forEach(d=>d.classList.toggle('on',d.dataset.p==k))};pg('Personalization');
+ b.onclick=e=>{const d=e.target.dataset,r=document.documentElement;
+  if(d.p)pg(d.p);if(d.m){S.th=d.m;r.dataset.theme=d.m}if(d.c){S.ac=d.c;r.style.setProperty('--ac',d.c)}if(d.b){S.wp=+d.b;wp(S.wp)}
+  if(d.t){S.nb=!S.nb;applyS();pg('Personalization')}if(d.h){S.h24=!S.h24;applyS();tick();pg('Clock')}
+  if(d.u){const u=$('#us',b);u.textContent='Checking for updates…';setTimeout(()=>{u.textContent='Downloading updates… 100%';setTimeout(()=>{u.innerHTML='Updates installed. <button class="bt" data-rs="1">Restart now</button>'},1200)},1200)}
+  if(d.rs)$('#pw [data-a="r"]').click();sv()};
+ b.oninput=e=>{const d=e.target.dataset;if(d.cc){S.ac=e.target.value;document.documentElement.style.setProperty('--ac',S.ac)}if(d.br){$('#dim').style.opacity=(100-e.target.value)/125;$('#br').value=e.target.value}sv()}}
+
+/* ---------- v2: Minesweeper ---------- */
+function mines(b,w){
+ const n=9,M=10;let g,st,fl,sec,iv;
+ b.innerHTML='<div class="mb"><button>🙂 New game</button><span class="mi"></span><span class="mi"></span></div><div class="mg"></div>';
+ const bd=$('.mg',b),[i1,i2]=b.querySelectorAll('.mi'),nb=(r,c)=>{const a=[];for(let y=-1;y<2;y++)for(let x=-1;x<2;x++)(y||x)&&g[r+y]&&g[r+y][c+x]&&a.push(g[r+y][c+x]);return a};
+ function reset(){clearInterval(iv);sec=0;st=0;fl=M;w.t('Minesweeper');i1.textContent='🚩 '+fl;i2.textContent='⏱ 0';bd.innerHTML='';
+  g=[...Array(n)].map((_,r)=>[...Array(n)].map((_,c)=>({r,c,m:0,o:0,f:0,n:0})));
+  g.flat().forEach(k=>{const d=el('div','mc');k.d=d;d.onclick=()=>opn(k);d.oncontextmenu=e=>{e.preventDefault();flag(k)};let t;d.onpointerdown=()=>{t=setTimeout(()=>{flag(k);k.lp=1},450)};d.onpointerup=d.onpointerleave=()=>clearTimeout(t);bd.append(d)})}
+ function place(s){let c=0;while(c<M){const k=g[Math.random()*n|0][Math.random()*n|0];if(!k.m&&k!=s&&!nb(s.r,s.c).includes(k)){k.m=1;c++}}g.flat().forEach(k=>k.n=nb(k.r,k.c).filter(x=>x.m).length)}
+ function opn(k){if(k.lp){k.lp=0;return}if(st==2||k.o||k.f)return;if(!st){st=1;place(k);iv=setInterval(()=>{if(!b.isConnected)clearInterval(iv);i2.textContent='⏱ '+ ++sec},1000)}
+  if(k.m){st=2;clearInterval(iv);g.flat().forEach(x=>{if(x.m){x.d.textContent='💣';x.d.className='mc o'}});k.d.style.background='#e81123';w.t('Minesweeper - Game over');return}
+  flood(k);if(g.flat().every(x=>x.m||x.o)){st=2;clearInterval(iv);w.t('Minesweeper - You win! 🎉')}}
+ function flood(k){if(k.o||k.f)return;k.o=1;k.d.className='mc o';k.d.textContent=k.n||'';k.d.dataset.n=k.n;if(!k.n)nb(k.r,k.c).forEach(flood)}
+ function flag(k){if(st==2||k.o)return;k.f=!k.f;fl+=k.f?-1:1;k.d.textContent=k.f?'🚩':'';i1.textContent='🚩 '+fl}
+ $('.mb button',b).onclick=reset;reset()}
+
+/* ---------- v2: Task Manager ---------- */
+function taskman(b,w){
+ w.t('Task Manager');
+ b.innerHTML='<div class="mb"><button data-a="e">End task</button><span class="mi"></span></div><canvas width="460" height="110" style="flex:none;width:100%;height:110px;background:var(--ws)"></canvas><div class="tml" style="flex:1;overflow:auto"></div>';
+ const x=$('canvas',b).getContext('2d'),L=$('.tml',b),h=[...Array(60)].map(()=>20);let sel=-1;
+ const tick2=()=>{h.push(Math.min(95,Math.max(3,h[59]+(Math.random()-.5)*14+W.length*.15-.4)));h.shift();
+  x.clearRect(0,0,460,110);x.strokeStyle='#17a2b8';x.lineWidth=2;x.beginPath();h.forEach((v,i)=>x[i?'lineTo':'moveTo'](i*460/59,110-v*1.1));x.stroke();
+  $('.mi',b).textContent='CPU '+(h[59]|0)+'%   Memory '+(30+W.length*4)+'%';
+  L.innerHTML='<div class="tr th"><span>Name</span><span>Status</span></div>'+W.map((k,i)=>'<div class="tr'+(i==sel?' s':'')+'" data-i="'+i+'"><span>'+APPS[k.id].i+' '+APPS[k.id].n+'</span><span>Running</span></div>').join('')},
+ iv=setInterval(()=>b.isConnected?tick2():clearInterval(iv),1000);tick2();
+ L.onclick=e=>{const r=e.target.closest('.tr');if(r&&r.dataset.i)sel=+r.dataset.i;tick2()};
+ $('.mb',b).onclick=e=>{if(e.target.dataset.a){if(W[sel]==w)toast("Task Manager can't end itself.");else if(W[sel]){W[sel].close();sel=-1;tick2()}}}}
+
+/* ---------- v2: shell polish ---------- */
+Object.assign(APPS,{mines:{n:'Minesweeper',i:'💣',w:340,h:440,f:mines},tm:{n:'Task Manager',i:'📊',w:480,h:440,f:taskman,one:1}});
+APPS.explorer.f=explorer2;APPS.cmd.f=cmd2;APPS.settings.f=settings2;
+const l0=launch;launch=function(id,a){const w=l0(id,a),e=w.e;if(!e._s){e._s=1;const tb=$('.tb',e);
+ tb.addEventListener('pointerdown',v=>{if(v.target.tagName!='BUTTON'&&(e.classList.contains('sl2')||e.classList.contains('sr2'))){e.classList.remove('sl2','sr2');e.style.cssText=e._g}});
+ tb.addEventListener('pointerup',v=>{if(innerWidth<700||e.classList.contains('m')||v.target.tagName=='BUTTON')return;const x=v.clientX,y=v.clientY;
+  if(y<6)e.classList.add('m');else if(x<6||x>innerWidth-6){e._g=e.style.cssText;e.classList.add(x<6?'sl2':'sr2')}})}
+ return w};
+const tvb=el('div','tbtn','❐'),tv=el('div','');tvb.id='tvb';tvb.title='Task View';tv.id='tvw';$('#sb').after(tvb);document.body.append(tv);
+function tvo(){closeAll();tv.innerHTML=W.length?W.map((k,i)=>'<div class="tvc" data-i="'+i+'"><b><span style="font-size:12px;display:inline">'+APPS[k.id].i+' '+$('.tt',k.e).textContent+'</span><u data-x="'+i+'">✕</u></b><span>'+APPS[k.id].i+'</span></div>').join(''):'<p>No open windows</p>';tv.style.display='flex'}
+tv.onclick=e=>{const c=e.target.closest('.tvc'),x=e.target.dataset.x;if(x!=null){W[x].close();tvo();return}if(c)foc(W[c.dataset.i]);tv.style.display='none'};
+tvb.onclick=()=>tv.style.display=='flex'?tv.style.display='none':tvo();
+TL.push(['mines','💣','Minesweeper','#107c10'],['tm','📊','Task Manager','#3b4b5a']);
+$('#tl').innerHTML=TL.map(([k,i,n,c,s])=>'<div class="tl" data-k="'+k+'" style="background:'+c+';grid-column:span '+(s||1)+'"><b>'+i+'</b>'+(n||new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'}))+'</div>').join('');
+const bt=el('div','','<div class="lg big"><i></i><i></i><i></i><i></i></div><div class="sp"></div>');bt.id='boot';document.body.append(bt);setTimeout(()=>bt.remove(),1900);
+/* ---------- v3 ---------- */
+Object.assign(APPS,{photos:{n:'Photos',i:'🖼️',w:640,h:440,f:photos},stick:{n:'Sticky Notes',i:'🗒️',w:300,h:340,f:stick}});Object.assign(RM,{photos:'photos',stickynot:'stick'});
+const setbg=d=>{$('#desk').style.background=$('#lock').style.background='url("'+d+'") center/cover'};
+closeAll=function(x){document.querySelectorAll('.pop').forEach(p=>p.id!=x&&p.classList.remove('o'));$('#cx').classList.remove('o')};
+const l1=launch;launch=function(id,a){if(id=='notepad'&&a&&/^data:image/.test(a.t||''))id='photos';return l1(id,a)};
+
+function photos(b,w,a={}){
+ const dir=a.d||FS['This PC'].Pictures,ks=()=>Object.keys(dir).filter(k=>/^data:image/.test(dir[k]));let i=Math.max(0,ks().indexOf(a.f)),z=1;
+ b.innerHTML='<div class="mb"><button data-a="p">◀</button><button data-a="n">▶</button><button data-a="i">＋</button><button data-a="o">－</button><button data-a="w">Set as background</button><button data-a="d">Delete</button></div><div class="ph"></div><div class="st"></div>';
+ const ph=$('.ph',b),sh=()=>{const l=ks(),k=l[Math.min(i,l.length-1)];ph.innerHTML=k?'<img alt="">':'<p>No pictures yet. Draw something in Paint and press Save.</p>';if(k){const m=$('img',ph);m.src=dir[k];m.style.transform='scale('+z+')'}$('.st',b).textContent=k?k+'  ('+(Math.min(i,l.length-1)+1)+' of '+l.length+')':'0 pictures';w.t((k||'Photos')+' - Photos')};
+ b.onclick=e=>{const x=e.target.dataset.a,l=ks();if(!x||!l.length)return;if(x=='p')i=(i+l.length-1)%l.length;if(x=='n')i=(i+1)%l.length;if(x=='i')z=Math.min(4,z+.25);if(x=='o')z=Math.max(.25,z-.25);
+  if(x=='w'){S.bg=dir[l[i]];S.wp=-1;setbg(S.bg);sv();toast('Background updated')}if(x=='d'){del(dir,l[i]);i=0}sh()};
+ b.addEventListener('fs',sh);sh()}
+function stick(b,w){
+ w.t('Sticky Notes');const N=S.sn||(S.sn=['Welcome to Sticky Notes!\nNotes are saved in this browser.']);let i=0;
+ b.innerHTML='<div class="mb"><button data-a="n">＋ New</button><button data-a="p">◀</button><button data-a="x">▶</button><button data-a="d">🗑️</button><span class="mi"></span></div><textarea class="sk" spellcheck="false"></textarea>';
+ const t=$('textarea',b),sh=()=>{t.value=N[i]||'';t.className='sk k'+i%4;$('.mi',b).textContent=(i+1)+' / '+N.length};t.oninput=()=>{N[i]=t.value;sv()};
+ $('.mb',b).onclick=e=>{const a=e.target.dataset.a;if(a=='n'){N.push('');i=N.length-1}if(a=='p')i=(i+N.length-1)%N.length;if(a=='x')i=(i+1)%N.length;if(a=='d'&&N.length>1){N.splice(i,1);i=0}sv();sh()};sh()}
+
+const pa0=paint;paint=function(b,w){pa0(b,w);const s=el('button','','💾 Save');$('.mb',b).append(s);
+ s.onclick=e=>{e.stopPropagation();const P=FS['This PC'].Pictures,n=uniq(P,'Drawing','.png');P[n]=$('canvas',b).toDataURL('image/png');w.t(n+' - Paint');fsx();toast('Saved to Pictures: '+n)}};APPS.paint.f=paint;
+const np0=notepad;notepad=function(b,w,a={}){np0(b,w,a);const m=$('.mb',b),t=$('textarea',b);
+ [['Find','f'],['Date','t']].forEach(([n,k])=>{const x=el('button','',n);x.onclick=()=>{
+  if(k=='t'){t.setRangeText(new Date().toLocaleString(),t.selectionStart,t.selectionEnd,'end');t.focus()}
+  else ask('Find what:','',q=>{if(!q)return;const v=t.value.toLowerCase(),s=q.toLowerCase(),i=v.indexOf(s,t.selectionEnd),j=i<0?v.indexOf(s):i;if(j<0)toast("Cannot find '"+q+"'");else{t.focus();t.setSelectionRange(j,j+q.length)}})};m.append(x)});
+ t.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key=='s'){e.preventDefault();$('[data-a=s]',m).click()}})};APPS.notepad.f=notepad;
+const ca0=calc;calc=function(b,w){ca0(b,w);const M={'*':'×','/':'÷','-':'−',Enter:'=','=':'=',Backspace:'⌫',Escape:'C',Delete:'CE'},
+ h=e=>{if(!b.isConnected)return document.removeEventListener('keydown',h);if(act&&act.b==b&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){const k=M[e.key]||e.key,x=[...b.querySelectorAll('button')].find(y=>y.textContent==k);if(x){x.click();e.preventDefault()}}};document.addEventListener('keydown',h)};APPS.calc.f=calc;
+
+/* tray flyouts, real battery/network, startup chime */
+let AX,VL=.6,BT,nc=0,ch=0;const NW=['HomeNet-5G','CoffeeShop Guest','Linksys_2.4G','Airport Free WiFi'],
+mk=(id,h)=>{const d=el('div','pop fy',h);d.id=id;document.body.append(d);return d},
+tone=(f,t,d,g=.15)=>{try{AX=AX||new(window.AudioContext||webkitAudioContext)();AX.resume&&AX.resume();const o=AX.createOscillator(),v=AX.createGain(),s=AX.currentTime+t;o.frequency.value=f;o.connect(v);v.connect(AX.destination);v.gain.setValueAtTime(0,s);v.gain.linearRampToValueAtTime(g*VL,s+.05);v.gain.exponentialRampToValueAtTime(.0001,s+d);o.start(s);o.stop(s+d)}catch(e){}},
+NT=mk('net',''),VP=mk('vol','<h3>Volume</h3><input type="range" min="0" max="100" value="60"><span>🔊 60</span>'),
+rn=()=>{NT.innerHTML='<h3>Wi-Fi</h3><small>'+(navigator.onLine?'Connected, internet access':'No internet')+'</small>'+NW.map((n,i)=>'<div class="wf'+(i==nc?' on':'')+'" data-i="'+i+'"><span>📶 '+n+'</span><span>'+(i==nc?'Connected':'')+'</span></div>').join('')};
+rn();NT.onclick=e=>{const r=e.target.closest('.wf');if(r){nc=+r.dataset.i;rn();toast('Connected to '+NW[nc])}};
+VP.oninput=e=>{VL=e.target.value/100;const c=VL?VL<.4?'🔉':'🔊':'🔇';$('.tray [data-f=vol]').textContent=c;$('span',VP).textContent=c+' '+e.target.value};VP.onchange=()=>tone(660,0,.25,.2);
+$('.tray').innerHTML='⌃ <span data-f="net">📶</span><span data-f="vol">🔊</span><span data-f="bat">🔋</span>';
+$('.tray').onclick=e=>{const f=e.target.dataset.f;if(!f)return;if(f=='bat')toast(BT?'Battery: '+Math.round(BT.level*100)+'%'+(BT.charging?' (charging)':''):'Battery status is not available on this device.');else tog(f)};
+navigator.getBattery&&navigator.getBattery().then(b=>{BT=b;const u=()=>{$('.tray [data-f=bat]').textContent=(b.charging?'⚡':'🔋')+Math.round(b.level*100)+'%'};u();b.onlevelchange=b.onchargingchange=u}).catch(()=>{});
+addEventListener('offline',()=>{toast('You are offline');rn()});addEventListener('online',()=>{toast('Back online');rn()});
+$('#lock').addEventListener('click',()=>{if(!ch){ch=1;[[311,0],[466,.18],[415,.36],[622,.6]].forEach(([f,t])=>{tone(f,t,1.6);tone(f/2,t,1.6,.06)})}});
+
+/* ---------- v4: lots more apps ---------- */
+const ctl=(b,e,fn)=>{let sx,sy;e.onpointerdown=v=>{sx=v.clientX;sy=v.clientY};e.onpointerup=v=>{const x=v.clientX-sx,y=v.clientY-sy;if(Math.max(Math.abs(x),Math.abs(y))>20)fn(Math.abs(x)>Math.abs(y)?x>0?'R':'L':y>0?'D':'U')};
+ const h=v=>{if(!b.isConnected)return document.removeEventListener('keydown',h);const d={ArrowUp:'U',ArrowDown:'D',ArrowLeft:'L',ArrowRight:'R'}[v.key];if(d&&act&&act.b==b){v.preventDefault();fn(d)}};document.addEventListener('keydown',h)};
+
+function snake(b,w){
+ w.t('Snake');b.innerHTML='<div class="mb"><button>New game</button><span class="mi"></span></div><canvas width="300" height="300" style="flex:none;width:min(100%,300px);align-self:center;margin:8px;background:#111;touch-action:none"></canvas>';
+ const c=$('canvas',b),x=c.getContext('2d'),n=15,s=20,sc=$('.mi',b);let sn,d,nd,f,pt,t;
+ const nf=()=>{do f=[Math.random()*n|0,Math.random()*n|0];while(sn.some(p=>p[0]==f[0]&&p[1]==f[1]))},
+ step=()=>{if(!b.isConnected)return clearInterval(t);d=nd;const h=[sn[0][0]+(d=='R')-(d=='L'),sn[0][1]+(d=='D')-(d=='U')];
+  if(h[0]<0||h[1]<0||h[0]>=n||h[1]>=n||sn.some(p=>p[0]==h[0]&&p[1]==h[1])){clearInterval(t);sc.textContent='Game over: '+pt;return}
+  sn.unshift(h);if(h[0]==f[0]&&h[1]==f[1]){sc.textContent='Score '+ ++pt;nf()}else sn.pop();
+  x.fillStyle='#111';x.fillRect(0,0,300,300);x.fillStyle='#e74856';x.fillRect(f[0]*s+2,f[1]*s+2,s-4,s-4);x.fillStyle='#10c040';sn.forEach(p=>x.fillRect(p[0]*s+1,p[1]*s+1,s-2,s-2))},
+ rst=()=>{clearInterval(t);sn=[[7,7],[6,7],[5,7]];d=nd='R';pt=0;nf();t=setInterval(step,130);sc.textContent='Score 0'};
+ ctl(b,c,k=>{if({U:'D',D:'U',L:'R',R:'L'}[k]!=d)nd=k});$('.mb button',b).onclick=rst;rst()}
+
+function g2048(b,w){
+ w.t('2048');b.innerHTML='<div class="mb"><button>New game</button><span class="mi"></span></div><div class="g4"></div>';
+ const bd=$('.g4',b),sc=$('.mi',b);let g,pts;
+ const add=()=>{const e=[];g.forEach((v,i)=>v||e.push(i));if(e.length)g[e[Math.random()*e.length|0]]=Math.random()<.9?2:4},
+ draw=()=>{bd.innerHTML=g.map(v=>'<div class="t4" style="background:hsl('+(40-Math.log2(v||1)*3)+',90%,'+(v?Math.max(35,92-Math.log2(v)*5):85)+'%);color:'+(v>4?'#fff':'#444')+'">'+(v||'')+'</div>').join('');sc.textContent='Score '+pts},
+ rst=()=>{g=Array(16).fill(0);pts=0;add();add();draw()},
+ mv=k=>{const o=g.join();for(let i=0;i<4;i++){const ix=[0,1,2,3].map(j=>k=='L'?i*4+j:k=='R'?i*4+3-j:k=='U'?j*4+i:(3-j)*4+i);let r=ix.map(j=>g[j]).filter(Boolean);
+  for(let j=0;j<r.length-1;j++)if(r[j]==r[j+1]){r[j]*=2;pts+=r[j];r.splice(j+1,1)}while(r.length<4)r.push(0);ix.forEach((j,m)=>g[j]=r[m])}
+  if(g.join()!=o){add();draw()}if(!g.includes(0)&&!g.some((v,i)=>v==g[i+1]&&i%4<3||v==g[i+4]))sc.textContent='Game over: '+pts};
+ ctl(b,bd,mv);$('.mb button',b).onclick=rst;rst()}
+
+function ttt(b,w){
+ w.t('Tic-Tac-Toe');b.innerHTML='<div class="mb"><button>New game</button><span class="mi"></span></div><div class="tt3"></div>';
+ const bd=$('.tt3',b),sc=$('.mi',b),L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];let g,over;
+ const win=p=>L.find(l=>l.every(i=>g[i]==p)),draw=()=>{bd.innerHTML=g.map((v,i)=>'<div data-i="'+i+'">'+v+'</div>').join('')},
+ end=()=>{const x=win('✕'),o=win('○');if(x||o||!g.includes('')){over=1;sc.textContent=x?'You win! 🎉':o?'Computer wins':'Draw'}},
+ ai=()=>{const f=g.map((v,i)=>v?-1:i).filter(i=>i>=0),t=p=>f.find(i=>{g[i]=p;const r=win(p);g[i]='';return r}),m=t('○')??t('✕')??(g[4]?undefined:4);g[m??f[Math.random()*f.length|0]]='○'},
+ rst=()=>{g=Array(9).fill('');over=0;sc.textContent='You are ✕';draw()};
+ bd.onclick=e=>{const i=e.target.dataset.i;if(i==null||over||g[i])return;g[i]='✕';end();if(!over){ai();end()}draw()};$('.mb button',b).onclick=rst;rst()}
+
+function piano(b,w){
+ w.t('Piano');const N=[['C',262],['D',294],['E',330],['F',349],['G',392],['A',440],['B',494],['C',523]],B=[['C♯',277,1],['D♯',311,2],['F♯',370,4],['G♯',415,5],['A♯',466,6]],K='asdfghjk',BK={w:0,e:1,t:2,y:3,u:4};
+ b.innerHTML='<div class="pn">'+N.map(([n,f])=>'<b data-f="'+f+'">'+n+'</b>').join('')+B.map(([n,f,k])=>'<i data-f="'+f+'" style="left:'+k*12.5+'%">'+n+'</i>').join('')+'</div><div class="st">Tap the keys, or press A S D F G H J K and W E T Y U</div>';
+ const p=$('.pn',b),pl=f=>{tone(f,0,1.2,.3);const e=p.querySelector('[data-f="'+f+'"]');e.classList.add('on');setTimeout(()=>e.classList.remove('on'),180)};
+ p.onpointerdown=e=>{const f=e.target.dataset.f;if(f)pl(+f)};
+ const h=e=>{if(!b.isConnected)return document.removeEventListener('keydown',h);if(act&&act.b==b&&!e.repeat){const k=e.key.toLowerCase(),i=K.indexOf(k);if(i>=0)pl(N[i][1]);else if(k in BK)pl(B[BK[k]][1])}};document.addEventListener('keydown',h)}
+
+function aclock(b,w){
+ w.t('Alarms & Clock');b.innerHTML='<div class="mb"><button data-a="s">Stopwatch</button><button data-a="t">Timer</button><button data-a="w">World clock</button></div><div class="ck"><div class="big"></div><div class="row"></div></div>';
+ const big=$('.big',b),row=$('.row',b),Z=[['Local'],['New York','America/New_York'],['London','Europe/London'],['Tokyo','Asia/Tokyo'],['Sydney','Australia/Sydney']];let m='s',acc=0,st=0,run=0,tl=300000;
+ const f=ms=>{const s=Math.max(0,ms)/1000;return String(s/60|0).padStart(2,'0')+':'+(s%60).toFixed(1).padStart(4,'0')},
+ stop=()=>{if(run){m=='s'?acc+=Date.now()-st:tl-=Date.now()-st;run=0}},
+ upd=()=>{const n=Date.now();if(m=='s')big.textContent=f(acc+(run?n-st:0));else if(m=='t'){const l=tl-(run?n-st:0);big.textContent=f(l);if(run&&l<=0){run=0;tl=0;toast('⏰ Timer finished!');tone(880,0,.5);tone(880,.6,.5);view()}}
+  else big.innerHTML=Z.map(([c,z])=>'<div class="tr"><span>'+c+'</span><span>'+new Date().toLocaleTimeString([],{timeZone:z,hour:'numeric',minute:'2-digit',second:'2-digit'})+'</span></div>').join('')},
+ view=()=>{big.style.fontSize=m=='w'?'16px':'';row.innerHTML=m=='w'?'':'<button class="bt" data-a="go">'+(run?'Pause':'Start')+'</button> <button class="bt" data-a="rs">Reset</button>'+(m=='t'?' <button class="bt" data-a="p">+1 min</button>':'');upd()};
+ $('.mb',b).onclick=e=>{const a=e.target.dataset.a;if(a){stop();m=a;view()}};
+ row.onclick=e=>{const a=e.target.dataset.a,n=Date.now();if(a=='go'){if(run)stop();else{st=n;run=1}}if(a=='rs'){run=0;acc=0;tl=300000}if(a=='p')tl+=60000;view()};
+ const iv=setInterval(()=>b.isConnected?upd():clearInterval(iv),100);view()}
+
+function todo(b,w){
+ w.t('To Do');const T=S.td||(S.td=[{t:'Try the new apps',d:0}]);
+ b.innerHTML='<div class="mb"><input class="xs" style="flex:1;width:auto;margin:4px;padding:6px" placeholder="Add a task and press Enter"></div><div style="flex:1;overflow:auto"></div>';
+ const L=b.lastChild,inp=$('input',b),dr=()=>{L.innerHTML=T.map((x,k)=>'<div class="tr" data-k="'+k+'"><span style="'+(x.d?'text-decoration:line-through;opacity:.6':'')+'">'+(x.d?'✅':'⭕')+' '+x.t.replace(/</g,'&lt;')+'</span><u data-x="'+k+'" style="text-decoration:none">🗑️</u></div>').join('')||'<p style="padding:12px">All done! 🎉</p>'};
+ inp.onkeydown=e=>{if(e.key=='Enter'&&inp.value.trim()){T.push({t:inp.value.trim(),d:0});inp.value='';sv();dr()}};
+ L.onclick=e=>{const x=e.target.dataset.x,r=e.target.closest('.tr');if(x!=null)T.splice(x,1);else if(r)T[r.dataset.k].d^=1;sv();dr()};dr()}
+
+function cal2(b,w){
+ w.t('Calendar');const E=S.ev||(S.ev={});let d=new Date(),sel=new Date().toDateString();d.setDate(1);
+ b.innerHTML='<div class="mb"><button data-a="p">◀</button><button data-a="n">▶</button><button data-a="t">Today</button><button data-a="a">＋ Add event</button><span class="mi"></span></div><div class="cg2"></div><div style="overflow:auto;flex:none;max-height:35%"></div>';
+ const g=$('.cg2',b),l=b.lastChild,
+ dr=()=>{const y=d.getFullYear(),m=d.getMonth(),n=new Date(y,m+1,0).getDate(),td=new Date().toDateString();$('.mi',b).textContent=d.toLocaleDateString([],{month:'long',year:'numeric'});
+  let h=['S','M','T','W','T','F','S'].map(x=>'<b>'+x+'</b>').join('')+'<i></i>'.repeat(d.getDay());
+  for(let k=1;k<=n;k++){const s=new Date(y,m,k).toDateString();h+='<div data-s="'+s+'" class="'+(s==td?'td ':'')+(s==sel?'sl3':'')+'">'+k+(E[s]?'<small>●</small>':'')+'</div>'}
+  g.innerHTML=h;l.innerHTML='<div class="st">'+sel+' (tap an event to delete it)</div>'+(E[sel]||[]).map((t,i)=>'<div class="tr" data-i="'+i+'"><span>'+t.replace(/</g,'&lt;')+'</span><u style="text-decoration:none">✕</u></div>').join('')};
+ $('.mb',b).onclick=e=>{const a=e.target.dataset.a;if(a=='p')d.setMonth(d.getMonth()-1);if(a=='n')d.setMonth(d.getMonth()+1);if(a=='t'){d=new Date();d.setDate(1);sel=new Date().toDateString()}
+  if(a=='a')return ask('New event on '+sel,'',t=>{if(t){(E[sel]=E[sel]||[]).push(t);sv();dr()}});dr()};
+ g.onclick=e=>{const s=e.target.closest('[data-s]');if(s){sel=s.dataset.s;dr()}};
+ l.onclick=e=>{const r=e.target.closest('.tr');if(r){E[sel].splice(r.dataset.i,1);if(!E[sel].length)delete E[sel];sv();dr()}};dr()}
+
+function conv(b,w){
+ w.t('Unit Converter');const U={Length:{m:1,km:1e3,cm:.01,mi:1609.344,ft:.3048,in:.0254},Weight:{kg:1,g:.001,lb:.45359237,oz:.0283495},Temperature:{'°C':0,'°F':0,K:0},Volume:{L:1,mL:.001,gal:3.78541,cup:.236588}};
+ b.innerHTML='<div class="cvw"><select></select><input type="number" value="1"><select></select><select></select><div class="cvr"></div></div>';
+ const [C,fs,ts]=b.querySelectorAll('select'),v=$('input',b),r=$('.cvr',b),opt=a=>a.map(x=>'<option>'+x+'</option>').join('');
+ const go=()=>{const u=U[C.value],x=parseFloat(v.value);if(isNaN(x)){r.textContent='';return}let o;
+  if(C.value=='Temperature'){const c=fs.value=='°C'?x:fs.value=='°F'?(x-32)*5/9:x-273.15;o=ts.value=='°C'?c:ts.value=='°F'?c*9/5+32:c+273.15}else o=x*u[fs.value]/u[ts.value];r.textContent=(+o.toPrecision(8))+' '+ts.value},
+ cat=()=>{fs.innerHTML=ts.innerHTML=opt(Object.keys(U[C.value]));ts.selectedIndex=1;go()};
+ C.innerHTML=opt(Object.keys(U));C.onchange=cat;v.oninput=fs.onchange=ts.onchange=go;cat()}
+
+function wpad(b,w){
+ w.t('WordPad');b.innerHTML='<div class="mb"><button data-c="bold"><b>B</b></button><button data-c="italic"><i>I</i></button><button data-c="underline"><u>U</u></button><button data-c="insertUnorderedList">• List</button><button data-s="1">💾 Save</button><span class="mi"></span></div><div class="wpd" contenteditable="true" spellcheck="false"></div>';
+ const d=$('.wpd',b),m=$('.mb',b);m.onmousedown=e=>e.preventDefault();
+ m.onclick=e=>{const t=e.target.closest('button');if(!t)return;if(t.dataset.c)document.execCommand(t.dataset.c);if(t.dataset.s){const D=FS['This PC'].Documents,n=uniq(D,'Document','.txt');D[n]=d.innerText;fsx();toast('Saved '+n+' to Documents')}d.focus()};
+ d.oninput=()=>$('.mi',b).textContent=d.innerText.trim().split(/\s+/).filter(Boolean).length+' words'}
+
+function typer(b,w){
+ w.t('Typing Test');const P=['The quick brown fox jumps over the lazy dog while the sun sets slowly behind the distant hills.','Programming is the art of telling another human what one wants the computer to do.','A journey of a thousand miles begins with a single step and a very good pair of shoes.'];
+ b.innerHTML='<div class="cvw"><div class="tpt"></div><textarea class="tpi" placeholder="Start typing here…" spellcheck="false"></textarea><div class="tpr">Type the text above. Timing starts on your first key.</div><button class="bt">New text</button></div>';
+ const t=$('.tpt',b),i=$('textarea',b),r=$('.tpr',b);let tx,st;
+ const nw=()=>{tx=P[Math.random()*P.length|0];t.textContent=tx;i.value='';st=0;i.disabled=false;i.focus()};
+ i.oninput=()=>{if(!st)st=Date.now();const v=i.value;t.innerHTML=[...tx].map((c,k)=>'<span style="'+(k<v.length?(v[k]==c?'color:#10893e':'color:#e81123;text-decoration:underline'):'opacity:.7')+'">'+c+'</span>').join('');
+  const m=(Date.now()-st)/60000,ok=[...v].filter((c,k)=>c==tx[k]).length;r.textContent=Math.round(v.length/5/Math.max(m,.02))+' WPM, accuracy '+Math.round(ok/Math.max(v.length,1)*100)+'%';
+  if(v.length>=tx.length){i.disabled=true;r.textContent+=' (finished! 🎉)'}};
+ $('button',b).onclick=nw;nw()}
+
+function pwgen(b,w){
+ w.t('Password Generator');b.innerHTML='<div class="cvw"><div class="cvr" style="word-break:break-all;font:20px Consolas,monospace"></div><label>Length <input type="range" min="8" max="64" value="16"> <span>16</span></label><label><input type="checkbox" checked> Include symbols</label><button class="bt">Generate</button><button class="bt">Copy</button></div>';
+ const o=$('.cvr',b),r=$('input[type=range]',b),s=$('input[type=checkbox]',b),[g,c]=b.querySelectorAll('button');
+ const gen=()=>{const ch='abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'+(s.checked?'!@#$%^&*-_=+?':''),a=crypto.getRandomValues(new Uint32Array(+r.value));o.textContent=[...a].map(x=>ch[x%ch.length]).join('');$('span',b).textContent=r.value};
+ g.onclick=gen;r.oninput=s.onchange=gen;c.onclick=()=>{try{navigator.clipboard.writeText(o.textContent).then(()=>toast('Copied to clipboard')).catch(()=>toast('Select the text to copy it.'))}catch(e){toast('Select the text to copy it.')}};gen()}
+
+Object.assign(APPS,{snake:{n:'Snake',i:'🐍',w:340,h:440,f:snake},g2048:{n:'2048',i:'🔢',w:360,h:470,f:g2048},ttt:{n:'Tic-Tac-Toe',i:'⭕',w:340,h:420,f:ttt},piano:{n:'Piano',i:'🎹',w:520,h:260,f:piano},aclock:{n:'Alarms & Clock',i:'⏰',w:380,h:380,f:aclock},todo:{n:'To Do',i:'✅',w:380,h:420,f:todo},cal2:{n:'Calendar',i:'📅',w:420,h:480,f:cal2},conv:{n:'Unit Converter',i:'📐',w:340,h:400,f:conv},wpad:{n:'WordPad',i:'📃',w:560,h:420,f:wpad},typer:{n:'Typing Test',i:'🏁',w:480,h:400,f:typer},pwgen:{n:'Password Generator',i:'🔑',w:420,h:360,f:pwgen}});
+Object.assign(RM,{snake:'snake','2048':'g2048',calendar:'cal2',wordpad:'wpad',write:'wpad',pwgen:'pwgen',piano:'piano',todo:'todo',clock:'aclock'});
+TL.push(['snake','🐍','Snake','#2d7d32'],['g2048','🔢','2048','#c88b00'],['piano','🎹','Piano','#6b4eaa'],['aclock','⏰','Alarms & Clock','#0a6e8a'],['todo','✅','To Do','#2564cf'],['cal2','📅','Calendar','#a4262c'],['wpad','📃','WordPad','#1d5fa6'],['conv','📐','Converter','#00796b'],['photos','🖼️','Photos','#7a3e9d'],['stick','🗒️','Sticky Notes','#b8860b'],['ttt','⭕','Tic-Tac-Toe','#c13b6c'],['typer','🏁','Typing Test','#555'],['pwgen','🔑','Password Gen','#6c3f2a']);
+$('#tl').innerHTML=TL.map(([k,i,n,c,s])=>'<div class="tl" data-k="'+k+'" style="background:'+c+';grid-column:span '+(s||1)+'"><b>'+i+'</b>'+(n||new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'}))+'</div>').join('');
+
+applyS();if(S.wp==-1&&S.bg)setbg(S.bg);icons();alist();tick();
+
+/* Extra apps for the remake */
+function browserApp(b,w){
+ w.t('Microsoft Edge');b.innerHTML='<div class="browserbar"><button class="bt" data-nav="back" title="Back">←</button><button class="bt" data-nav="reload" title="Reload">↻</button><input class="field" id="edgeurl" value="https://www.bing.com" aria-label="Address or search"><button class="bt primary" data-nav="go">Go</button><button class="bt" data-nav="new">↗</button></div><div class="apphead"><span style="font-size:25px">🌐</span><div><strong>Microsoft Edge</strong><div class="hint">A simple browser window</div></div></div><iframe class="browserframe" id="edgeframe" title="Web page" referrerpolicy="no-referrer"></iframe><div class="st">Some websites block embedding. Use ↗ to open the address in a new tab.</div>';
+ const input=$('#edgeurl',b),frame=$('#edgeframe',b);let last='https://www.bing.com';
+ const resolve=()=>{let q=input.value.trim();if(!q)return;if(!/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(q)){q=/\s/.test(q)||!q.includes('.')?'https://www.bing.com/search?q='+encodeURIComponent(q):'https://'+q}return q};
+ const go=()=>{const u=resolve();if(!u)return;last=u;input.value=u;frame.src=u;};
+ b.querySelector('.browserbar').onclick=e=>{const k=e.target.dataset.nav;if(k==='go')go();if(k==='reload')frame.src=last;if(k==='back'){try{frame.contentWindow.history.back()}catch(_){}}if(k==='new'){const u=resolve();if(u)window.open(u,'_blank','noopener,noreferrer')}};
+ input.onkeydown=e=>{if(e.key==='Enter')go()};go();
+}
+function storeApp(b,w){w.t('Microsoft Store');const items=[['🌐','Microsoft Edge','browser','Browse the web'],['📸','Photos','photos','View your pictures'],['🎵','Media Player','media','Listen to music'],['🌦️','Weather','weather','Weather dashboard'],['📊','Task Manager','taskmgr','Monitor running apps'],['🗒️','Sticky Notes','stick','Quick notes'],['🐍','Snake','snake','Classic arcade game'],['🔢','2048','g2048','Number puzzle'],['⭕','Tic-Tac-Toe','ttt','Play a quick game'],['🔑','Password Generator','pwgen','Generate a random password'],['📐','Unit Converter','conv','Convert common units'],['⌨️','Command Prompt','cmd','Try simulated commands']];
+ b.innerHTML='<div class="apphead"><span style="font-size:30px">🛍️</span><div><strong>Microsoft Store</strong><div class="hint">Discover apps for your desktop</div></div></div><div class="appbody" style="padding:0"><div style="padding:12px"><input class="field" id="storesearch" placeholder="Search apps and games..."></div><div class="cards" id="storecards"></div></div>';
+ const draw=()=>{$('#storecards',b).innerHTML='';const q=$('#storesearch',b).value.toLowerCase();items.filter(x=>(x[1]+' '+x[3]).toLowerCase().includes(q)).forEach(x=>{const d=el('div','storecard','<div class="emoji">'+x[0]+'</div><b>'+x[1]+'</b><span class="hint">'+x[3]+'</span><button class="bt primary" data-app="'+x[2]+'">Open</button>');$('#storecards',b).append(d)})};
+ $('#storesearch',b).oninput=draw;$('#storecards',b).onclick=e=>{const q=e.target.closest('[data-app]');if(q){launch(q.dataset.app);toast(q.dataset.app+' opened')}};draw();
+}
+function mediaApp(b,w){w.t('Media Player');b.innerHTML='<div class="apphead"><span style="font-size:30px">🎵</span><div><strong>Media Player</strong><div class="hint">Play a local audio or video file</div></div></div><div class="appbody"><p>Choose a media file from your device. Files stay on your device and are not uploaded.</p><input type="file" class="field" id="mediafile" accept="audio/*,video/*"><div id="mediabox" style="margin-top:16px"></div><p class="hint">Tip: this player supports formats your browser can play.</p></div>';$('#mediafile',b).onchange=e=>{const f=e.target.files[0];if(!f)return;const u=URL.createObjectURL(f),box=$('#mediabox',b);box.innerHTML='';const m=document.createElement(f.type.startsWith('video/')?'video':'audio');m.controls=true;m.src=u;m.style.maxWidth='100%';m.style.width='100%';box.append(m);m.play().catch(()=>{})}}
+function weatherApp(b,w){w.t('Weather');b.innerHTML='<div class="apphead"><span style="font-size:30px">🌦️</span><div><strong>Weather</strong><div class="hint">Live conditions require an internet connection</div></div></div><div class="appbody"><form id="weatherform" style="display:flex;gap:8px"><input class="field" id="weathercity" placeholder="Enter a city (e.g. Starkville, MS)" value="Starkville, MS"><button class="bt primary">Search</button></form><div id="weatherresult" style="padding:18px 0">Search the web for current weather.</div><button class="bt" id="weatherweb">Open weather search in browser</button></div>';$('#weatherform',b).onsubmit=e=>{e.preventDefault();const q=$('#weathercity',b).value.trim();$('#weatherresult',b).textContent='Weather for '+q+': open the web search below for current conditions.';$('#weatherweb',b).onclick=()=>window.open('https://www.bing.com/search?q='+encodeURIComponent('weather '+q),'_blank','noopener,noreferrer')};$('#weatherweb',b).onclick=()=>window.open('https://www.bing.com/search?q='+encodeURIComponent('weather '+$('#weathercity',b).value),'_blank','noopener,noreferrer')}
+function taskmgrApp(b,w){w.t('Task Manager');b.innerHTML='<div class="apphead"><span style="font-size:28px">📊</span><div><strong>Task Manager</strong><div class="hint">Apps currently open in this simulation</div></div></div><div class="appbody"><div class="statgrid"><div class="statbox"><div class="hint">Open windows</div><h2 id="tmcount">0</h2></div><div class="statbox"><div class="hint">Memory</div><h2>Browser</h2><div class="hint">Usage varies by device</div></div></div><div style="margin-top:14px;border:1px solid var(--bd)" id="tmlist"></div></div>';
+ const draw=()=>{if(!b.isConnected)return;$('#tmcount',b).textContent=W.length;$('#tmlist',b).innerHTML='<div class="tr th"><span>App</span><span>Status</span><span>Action</span></div>'+W.filter(x=>x!==w).map(x=>'<div class="tr"><span>'+x.e.querySelector('.tt').textContent+'</span><span>'+(x.e.classList.contains('h')?'Suspended':'Running')+'</span><button class="bt" data-close="'+x.id+'">End task</button></div>').join('')||'<div class="tr">No other apps are open.</div>'};
+ const timer=setInterval(draw,800);b.addEventListener('DOMNodeRemoved',()=>clearInterval(timer),{once:true});b.onclick=e=>{const z=e.target.closest('[data-close]');if(z){const x=W.find(v=>v.id===z.dataset.close);if(x)x.close();draw()}};draw()}
+Object.assign(APPS,{browser:{n:'Microsoft Edge',i:'🌐',w:800,h:560,f:browserApp},store:{n:'Microsoft Store',i:'🛍️',w:700,h:520,f:storeApp},media:{n:'Media Player',i:'🎵',w:620,h:440,f:mediaApp},weather:{n:'Weather',i:'🌦️',w:460,h:420,f:weatherApp},taskmgr:{n:'Task Manager',i:'📊',w:600,h:440,f:taskmgrApp}});
+TL.push(['browser','🌐','Microsoft Edge','#087ea4'],['store','🛍️','Microsoft Store','#0878d1'],['media','🎵','Media Player','#713e9b'],['weather','🌦️','Weather','#2876b9'],['taskmgr','📊','Task Manager','#247b75']);
+$('#tl').innerHTML=TL.map(([k,i,n,c,s])=>'<div class="tl" data-k="'+k+'" style="background:'+c+';grid-column:span '+(s||1)+'"><b>'+i+'</b>'+(n||new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'}))+'</div>').join('');
+$('#tl').onclick=e=>{const t=e.target.closest('.tl');if(!t)return;closeAll();t.dataset.k==='cal'?tog('cal'):launch(t.dataset.k)};
+$('#sb .sx').textContent='Search apps, settings, and the web';
+
+</script></body></html>
