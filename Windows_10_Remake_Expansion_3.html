@@ -1,0 +1,4510 @@
+<!--
+  Windows 10 Remake — readable source build
+  This is a single-file HTML desktop simulator. It runs locally in a modern browser.
+  Apps and simulated system functions are implemented in the JavaScript below.
+  Browser security restrictions still apply: it is not a real Windows installation.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Windows 10</title>
+
+<style>
+:root {
+  --ac:#0078d7;
+  --wb:#fff;
+  --wf:#111;
+  --ws:#f2f2f2;
+  --bd:#d0d0d0;
+  --hv:#e5e5e5;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px)
+}
+
+@media(prefers-color-scheme:dark) {
+  :root:not([data-theme="light"]) {
+    --wb:#1f1f1f;
+    --wf:#f0f0f0;
+    --ws:#2b2b2b;
+    --bd:#444;
+    --hv:#3a3a3a
+  }
+  
+}
+
+:root[data-theme="dark"] {
+  --wb:#1f1f1f;
+  --wf:#f0f0f0;
+  --ws:#2b2b2b;
+  --bd:#444;
+  --hv:#3a3a3a
+}
+
+html,body {
+  height:100%;
+  margin:0;
+  overflow:hidden
+}
+
+html {
+  background:#101014
+}
+
+body {
+  position:relative;
+  background:#101014;
+  font:13px/1.3 "Segoe UI",system-ui,sans-serif;
+  color:#fff;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:manipulation
+}
+
+input,textarea {
+  font:inherit;
+  color:inherit;
+  user-select:text;
+  -webkit-user-select:text
+}
+
+#desk {
+  position:absolute;
+  inset:0 0 40px 0;
+  overflow:hidden;
+  background:#0a58b8
+}
+
+#ic {
+  position:absolute;
+  inset:0;
+  padding:6px;
+  display:grid;
+  grid-auto-flow:column;
+  grid-template-rows:repeat(auto-fill,86px);
+  grid-auto-columns:82px;
+  align-content:start
+}
+
+.ic {
+  width:76px;
+  height:80px;
+  text-align:center;
+  font-size:12px;
+  text-shadow:0 1px 3px #000;
+  border:1px solid transparent;
+  padding:3px 2px;
+  overflow:hidden
+}
+
+.ic b,.fi b {
+  display:block;
+  font-size:34px;
+  font-weight:400;
+  line-height:40px
+}
+
+.ic.s {
+  background:rgba(255,255,255,.2);
+  border-color:rgba(255,255,255,.4)
+}
+
+.win {
+  position:absolute;
+  display:flex;
+  flex-direction:column;
+  background:var(--wb);
+  color:var(--wf);
+  border:1px solid var(--bd);
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
+  animation:pp .12s;
+  min-width:260px;
+  min-height:160px
+}
+
+.win.a {
+  border-color:var(--ac)
+}
+.win.h {
+  display:none
+}
+
+.win.m {
+  inset:0!important;
+  width:auto!important;
+  height:auto!important
+}
+.win.m .rz {
+  display:none
+}
+
+@keyframes pp {
+  from {
+    opacity:0;
+    transform:scale(.95)
+  }
+  
+}
+
+.tb {
+  display:flex;
+  align-items:center;
+  height:32px;
+  flex:none;
+  touch-action:none
+}
+
+.ti {
+  padding:0 8px;
+  font-size:15px
+}
+.tt {
+  flex:1;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  font-size:12px
+}
+
+.tb button {
+  border:0;
+  background:none;
+  color:inherit;
+  width:46px;
+  height:32px;
+  font:13px sans-serif
+}
+
+.tb button:hover {
+  background:var(--hv)
+}
+.tb .x:hover {
+  background:#e81123;
+  color:#fff
+}
+
+.bd {
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  background:var(--wb)
+}
+
+.rz {
+  position:absolute;
+  right:0;
+  bottom:0;
+  width:16px;
+  height:16px;
+  cursor:nwse-resize;
+  touch-action:none
+}
+
+.mb {
+  display:flex;
+  flex:none;
+  background:var(--ws);
+  border-bottom:1px solid var(--bd);
+  align-items:center
+}
+
+.mb button,.bt {
+  border:0;
+  background:none;
+  color:inherit;
+  padding:5px 10px;
+  font:inherit
+}
+
+.mb button:hover {
+  background:var(--hv)
+}
+
+.bt {
+  border:1px solid var(--bd);
+  background:var(--ws);
+  padding:6px 16px
+}
+.bt:hover {
+  border-color:var(--ac)
+}
+
+.st {
+  flex:none;
+  padding:2px 8px;
+  background:var(--ws);
+  border-top:1px solid var(--bd);
+  font-size:12px
+}
+
+.bd textarea {
+  flex:1;
+  min-height:0;
+  border:0;
+  outline:0;
+  resize:none;
+  background:var(--wb);
+  padding:6px;
+  font:15px Consolas,monospace
+}
+
+.xn {
+  display:flex;
+  gap:4px;
+  padding:4px;
+  flex:none;
+  background:var(--ws);
+  border-bottom:1px solid var(--bd)
+}
+
+.xn button {
+  border:0;
+  background:none;
+  color:inherit;
+  width:30px;
+  font-size:16px
+}
+.xn button:hover,.sl:hover,.fi:hover {
+  background:var(--hv)
+}
+
+.ad {
+  flex:1;
+  border:1px solid var(--bd);
+  background:var(--wb);
+  padding:3px 8px;
+  overflow:hidden;
+  white-space:nowrap
+}
+
+.xm {
+  flex:1;
+  display:flex;
+  min-height:0
+}
+.sd2 {
+  width:130px;
+  flex:none;
+  border-right:1px solid var(--bd);
+  padding:6px 0;
+  overflow:auto
+}
+
+.sl {
+  padding:5px 12px
+}
+
+.fl {
+  flex:1;
+  overflow:auto;
+  padding:8px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,88px);
+  grid-auto-rows:92px;
+  gap:4px;
+  align-content:start
+}
+
+.fi {
+  text-align:center;
+  font-size:12px;
+  padding:4px;
+  overflow:hidden;
+  word-break:break-word
+}
+.fi.s {
+  background:rgba(0,120,215,.25);
+  outline:1px solid var(--ac)
+}
+
+.cd {
+  flex:none;
+  padding:10px 14px;
+  text-align:right;
+  background:var(--ws)
+}
+.ce {
+  height:18px;
+  font-size:13px;
+  opacity:.7
+}
+.cr {
+  font-size:38px;
+  font-weight:300;
+  overflow:hidden
+}
+
+.cl {
+  flex:1;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:2px;
+  padding:2px;
+  background:var(--ws)
+}
+
+.cl button {
+  border:0;
+  background:var(--hv);
+  color:var(--wf);
+  font:18px "Segoe UI",sans-serif
+}
+.cl .nm {
+  background:var(--wb);
+  font-weight:600
+}
+
+.cl button:hover {
+  filter:brightness(.92)
+}
+.cl .eq {
+  background:var(--ac);
+  color:#fff
+}
+
+.sg {
+  padding:16px
+}
+.sg h2 {
+  margin:0 0 8px;
+  font:300 26px "Segoe UI",sans-serif
+}
+.sg h4 {
+  margin:16px 0 8px;
+  font-size:14px
+}
+
+.sw {
+  display:inline-block;
+  width:42px;
+  height:42px;
+  margin:0 6px 6px 0;
+  border:2px solid transparent;
+  cursor:pointer
+}
+.sw:hover {
+  border-color:var(--wf)
+}
+.wp {
+  width:84px
+}
+
+.cm {
+  background:#0c0c0c;
+  color:#ccc;
+  font:14px Consolas,monospace;
+  padding:6px
+}
+.cm .o {
+  white-space:pre-wrap;
+  margin:0;
+  flex:none
+}
+
+.ln {
+  display:flex
+}
+.ln input {
+  flex:1;
+  background:none;
+  border:0;
+  outline:0;
+  color:#ccc;
+  font:14px Consolas,monospace
+}
+
+#tbar {
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:40px;
+  background:rgba(18,18,22,.96);
+  display:flex;
+  z-index:9999
+}
+
+#tbar>* {
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:none;
+  position:relative
+}
+
+.tbtn {
+  width:46px;
+  font-size:19px
+}
+.tbtn:hover,#sb:hover {
+  background:rgba(255,255,255,.14)
+}
+
+.tbtn.on::after {
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:10px;
+  right:10px;
+  height:2px;
+  background:#999
+}
+
+.tbtn.fo {
+  background:rgba(255,255,255,.18)
+}
+.tbtn.fo::after {
+  background:var(--ac)
+}
+
+.lg {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2px;
+  width:18px;
+  height:18px
+}
+.lg i {
+  background:#fff
+}
+
+#sb {
+  width:240px;
+  height:32px!important;
+  margin:0 6px;
+  background:#f3f3f3;
+  color:#555;
+  justify-content:flex-start!important;
+  gap:8px;
+  padding:0 10px
+}
+
+#apps {
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  justify-content:flex-start
+}
+
+.tray {
+  gap:10px;
+  padding:0 8px
+}
+
+#clk {
+  display:block;
+  text-align:center;
+  line-height:20px;
+  padding:0 8px;
+  font-size:12px
+}
+
+#sd {
+  width:7px;
+  border-left:1px solid #777
+}
+
+.pop {
+  position:absolute;
+  bottom:40px;
+  z-index:9998;
+  background:rgba(28,28,32,.97);
+  color:#fff;
+  display:none
+}
+
+.pop.o {
+  display:flex
+}
+
+#start {
+  left:0;
+  width:min(100%,650px);
+  height:min(580px,calc(100% - 40px))
+}
+
+.rail {
+  width:48px;
+  flex:none;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  background:rgba(0,0,0,.25)
+}
+
+.rail div {
+  height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px
+}
+
+.rail div:hover,.li:hover,#pw div:hover {
+  background:rgba(255,255,255,.15)
+}
+
+.lst {
+  width:250px;
+  flex:none;
+  display:flex;
+  flex-direction:column;
+  min-height:0
+}
+
+#q {
+  margin:8px;
+  padding:8px;
+  border:0;
+  background:#fff;
+  color:#111
+}
+
+#al {
+  flex:1;
+  overflow:auto
+}
+#al h6 {
+  margin:0;
+  padding:8px 14px 2px;
+  font-size:12px;
+  color:#aaa
+}
+
+.li {
+  display:flex;
+  gap:12px;
+  align-items:center;
+  height:40px;
+  padding:0 14px
+}
+
+.tls {
+  flex:1;
+  padding:12px;
+  display:grid;
+  grid-template-columns:repeat(3,92px);
+  grid-auto-rows:92px;
+  gap:4px;
+  align-content:start;
+  overflow:auto
+}
+
+.tl {
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:8px;
+  font-size:12px
+}
+.tl b {
+  font-size:28px;
+  font-weight:400
+}
+.tl:hover {
+  outline:2px solid rgba(255,255,255,.5)
+}
+
+#pw {
+  left:48px;
+  bottom:42px;
+  width:150px;
+  flex-direction:column
+}
+#pw div {
+  padding:10px 14px
+}
+
+#ac {
+  right:0;
+  width:min(100%,360px);
+  height:calc(100% - 40px);
+  flex-direction:column;
+  padding:10px;
+  gap:8px
+}
+
+.ah {
+  display:flex;
+  justify-content:space-between;
+  font-size:15px
+}
+.ah u {
+  font-size:12px;
+  cursor:pointer
+}
+
+#nt {
+  flex:1;
+  overflow:auto
+}
+#nt:empty::before {
+  content:"No new notifications";
+  opacity:.6
+}
+
+.nc {
+  background:#3a3a3e;
+  padding:10px;
+  margin-bottom:6px;
+  font-size:12px
+}
+
+#qa {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:4px
+}
+
+.qt {
+  background:#3a3a3e;
+  height:70px;
+  font-size:11px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  text-align:center
+}
+
+.qt.on {
+  background:var(--ac)
+}
+.qt b {
+  font-size:20px;
+  font-weight:400
+}
+
+.br {
+  display:flex;
+  gap:8px;
+  align-items:center
+}
+.br input {
+  flex:1
+}
+
+#cal {
+  right:0;
+  width:min(100%,300px);
+  padding:14px;
+  flex-direction:column;
+  gap:8px
+}
+
+#ct {
+  font-size:44px;
+  font-weight:200
+}
+.cn {
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
+.cn b {
+  padding:2px 12px;
+  cursor:pointer
+}
+
+#cg {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:2px;
+  text-align:center
+}
+#cg span {
+  padding:7px 0
+}
+.dw {
+  opacity:.6;
+  font-size:11px
+}
+.td {
+  background:var(--ac)
+}
+
+#cx {
+  position:fixed;
+  z-index:99000;
+  background:var(--ws);
+  color:var(--wf);
+  border:1px solid var(--bd);
+  box-shadow:0 4px 14px #0006;
+  display:none;
+  min-width:190px;
+  padding:2px 0
+}
+
+#cx.o {
+  display:block
+}
+#cx div {
+  padding:7px 28px
+}
+#cx div:hover {
+  background:var(--hv)
+}
+
+#ts {
+  position:absolute;
+  right:8px;
+  bottom:48px;
+  width:min(300px,calc(100% - 16px));
+  padding:12px;
+  background:#2b2b2b;
+  color:#fff;
+  border-left:3px solid var(--ac);
+  transform:translateX(110%);
+  transition:transform .25s;
+  z-index:9997
+}
+
+#ts.o {
+  transform:none
+}
+
+#lock {
+  position:fixed;
+  inset:0;
+  z-index:99998;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:8vh 6vw;
+  transition:transform .5s;
+  cursor:pointer;
+  text-shadow:0 2px 8px #0008;
+  box-shadow:inset 0 0 0 100vmax rgba(0,0,0,.25)
+}
+
+#lock.u {
+  transform:translateY(-100%)
+}
+#lt {
+  font-size:min(20vw,110px);
+  font-weight:200;
+  line-height:1
+}
+#ld {
+  font-size:min(7vw,34px);
+  font-weight:300;
+  margin-bottom:12px
+}
+
+#off {
+  position:fixed;
+  inset:0;
+  background:#000;
+  color:#fff;
+  z-index:99999;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-size:22px
+}
+
+.sp {
+  width:34px;
+  height:34px;
+  border:3px solid #fff3;
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:rt 1s linear infinite;
+  margin-bottom:16px
+}
+@keyframes rt {
+  to {
+    transform:rotate(360deg)
+  }
+  
+}
+
+#dim,#nl {
+  position:fixed;
+  inset:0;
+  pointer-events:none
+}
+#dim {
+  background:#000;
+  opacity:0;
+  z-index:99990
+}
+#nl {
+  background:rgba(255,150,0,.2);
+  mix-blend-mode:multiply;
+  z-index:99989;
+  display:none
+}
+
+.pop,#tbar {
+  backdrop-filter:blur(24px) saturate(1.5);
+  -webkit-backdrop-filter:blur(24px) saturate(1.5)
+}
+
+.pop {
+  background:rgba(24,24,30,.82)
+}
+#tbar {
+  background:rgba(14,14,18,.8)
+}
+
+body.nb .pop,body.nb #tbar {
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  background:#1c1c20
+}
+
+.win.sl2 {
+  inset:0 50% 0 0!important;
+  width:auto!important;
+  height:auto!important
+}
+.win.sr2 {
+  inset:0 0 0 50%!important;
+  width:auto!important;
+  height:auto!important
+}
+.win.sl2 .rz,.win.sr2 .rz {
+  display:none
+}
+
+#boot {
+  position:fixed;
+  inset:0;
+  background:#000;
+  z-index:100001;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:40px
+}
+
+.lg.big {
+  width:88px;
+  height:88px;
+  gap:5px
+}
+.lg.big i {
+  background:#2f95ea
+}
+
+#tvw {
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  bottom:40px;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(8px);
+  z-index:9990;
+  display:none;
+  flex-wrap:wrap;
+  gap:16px;
+  padding:24px;
+  align-content:center;
+  justify-content:center;
+  overflow:auto
+}
+
+.tvc {
+  width:210px;
+  height:140px;
+  background:var(--wb);
+  color:var(--wf);
+  border:1px solid var(--bd);
+  display:flex;
+  flex-direction:column
+}
+.tvc:hover {
+  outline:2px solid var(--ac)
+}
+
+.tvc b {
+  display:flex;
+  justify-content:space-between;
+  padding:6px 8px;
+  font-size:12px;
+  font-weight:400
+}
+.tvc u {
+  padding:0 6px;
+  text-decoration:none
+}
+.tvc u:hover {
+  background:#e81123;
+  color:#fff
+}
+.tvc span {
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:44px
+}
+
+.dlg {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  z-index:99500;
+  display:flex;
+  align-items:center;
+  justify-content:center
+}
+
+.dbox {
+  background:var(--wb);
+  color:var(--wf);
+  border:1px solid var(--ac);
+  padding:16px;
+  min-width:260px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  box-shadow:0 10px 40px #0008
+}
+.dbox input {
+  padding:6px;
+  border:1px solid var(--bd);
+  background:var(--wb)
+}
+
+.bs {
+  position:fixed;
+  inset:0;
+  background:#0078d7;
+  color:#fff;
+  z-index:100000;
+  padding:8vh 8vw;
+  font-size:20px;
+  cursor:none
+}
+
+.mg {
+  display:grid;
+  grid-template-columns:repeat(9,1fr);
+  gap:1px;
+  padding:6px;
+  background:#808080;
+  flex:1;
+  min-height:0;
+  align-content:start;
+  overflow:auto
+}
+
+.mc {
+  aspect-ratio:1;
+  background:#c0c0c0;
+  border:3px outset #fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:17px;
+  color:#000
+}
+.mc.o {
+  border:1px solid #888;
+  background:#d6d6d6
+}
+
+.mc[data-n="1"] {
+  color:#00f
+}
+.mc[data-n="2"] {
+  color:#080
+}
+.mc[data-n="3"] {
+  color:#e00
+}
+.mc[data-n="4"] {
+  color:#008
+}
+.mc[data-n="5"] {
+  color:#800
+}
+.mi {
+  padding:0 12px
+}
+
+.tr {
+  display:flex;
+  padding:5px 10px;
+  border-bottom:1px solid var(--bd)
+}
+.tr span {
+  flex:1
+}
+.tr.s {
+  background:rgba(0,120,215,.3)
+}
+.th {
+  font-weight:600;
+  background:var(--ws)
+}
+
+.sn {
+  width:140px;
+  flex:none;
+  background:var(--ws);
+  padding:8px 0
+}
+.sn div {
+  padding:9px 14px
+}
+.sn div:hover {
+  background:var(--hv)
+}
+.sn .on {
+  border-left:3px solid var(--ac);
+  background:var(--hv)
+}
+.sc {
+  flex:1;
+  padding:16px;
+  overflow:auto
+}
+.sc h2 {
+  margin:0 0 8px;
+  font:300 26px "Segoe UI",sans-serif
+}
+.sc h4 {
+  margin:16px 0 8px;
+  font-size:14px
+}
+
+.xs {
+  width:110px;
+  border:1px solid var(--bd);
+  background:var(--wb)
+}
+
+.ph {
+  flex:1;
+  min-height:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#000;
+  overflow:auto;
+  color:#fff
+}
+.ph img {
+  max-width:100%;
+  max-height:100%;
+  transition:transform .15s
+}
+
+.fy {
+  right:0;
+  width:min(100%,300px);
+  padding:16px;
+  flex-direction:column;
+  gap:10px
+}
+.fy h3 {
+  margin:0;
+  font:300 22px "Segoe UI",sans-serif
+}
+.fy input[type=range] {
+  width:100%
+}
+
+.wf {
+  display:flex;
+  justify-content:space-between;
+  padding:10px 8px
+}
+.wf:hover {
+  background:rgba(255,255,255,.12)
+}
+.wf.on {
+  background:var(--ac)
+}
+
+.tray span {
+  cursor:default;
+  padding:0 2px
+}
+.tray span:hover {
+  background:rgba(255,255,255,.14)
+}
+
+.sk {
+  background:#fff7a8;
+  color:#222;
+  border:0;
+  flex:1;
+  resize:none;
+  padding:12px;
+  font:17px "Segoe Print","Comic Sans MS",cursive;
+  outline:0
+}
+.sk.k1 {
+  background:#ffd1e6
+}
+.sk.k2 {
+  background:#c9f0ff
+}
+.sk.k3 {
+  background:#d5f5c4
+}
+
+.g4 {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  padding:8px;
+  background:#bbada0;
+  touch-action:none;
+  flex:1;
+  min-height:0;
+  align-content:start
+}
+.t4 {
+  aspect-ratio:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font:700 24px sans-serif;
+  border-radius:3px
+}
+
+.tt3 {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:4px;
+  padding:8px;
+  flex:1;
+  min-height:0;
+  align-content:start
+}
+.tt3 div {
+  aspect-ratio:1;
+  background:var(--ws);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:44px;
+  border:1px solid var(--bd)
+}
+
+.pn {
+  position:relative;
+  display:flex;
+  flex:1;
+  min-height:140px;
+  margin:8px;
+  touch-action:none
+}
+.pn b {
+  flex:1;
+  background:#fff;
+  color:#333;
+  border:1px solid #333;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding-bottom:8px;
+  font-weight:400
+}
+.pn b.on {
+  background:#9ecbff
+}
+
+.pn i {
+  position:absolute;
+  top:0;
+  width:8%;
+  height:60%;
+  margin-left:-4%;
+  background:#111;
+  color:#fff;
+  font:10px sans-serif;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding-bottom:4px;
+  z-index:1
+}
+.pn i.on {
+  background:var(--ac)
+}
+
+.ck {
+  flex:1;
+  overflow:auto;
+  padding:12px;
+  text-align:center
+}
+.big {
+  font:200 48px "Segoe UI",sans-serif;
+  text-align:center;
+  padding:20px 0
+}
+
+.cg2 {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:2px;
+  padding:6px;
+  flex:1;
+  min-height:0;
+  align-content:start;
+  text-align:center;
+  overflow:auto
+}
+.cg2 div,.cg2 b {
+  padding:8px 0
+}
+.cg2 div {
+  border:1px solid var(--bd)
+}
+.cg2 .td {
+  background:var(--ac);
+  color:#fff
+}
+.cg2 .sl3 {
+  outline:2px solid var(--ac)
+}
+.cg2 small {
+  display:block;
+  font-size:8px
+}
+
+.cvw {
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:10px
+}
+.cvw select,.cvw input:not([type=range]):not([type=checkbox]),.tpi {
+  padding:8px;
+  background:var(--wb);
+  color:var(--wf);
+  border:1px solid var(--bd)
+}
+.cvr {
+  font:300 30px "Segoe UI",sans-serif;
+  padding:10px 0
+}
+
+.wpd {
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  padding:16px;
+  background:#fff;
+  color:#111;
+  outline:0;
+  font:16px Calibri,"Segoe UI",sans-serif
+}
+
+.tpt {
+  font:20px/1.6 Consolas,monospace
+}
+.tpi {
+  min-height:90px;
+  font:16px Consolas,monospace
+}
+
+@media(max-width:700px) {
+  .tls,.sd2,.tray,.sx {
+    display:none
+  }
+  #sb {
+    width:40px;
+    margin:0;
+    padding:0;
+    justify-content:center!important;
+    background:none;
+    color:#fff
+  }
+  .tbtn {
+    width:40px
+  }
+  #start {
+    width:min(100%,300px)
+  }
+  
+}
+
+/* Expansion Pack 3 layout refinements */
+.p3-app{padding:14px;height:100%;overflow:auto;box-sizing:border-box;color:var(--wf);background:var(--wb)}
+.p3-app h2{font:300 25px "Segoe UI",system-ui,sans-serif;margin:0 0 6px}
+.p3-app p{line-height:1.45}
+.p3-head{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.p3-entry{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0}
+.p3-entry input:not([type=range]):not([type=file]),.p3-entry select,.p3-label select,.p3-label input:not([type=range]){min-width:0;padding:8px;border:1px solid var(--bd);background:var(--wb);color:var(--wf)}
+.p3-entry input[type=file]{max-width:100%}
+.p3-entry>input:first-child{flex:1}
+.p3-muted{font-size:12px;color:var(--wf);opacity:.7}
+.p3-status{padding:8px 10px;margin:10px 0;background:var(--ws);border-left:3px solid var(--ac);font-size:13px}
+.p3-label{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0}
+.p3-label>span{flex:1}
+.p3-label input[type=range]{width:min(55%,280px)}
+.p3-kanban{display:grid;grid-template-columns:repeat(3,minmax(170px,1fr));gap:10px;align-items:start;overflow:auto;padding:3px 1px 10px}
+.p3-column{min-height:180px;border:1px solid var(--bd);background:var(--ws);border-radius:7px;overflow:hidden}
+.p3-column.p3-drop{outline:3px dashed var(--ac);outline-offset:-3px}
+.p3-column-head{display:flex;justify-content:space-between;padding:10px;background:var(--wb)}
+.p3-column-head span{opacity:.65}
+.p3-cards{padding:7px;min-height:120px}
+.p3-task{padding:10px;background:var(--wb);border:1px solid var(--bd);border-radius:6px;margin-bottom:7px;cursor:grab;box-shadow:0 1px 3px #0001}
+.p3-task-title{font-weight:600;overflow-wrap:anywhere;margin-bottom:8px}
+.p3-task small{font-size:11px;opacity:.7}
+.p3-task-controls{display:flex;gap:5px;margin-top:9px}
+.p3-task-controls select{min-width:0;flex:1;width:0;padding:5px;background:var(--ws);color:var(--wf);border:1px solid var(--bd);font-size:11px}
+.p3-task-controls .bt{padding:3px 8px}
+.p3-canvas-wrap{height:min(50vh,390px);min-height:170px;background:repeating-conic-gradient(#ddd 0 25%,#f4f4f4 0 50%) 50%/18px 18px;border:1px solid #999;display:flex;align-items:center;justify-content:center;overflow:auto}
+.p3-canvas-wrap canvas{max-width:100%;max-height:100%;object-fit:contain}
+.p3-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.p3-two label,.p3-code-editors label{display:flex;flex-direction:column;gap:6px;min-width:0;font-weight:600}
+.p3-two textarea,.p3-code-editors textarea{width:100%;box-sizing:border-box;padding:9px;resize:vertical;font:12px/1.5 Consolas,monospace;background:var(--wb);color:var(--wf);border:1px solid var(--bd);min-height:150px}
+.p3-diff{font:12px/1.5 Consolas,monospace;overflow:auto;border:1px solid var(--bd);max-height:260px}
+.p3-diff-line{display:flex;gap:8px;white-space:pre;min-width:max-content;padding:3px 8px;border-bottom:1px solid #7772}
+.p3-diff-num{opacity:.5;min-width:28px;text-align:right}
+.p3-diff-line.same{background:var(--wb)}
+.p3-diff-line.changed,.p3-diff-line.removed{background:#ffe7e7;color:#7e2020}
+.p3-diff-line.added{background:#e2f8e7;color:#18552b}
+.p3-button-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0}
+.p3-flex-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.p3-flex-preview{margin:12px 0}
+.p3-flex-item{min-width:35px;min-height:35px;padding:8px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:#0078d7;color:white;border-radius:4px;font-weight:600}
+.p3-storage-row{border-bottom:1px solid var(--bd);padding:9px 0;display:flex;justify-content:space-between;gap:9px;align-items:flex-start}
+.p3-storage-main{min-width:0;flex:1}
+.p3-storage-main b{display:block;overflow-wrap:anywhere}
+.p3-storage-main small{display:block;opacity:.65;margin:3px 0}
+.p3-storage-value{white-space:pre-wrap;overflow-wrap:anywhere;max-height:120px;overflow:auto;background:var(--ws);padding:7px;font-size:11px}
+.p3-code-editors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.p3-code-editors textarea{height:190px;min-height:130px}
+@media(max-width:720px){.p3-kanban{grid-template-columns:repeat(3,minmax(190px,1fr))}.p3-two{grid-template-columns:1fr}.p3-code-editors{grid-template-columns:1fr}.p3-code-editors textarea{height:110px}.p3-button-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.p3-flex-controls{grid-template-columns:1fr}.p3-storage-row{flex-direction:column}.p3-app{padding:10px}}
+
+</style>
+</head>
+<body>
+<div id="desk">
+<div id="ic">
+</div>
+</div>
+<div id="tbar">
+<div class="tbtn" id="sbtn">
+<span class="lg">
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+</span>
+</div>
+<div id="sb">
+<span>🔍</span>
+<span class="sx">Type here to search</span>
+</div>
+<div id="apps">
+</div>
+<div class="tray">⌃ 📶 🔊 ENG</div>
+<div id="clk">
+</div>
+<div class="tbtn" id="nbtn">💬</div>
+<div id="sd">
+</div>
+</div>
+<div id="start" class="pop">
+<div class="rail" id="rl">
+<div data-a="d">📄</div>
+<div data-a="p">🖼️</div>
+<div data-a="s">⚙️</div>
+<div data-a="w">⏻</div>
+</div>
+<div class="lst">
+<input id="q" placeholder="Search apps">
+<div id="al">
+</div>
+</div>
+<div class="tls" id="tl">
+</div>
+</div>
+<div id="pw" class="pop">
+<div data-a="l">🔒 Lock</div>
+<div data-a="s">⏻ Shut down</div>
+<div data-a="r">🔄 Restart</div>
+</div>
+<div id="ac" class="pop">
+<div class="ah">Notifications <u id="clr">Clear all</u>
+</div>
+<div id="nt">
+</div>
+<div id="qa">
+</div>
+<div class="br">☀️ <input id="br" type="range" min="20" max="100" value="100">
+</div>
+</div>
+<div id="cal" class="pop">
+<div id="ct">
+</div>
+<div id="cd2">
+</div>
+<div class="cn">
+<span id="cmn">
+</span>
+<span id="cnv">
+<b data-d="-1">▲</b>
+<b data-d="1">▼</b>
+</span>
+</div>
+<div id="cg">
+</div>
+</div>
+<div id="cx">
+<div data-a="r">Refresh</div>
+<div data-a="f">New folder</div>
+<div data-a="t">New text document</div>
+<div data-a="d">Display settings</div>
+<div data-a="p">Personalize</div>
+</div>
+<div id="ts">
+</div>
+<div id="nl">
+</div>
+<div id="dim">
+</div>
+<div id="lock">
+<div id="lt">
+</div>
+<div id="ld">
+</div>
+<small>Click anywhere to sign in</small>
+</div>
+<div id="off">
+</div>
+
+<script>
+const $=(s,e=document)=>e.querySelector(s),
+el=(t,c,h)=>{
+const e=document.createElement(t);
+e.className=c||'';
+if(h!=null)e.innerHTML=h;
+return e}
+,
+CO=matchMedia('(pointer:coarse)').matches,
+AC=['#0078d7','#e74856','#10893e','#8e8cd8','#ca5010','#00b7c3','#c239b3','#7a7574'],
+WP=['linear-gradient(105deg,transparent 38%,rgba(130,205,255,.35) 50%,transparent 62%),radial-gradient(ellipse at 65% 55%,#2f95ea,#0a58b8 38%,#04204f 78%,#020b1f)','linear-gradient(135deg,#ff7e5f,#6a1b9a 55%,#1a0b3a)','linear-gradient(160deg,#12a67a,#065a60 55%,#0b1d2a)','linear-gradient(135deg,#232526,#4b4f52)'],
+FS={
+'This PC':{
+Desktop:{
+}
+,Documents:{
+'Resume.txt':'Jane Doe\nFront-end developer\n\nSkills: HTML, CSS, JavaScript','Shopping list.txt':'Milk\nEggs\nBread\nCoffee'}
+,Downloads:{
+'setup.exe':null,'notes.txt':'Downloaded notes.'}
+,Pictures:{
+Vacation:{
+}
+,Screenshots:{
+}
+}
+,Music:{
+}
+,Videos:{
+}
+,'Local Disk (C:)':{
+Windows:{
+}
+,'Program Files':{
+}
+,Users:{
+}
+}
+}
+,'Recycle Bin':{
+}
+}
+,
+PIN=['explorer','notepad','calc','settings','cmd'],
+APPS={
+explorer:{
+n:'File Explorer',i:'📁',w:660,h:430,f:explorer}
+,notepad:{
+n:'Notepad',i:'📝',w:520,h:380,f:notepad}
+,calc:{
+n:'Calculator',i:'🧮',w:320,h:480,f:calc}
+,settings:{
+n:'Settings',i:'⚙️',w:620,h:460,f:settings,one:1}
+,cmd:{
+n:'Command Prompt',i:'⌨️',w:620,h:360,f:cmd}
+,paint:{
+n:'Paint',i:'🎨',w:700,h:480,f:paint}
+}
+;
+let Z=10,N=0,NC=0,act=null,tm,cm=new Date();
+const W=[];
+/* ---------- window manager ---------- */
+function launch(id,arg){
+const A=APPS[id],ex=A.one&&W.find(x=>x.id==id);
+if(ex){
+foc(ex);
+return ex}
+const e=el('div','win','<div class="tb"><span class="ti">'+A.i+'</span><span class="tt">'+A.n+'</span><button class="n">–</button><button class="z">▢</button><button class="x">✕</button></div><div class="bd"></div><i class="rz"></i>'),
+w={
+id,e,b:$('.bd',e),t:s=>{
+$('.tt',e).textContent=s}
+,close:()=>{
+e.remove();
+W.splice(W.indexOf(w),1);
+foc(topw())}
+}
+;
+e.style.cssText='left:'+(30+N%8*26)+'px;top:'+(20+N%8*26)+'px;width:'+Math.min(A.w,innerWidth-16)+'px;height:'+Math.min(A.h,innerHeight-90)+'px';
+N++;
+if(innerWidth<700)e.classList.add('m');
+W.push(w);
+$('#desk').append(e);
+e.onpointerdown=()=>foc(w);
+const tb=$('.tb',e),mx=()=>e.classList.toggle('m');
+$('.n',e).onclick=()=>mini(w);
+$('.z',e).onclick=mx;
+$('.x',e).onclick=w.close;
+tb.ondblclick=v=>{
+if(v.target.tagName!='BUTTON')mx()}
+;
+tb.onpointerdown=v=>{
+if(v.target.tagName=='BUTTON'||e.classList.contains('m'))return;
+const ox=v.clientX-e.offsetLeft,oy=v.clientY-e.offsetTop;
+tb.setPointerCapture(v.pointerId);
+tb.onpointermove=m=>{
+e.style.left=m.clientX-ox+'px';
+e.style.top=Math.max(0,m.clientY-oy)+'px'}
+;
+tb.onpointerup=()=>tb.onpointermove=null}
+;
+const r=$('.rz',e);
+r.onpointerdown=v=>{
+const sx=v.clientX,sy=v.clientY,sw=e.offsetWidth,sh=e.offsetHeight;
+r.setPointerCapture(v.pointerId);
+r.onpointermove=m=>{
+e.style.width=Math.max(260,sw+m.clientX-sx)+'px';
+e.style.height=Math.max(160,sh+m.clientY-sy)+'px'}
+;
+r.onpointerup=()=>r.onpointermove=null}
+;
+A.f(w.b,w,arg);
+foc(w);
+return w}
+const topw=()=>W.filter(x=>!x.e.classList.contains('h')).sort((a,b)=>a.e.style.zIndex-b.e.style.zIndex).pop();
+function foc(w){
+act=w||null;
+W.forEach(x=>x.e.classList.toggle('a',x==w));
+if(w){
+w.e.classList.remove('h');
+w.e.style.zIndex=++Z}
+tbr()}
+function mini(w){
+w.e.classList.add('h');
+foc(topw())}
+function tbr(){
+const a=$('#apps');
+a.innerHTML='';
+[...new Set([...PIN,...W.map(x=>x.id)])].forEach(id=>{
+const ws=W.filter(x=>x.id==id),b=el('div','tbtn'+(ws.length?' on':'')+(ws.includes(act)?' fo':''),APPS[id].i);b.title=APPS[id].n;
+b.onclick=()=>{
+closeAll();const w=ws[ws.length-1];if(!w)launch(id);else if(w==act)mini(w);else foc(w)}
+;a.append(b)}
+)}
+const ob=(e,f)=>{
+e.ondblclick=f;
+e.onclick=()=>{
+[...e.parentNode.children].forEach(c=>c.classList.remove('s'));
+e.classList.add('s');
+if(CO)f()}
+}
+;
+/* ---------- apps ---------- */
+function explorer(b,w,a){
+let p=a||['This PC'];
+const H=[];
+b.innerHTML='<div class="xn"><button data-a="b">←</button><button data-a="u">↑</button><div class="ad"></div></div><div class="xm"><div class="sd2"></div><div class="fl"></div></div><div class="st"></div>';
+const get=q=>q.reduce((o,k)=>o&&o[k],FS),fl=$('.fl',b),go=(q,h=1)=>{
+if(h)H.push(p);
+p=q;
+draw()}
+;
+function draw(){
+const o=get(p),ks=Object.keys(o);
+fl.innerHTML='';
+$('.ad',b).textContent=p.join(' › ');
+w.t(p[p.length-1]);
+ks.forEach(k=>{
+const v=o[k],d=el('div','fi','<b>'+(typeof v=='string'?'📄':v===null?'⚙️':/Disk/.test(k)?'💽':'📁')+'</b>'+k);
+ob(d,()=>typeof v=='string'?launch('notepad',{
+f:k,t:v,d:o}
+):v===null?toast('Windows cannot open this file.'):go([...p,k]));fl.append(d)}
+);
+$('.st',b).textContent=ks.length+' items'}
+$('.sd2',b).append(...[['This PC'],['This PC','Desktop'],['This PC','Documents'],['This PC','Downloads'],['This PC','Pictures'],['Recycle Bin']].map(q=>{
+const d=el('div','sl',q[q.length-1]);d.onclick=()=>go(q);return d}
+));
+$('.xn',b).onclick=e=>{
+const k=e.target.dataset.a;
+if(k=='b'&&H.length)go(H.pop(),0);
+if(k=='u'&&p.length>1)go(p.slice(0,-1))}
+;
+draw()}
+function notepad(b,w,a={
+}
+){
+let f=a.f,fs=15;
+const dir=a.d||FS['This PC'].Documents;
+b.innerHTML='<div class="mb"><button data-a="n">New</button><button data-a="s">Save</button><button data-a="w">Wrap</button><button data-a="p">A+</button><button data-a="m">A−</button></div><textarea wrap="soft" spellcheck="false"></textarea><div class="st">Ln 1, Col 1</div>';
+const t=$('textarea',b),T=()=>w.t((f||'Untitled')+' - Notepad');
+t.value=a.t||'';
+T();
+const pos=()=>{
+const s=t.value.slice(0,t.selectionStart).split('\n');
+$('.st',b).textContent='Ln '+s.length+', Col '+(s[s.length-1].length+1)}
+;
+t.oninput=t.onkeyup=t.onclick=pos;
+$('.mb',b).onclick=e=>{
+const k=e.target.dataset.a;
+if(k=='n'){
+t.value='';
+f=null;
+T()}
+if(k=='s'){
+f=f||'Note '+(++NC)+'.txt';
+dir[f]=t.value;
+T();
+toast('Saved '+f+' to '+(a.d?'this folder':'Documents'),1)}
+if(k=='w')t.wrap=t.wrap=='off'?'soft':'off';
+if(k=='p'||k=='m')t.style.fontSize=(fs+=k=='p'?2:-2)+'px'}
+}
+function calc(b,w){
+w.t('Calculator');
+const K='% CE C ⌫ 1/x x² √ ÷ 7 8 9 × 4 5 6 − 1 2 3 + ± 0 . ='.split(' ');
+b.innerHTML='<div class="cd"><div class="ce"></div><div class="cr">0</div></div><div class="cl">'+K.map(k=>'<button'+(k=='='?' class="eq"':/^\d$/.test(k)?' class="nm"':'')+'>'+k+'</button>').join('')+'</div>';
+let cur='0',acc=null,op=null,nw=1,ex='';
+const d=$('.cr',b),x2=$('.ce',b),
+f=n=>String(+(+n).toPrecision(12)),ev=(x,o,y)=>o=='+'?x+y:o=='−'?x-y:o=='×'?x*y:o=='÷'?x/y:y;
+const k=t=>{
+if(!isFinite(cur)){
+cur='0';
+acc=op=null;
+ex='';
+nw=1}
+if(/^\d$/.test(t)){
+cur=nw||cur=='0'?t:cur+t;
+nw=0}
+else if(t=='.'){
+if(nw){
+cur='0.';
+nw=0}
+else if(!cur.includes('.'))cur+='.'}
+else if('+−×÷='.includes(t)){
+const c=parseFloat(cur);
+if(op&&(!nw||t=='=')){
+acc=ev(acc,op,c);
+cur=f(acc)}
+else acc=c;
+ex=t=='='?'':cur+' '+t;
+op=t=='='?null:t;
+nw=1}
+else if(t=='C'){
+cur='0';
+acc=op=null;
+ex='';
+nw=1}
+else if(t=='CE'){
+cur='0';
+nw=1}
+else if(t=='⌫'){
+if(!nw)cur=cur.length>1?cur.slice(0,-1):'0'}
+else if(t=='±')cur=f(-cur);
+else if(t=='%')cur=f(cur*(acc||0)/100);
+else if(t=='1/x')cur=f(1/cur);
+else if(t=='x²')cur=f(cur*cur);
+else if(t=='√')cur=f(Math.sqrt(cur));
+d.textContent=isFinite(cur)?cur:'Cannot divide by zero';
+x2.textContent=ex}
+;
+b.onclick=e=>{
+if(e.target.tagName=='BUTTON')k(e.target.textContent)}
+}
+function settings(b,w){
+w.t('Settings');
+b.innerHTML='<div class="sg"><h2>Settings</h2><h4>Choose your color mode</h4><button class="bt" data-m="light">Light</button> <button class="bt" data-m="dark">Dark</button><h4>Accent color</h4>'+AC.map(c=>'<i class="sw" data-c="'+c+'" style="background:'+c+'"></i>').join('')+'<h4>Background</h4>'+WP.map((v,i)=>'<i class="sw wp" data-b="'+i+'" style="background:'+v+'"></i>').join('')+'<h4>About</h4><p>Device name: DESKTOP-WEB10<br>Edition: Windows 10 Pro (HTML remake)<br>Version: 22H2<br>Screen: '+innerWidth+' × '+innerHeight+'</p></div>';
+b.onclick=e=>{
+const d=e.target.dataset;
+if(d.m)document.documentElement.dataset.theme=d.m;
+if(d.c)document.documentElement.style.setProperty('--ac',d.c);
+if(d.b)wp(+d.b)}
+}
+function cmd(b,w){
+w.t('Command Prompt');
+b.classList.add('cm');
+b.innerHTML='<pre class="o">Microsoft Windows [Version 10.0.19045.1]\n(c) Microsoft Corporation. All rights reserved.\n</pre><div class="ln"><span>C:\\Users\\User&gt;</span><input spellcheck="false" autocapitalize="off" autocomplete="off"></div>';
+const o=$('.o',b),i=$('input',b),H=[];
+let hi=0;
+const AP={
+notepad:'notepad',calc:'calc',mspaint:'paint',paint:'paint',explorer:'explorer',cmd:'cmd',control:'settings'}
+,
+R={
+help:()=>'help  dir  cls  echo  date  time  ver  whoami  hostname  ipconfig  start <app>  exit',
+dir:()=>' Directory of C:\\Users\\User\n\n'+Object.keys(FS['This PC']).map(k=>'10/09/2026  09:00 AM    <DIR>          '+k).join('\n'),
+cls:()=>{
+o.textContent=''}
+,echo:r=>r.join(' '),
+date:()=>'The current date is: '+new Date().toLocaleDateString('en-US'),time:()=>'The current time is: '+new Date().toLocaleTimeString(),
+ver:()=>'\nMicrosoft Windows [Version 10.0.19045.1]',whoami:()=>'desktop-web10\\user',hostname:()=>'DESKTOP-WEB10',
+ipconfig:()=>'Windows IP Configuration\n\nEthernet adapter Ethernet:\n   IPv4 Address. . . . . : 192.168.1.42',
+exit:()=>{
+w.close()}
+,start:r=>AP[(r[0]||'').toLowerCase()]?launch(AP[r[0].toLowerCase()]):'The system cannot find the file '+(r[0]||'')+'.'}
+;
+i.onkeydown=e=>{
+if(e.key=='Enter'){
+const c=i.value.trim(),[m='',...r]=c.split(/\s+/),x=m.toLowerCase();
+H.push(c);
+hi=H.length;
+i.value='';
+o.textContent+='C:\\Users\\User>'+c+'\n';
+const f=R[x]||(AP[x]?()=>launch(AP[x]):null),s=f?f(r):c?"'"+m+"' is not recognized as an internal or external command,\noperable program or batch file.":'';
+if(typeof s=='string'&&s)o.textContent+=s+'\n'}
+if(e.key=='ArrowUp'&&hi>0)i.value=H[--hi];
+if(e.key=='ArrowDown'){
+hi=Math.min(hi+1,H.length);
+i.value=H[hi]||''}
+b.scrollTop=b.scrollHeight}
+;
+b.onclick=()=>i.focus();
+if(!CO)i.focus()}
+function paint(b,w){
+w.t('Untitled - Paint');
+b.innerHTML='<div class="mb"><input type="color" value="#000000"><input type="range" min="1" max="40" value="4"><button data-e="1">Eraser</button><button data-c="1">Clear</button></div><div style="flex:1;min-height:0;overflow:auto;background:#808080"><canvas width="900" height="600" style="background:#fff;display:block;touch-action:none"></canvas></div>';
+const c=$('canvas',b),x=c.getContext('2d'),[col,sz]=b.querySelectorAll('input');
+let er=0,d=0,lp;
+x.fillStyle='#fff';
+x.fillRect(0,0,900,600);
+x.lineCap='round';
+const P=e=>{
+const r=c.getBoundingClientRect();
+return[e.clientX-r.left,e.clientY-r.top]}
+,
+dr=p=>{
+x.strokeStyle=er?'#fff':col.value;
+x.lineWidth=sz.value;
+x.beginPath();
+x.moveTo(lp[0],lp[1]);
+x.lineTo(p[0]+.01,p[1]);
+x.stroke();
+lp=p}
+;
+c.onpointerdown=e=>{
+d=1;
+c.setPointerCapture(e.pointerId);
+lp=P(e);
+dr(lp)}
+;
+c.onpointermove=e=>{
+if(d)dr(P(e))}
+;
+c.onpointerup=()=>d=0;
+$('.mb',b).onclick=e=>{
+const t=e.target.dataset;
+if(t.e){
+er=!er;
+e.target.style.background=er?'var(--ac)':''}
+if(t.c){
+x.fillStyle='#fff';
+x.fillRect(0,0,900,600)}
+}
+}
+/* ---------- shell: start, popups, desktop ---------- */
+function closeAll(x){
+['start','ac','cal','pw'].forEach(p=>p!=x&&$('#'+p).classList.remove('o'));
+$('#cx').classList.remove('o')}
+function tog(p){
+const e=$('#'+p),on=e.classList.contains('o');
+closeAll(p=='pw'?'start':p);
+e.classList.toggle('o',!on);
+if(p=='start'&&!on){
+$('#q').value='';
+alist()}
+if(p=='cal'&&!on){
+cm=new Date();
+cm.setDate(1);
+calr()}
+}
+function alist(q=''){
+let h='',L='';
+Object.entries(APPS).sort((a,b)=>a[1].n.localeCompare(b[1].n)).forEach(([k,a])=>{
+if(q&&!a.n.toLowerCase().includes(q))return;if(a.n[0]!=L){
+L=a.n[0];h+='<h6>'+L+'</h6>'}
+h+='<div class="li" data-k="'+k+'"><span>'+a.i+'</span>'+a.n+'</div>'}
+);
+$('#al').innerHTML=h||'<div class="li">No apps found</div>'}
+function calr(){
+const y=cm.getFullYear(),m=cm.getMonth(),n=new Date(y,m+1,0).getDate(),t=new Date();
+let h=['S','M','T','W','T','F','S'].map(d=>'<span class="dw">'+d+'</span>').join('')+'<span></span>'.repeat(cm.getDay());
+for(let d=1;d<=n;d++)h+='<span'+(t.getFullYear()==y&&t.getMonth()==m&&t.getDate()==d?' class="td"':'')+'>'+d+'</span>';
+$('#cg').innerHTML=h;
+$('#cmn').textContent=cm.toLocaleDateString([],{
+month:'long',year:'numeric'}
+)}
+function icons(){
+const D=FS['This PC'].Desktop,B=[['💻','This PC',()=>launch('explorer',['This PC'])],['🗑️','Recycle Bin',()=>launch('explorer',['Recycle Bin'])],['📝','Notepad',()=>launch('notepad')],['🧮','Calculator',()=>launch('calc')],['🎨','Paint',()=>launch('paint')]];
+Object.entries(D).forEach(([k,v])=>B.push([typeof v=='string'?'📄':'📁',k,()=>typeof v=='string'?launch('notepad',{
+f:k,t:v,d:D}
+):launch('explorer',['This PC','Desktop',k])]));
+const c=$('#ic');
+c.innerHTML='';
+B.forEach(([i,n,f])=>{
+const d=el('div','ic','<b>'+i+'</b>'+n);ob(d,f);c.append(d)}
+)}
+const wp=i=>{
+$('#desk').style.background=$('#lock').style.background=WP[i]}
+,
+uniq=(D,b,x='')=>{
+let n=b+x,i=1;
+while(n in D)n=b+' ('+ ++i+')'+x;
+return n}
+,
+lk=()=>$('#lock').classList.remove('u'),
+tf={
+hour:'numeric',minute:'2-digit'}
+;
+function toast(m,keep){
+const s=$('#ts');
+s.textContent=m;
+s.classList.add('o');
+clearTimeout(tm);
+tm=setTimeout(()=>s.classList.remove('o'),3000);
+if(keep)$('#nt').prepend(el('div','nc','<b>Windows 10</b><br>'+m))}
+function tick(){
+const n=new Date(),t=n.toLocaleTimeString([],tf);
+$('#clk').innerHTML=t+'<br>'+n.toLocaleDateString('en-US');
+$('#lt').textContent=t.replace(/\s?[AP]M/i,'');
+$('#ld').textContent=n.toLocaleDateString([],{
+weekday:'long',month:'long',day:'numeric'}
+);
+$('#ct').textContent=n.toLocaleTimeString();
+$('#cd2').textContent=n.toLocaleDateString([],{
+weekday:'long',month:'long',day:'numeric',year:'numeric'}
+)}
+$('#sbtn').onclick=()=>tog('start');
+$('#sb').onclick=()=>{
+if(!$('#start').classList.contains('o'))tog('start');
+$('#q').focus()}
+;
+$('#nbtn').onclick=()=>tog('ac');
+$('#clk').onclick=()=>tog('cal');
+$('#sd').onclick=()=>{
+W.forEach(x=>x.e.classList.add('h'));
+foc(null)}
+;
+$('#q').oninput=e=>alist(e.target.value.toLowerCase());
+$('#q').onkeydown=e=>{
+if(e.key=='Enter'){
+const f=$('#al .li[data-k]');
+if(f){
+closeAll();
+launch(f.dataset.k)}
+}
+}
+;
+$('#al').onclick=e=>{
+const k=e.target.closest('.li[data-k]');
+if(k){
+closeAll();
+launch(k.dataset.k)}
+}
+;
+$('#rl').onclick=e=>{
+const a=e.target.dataset.a;
+if(a=='w')return tog('pw');
+closeAll();
+if(a=='d')launch('explorer',['This PC','Documents']);
+if(a=='p')launch('explorer',['This PC','Pictures']);
+if(a=='s')launch('settings')}
+;
+const TL=[['cal','📅','','#0063b1',2],['explorer','📁','File Explorer','#c88b00'],['notepad','📝','Notepad','#2d7d9a'],['calc','🧮','Calculator','#515c6b'],['paint','🎨','Paint','#b146c2'],['cmd','⌨️','Command Prompt','#333'],['settings','⚙️','Settings','#4c4a48']];
+$('#tl').innerHTML=TL.map(([k,i,n,c,s])=>'<div class="tl" data-k="'+k+'" style="background:'+c+';grid-column:span '+(s||1)+'"><b>'+i+'</b>'+(n||new Date().toLocaleDateString([],{
+weekday:'long',month:'long',day:'numeric'}
+))+'</div>').join('');
+$('#tl').onclick=e=>{
+const t=e.target.closest('.tl');
+if(!t)return;
+closeAll();
+t.dataset.k=='cal'?tog('cal'):launch(t.dataset.k)}
+;
+$('#pw').onclick=e=>{
+const a=e.target.dataset.a;
+if(!a)return;
+closeAll();
+if(a=='l')return lk();
+W.slice().forEach(w=>w.close());
+const o=$('#off');
+o.style.display='flex';
+o.innerHTML=a=='r'?'<div class="sp"></div>Restarting':'Shutting down';
+setTimeout(()=>{
+if(a=='r'){
+o.style.display='none';lk()}
+else{
+o.innerHTML='<small>Click anywhere to power on</small>';o.onclick=()=>{
+o.onclick=null;o.style.display='none';lk()}
+}
+}
+,1800)}
+;
+$('#cnv').onclick=e=>{
+const d=e.target.dataset.d;
+if(d){
+cm.setMonth(cm.getMonth()+ +d);
+calr()}
+}
+;
+const QA=[['📶','Wi‑Fi',1],['🔵','Bluetooth',1],['🌙','Night light'],['✈️','Airplane mode'],['🔋','Battery saver'],['🎯','Focus assist'],['📍','Location',1],['🖥️','Project']];
+$('#qa').innerHTML=QA.map(([i,n,o])=>'<div class="qt'+(o?' on':'')+'" data-n="'+n+'"><b>'+i+'</b>'+n+'</div>').join('');
+$('#qa').onclick=e=>{
+const q=e.target.closest('.qt');
+if(!q)return;
+const on=q.classList.toggle('on');
+if(q.dataset.n=='Night light')$('#nl').style.display=on?'block':'none';
+toast(q.dataset.n+(on?' on':' off'))}
+;
+$('#clr').onclick=()=>$('#nt').innerHTML='';
+$('#br').oninput=e=>$('#dim').style.opacity=(100-e.target.value)/125;
+$('#desk').oncontextmenu=e=>{
+if(e.target.closest('.win'))return;
+e.preventDefault();
+closeAll();
+const c=$('#cx');
+c.style.left=Math.min(e.clientX,innerWidth-200)+'px';
+c.style.top=Math.min(e.clientY,innerHeight-210)+'px';
+c.classList.add('o')}
+;
+$('#cx').onclick=e=>{
+const a=e.target.dataset.a,D=FS['This PC'].Desktop;
+closeAll();
+if(a=='r')icons();
+if(a=='f'){
+D[uniq(D,'New folder')]={
+}
+;
+icons()}
+if(a=='t'){
+D[uniq(D,'New Text Document','.txt')]='';
+icons()}
+if(a=='d'||a=='p')launch('settings')}
+;
+$('#lock').onclick=()=>{
+const l=$('#lock');
+l.classList.add('u');
+if(!l.dataset.s){
+l.dataset.s=1;
+setTimeout(()=>toast('Welcome! Open Start, or right-click the desktop.',1),700)}
+}
+;
+document.addEventListener('keydown',e=>{
+if(e.key=='Escape')closeAll();else if(!$('#lock').classList.contains('u'))$('#lock').click()}
+);
+document.addEventListener('pointerdown',e=>{
+if(!e.target.closest('.pop,#tbar,#cx'))closeAll()}
+);
+wp(0);
+icons();
+alist();
+tbr();
+tick();
+setInterval(tick,1000);
+/* ---------- v2: state, file system actions, dialogs ---------- */
+const S={
+}
+,sv=()=>{
+try{
+localStorage.w10=JSON.stringify({
+...S,fs:FS}
+)}
+catch(e){
+}
+}
+,
+applyS=()=>{
+const r=document.documentElement;
+if(S.th)r.dataset.theme=S.th;
+if(S.ac)r.style.setProperty('--ac',S.ac);
+if(S.wp!=null)wp(S.wp);
+tf.hour12=S.h24?false:undefined;
+document.body.classList.toggle('nb',!!S.nb)}
+;
+try{
+const j=JSON.parse(localStorage.w10||'{}');
+if(j.fs)Object.assign(FS,j.fs);
+delete j.fs;
+Object.assign(S,j)}
+catch(e){
+}
+const fsx=()=>{
+icons();
+sv();
+document.querySelectorAll('.win .bd').forEach(x=>x.dispatchEvent(new Event('fs')))}
+,
+del=(d,k)=>{
+const B=FS['Recycle Bin'];
+B[uniq(B,k)]=d[k];
+delete d[k];
+fsx()}
+,
+restore=k=>{
+const B=FS['Recycle Bin'],D=FS['This PC'].Desktop;
+D[uniq(D,k)]=B[k];
+delete B[k];
+fsx()}
+,
+RM={
+notepad:'notepad',calc:'calc',mspaint:'paint',explorer:'explorer',cmd:'cmd',control:'settings',taskmgr:'tm',winmine:'mines'}
+,
+runcmd=c=>{
+const k=RM[c.toLowerCase().replace(/\.exe$/,'')];
+k?launch(k):c&&toast("Windows cannot find '"+c+"'. Check the name and try again.")}
+;
+function ctx(e,items){
+e.preventDefault();
+e.stopPropagation();
+closeAll();
+const c=$('#cx');
+c.innerHTML='';
+items.forEach(([n,f])=>{
+const d=el('div','',n);d.onclick=v=>{
+v.stopPropagation();closeAll();f()}
+;c.append(d)}
+);
+c.style.left=Math.min(e.clientX,innerWidth-200)+'px';
+c.style.top=Math.max(0,Math.min(e.clientY,innerHeight-items.length*34-50))+'px';
+c.classList.add('o')}
+function ask(t,v,cb){
+const o=el('div','dlg','<div class="dbox"><b>'+t+'</b><input><div><button class="bt">OK</button> <button class="bt">Cancel</button></div></div>'),i=$('input',o);
+i.value=v||'';
+document.body.append(o);
+i.focus();
+i.select();
+const done=ok=>{
+o.remove();
+if(ok)cb(i.value.trim())}
+;
+o.onclick=e=>{
+if(e.target.textContent=='OK')done(1);
+else if(e.target.textContent=='Cancel'||e.target==o)done(0)}
+;
+i.onkeydown=e=>{
+if(e.key=='Enter')done(1);
+if(e.key=='Escape')done(0)}
+}
+function bsod(){
+const o=el('div','bs','<div style="font-size:96px">:(</div><p>Your PC ran into a problem and needs to restart. We\'re just collecting some error info, and then we\'ll restart for you.</p><p><span>0</span>% complete</p><small>Stop code: CRITICAL_PROCESS_DIED</small>');
+document.body.append(o);
+let n=0;
+const t=setInterval(()=>{
+n+=Math.random()*14;$('span',o).textContent=Math.min(100,n|0);if(n>=100){
+clearInterval(t);o.remove();W.slice().forEach(w=>w.close());lk()}
+}
+,350)}
+const t0=toast;
+toast=function(m,k){
+t0(m,k);
+if(k)fsx()}
+;
+icons=function(){
+const D=FS['This PC'].Desktop,B=[['💻','This PC',()=>launch('explorer',['This PC'])],[Object.keys(FS['Recycle Bin']).length?'♻️':'🗑️','Recycle Bin',()=>launch('explorer',['Recycle Bin'])],['📝','Notepad',()=>launch('notepad')],['🧮','Calculator',()=>launch('calc')],['🎨','Paint',()=>launch('paint')],['💣','Minesweeper',()=>launch('mines')]];
+Object.entries(D).forEach(([k,v])=>B.push([typeof v=='string'?'📄':'📁',k,()=>typeof v=='string'?launch('notepad',{
+f:k,t:v,d:D}
+):launch('explorer',['This PC','Desktop',k]),1]));
+const c=$('#ic');
+c.innerHTML='';
+B.forEach(([i,n,f,u])=>{
+const d=el('div','ic','<b>'+i+'</b>'+n);d.dataset.k=n;if(u)d.dataset.u=1;ob(d,f);c.append(d)}
+)}
+;
+$('#desk').oncontextmenu=e=>{
+if(e.target.closest('.win'))return;
+const D=FS['This PC'].Desktop,ic=e.target.closest('.ic'),k=ic&&ic.dataset.k;
+if(ic&&ic.dataset.u)return ctx(e,[['Open',()=>ic.ondblclick()],['Rename',()=>ask('Rename',k,n=>{
+if(n&&!(n in D)){
+D[n]=D[k];delete D[k];fsx()}
+}
+)],['Delete',()=>del(D,k)]]);
+if(k=='Recycle Bin')return ctx(e,[['Open',()=>ic.ondblclick()],['Empty Recycle Bin',()=>{
+const B=FS['Recycle Bin'];Object.keys(B).forEach(x=>delete B[x]);fsx()}
+]]);
+if(ic)return ctx(e,[['Open',()=>ic.ondblclick()]]);
+ctx(e,[['Refresh',fsx],['New folder',()=>{
+D[uniq(D,'New folder')]={
+}
+;fsx()}
+],['New text document',()=>{
+D[uniq(D,'New Text Document','.txt')]='';fsx()}
+],['Display settings',()=>launch('settings')],['Personalize',()=>launch('settings')]])}
+;
+$('#tbar').oncontextmenu=e=>ctx(e,[['Task Manager',()=>launch('tm')],['Show the desktop',()=>$('#sd').click()],['Run…',()=>ask('Run — type a program name (e.g. notepad, calc, cmd)','',runcmd)],['Settings',()=>launch('settings')]]);
+document.addEventListener('keydown',e=>{
+if(e.key=='Delete'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){
+const i=$('.ic.s[data-u]');if(i)del(FS['This PC'].Desktop,i.dataset.k)}
+}
+);
+document.addEventListener('keyup',e=>{
+if(e.key=='Meta')tog('start')}
+);
+/* ---------- v2: File Explorer ---------- */
+function explorer2(b,w,a){
+let p=a||['This PC'];
+const H=[],F=[];
+b.innerHTML='<div class="xn"><button data-a="b">←</button><button data-a="f">→</button><button data-a="u">↑</button><div class="ad"></div><input class="xs" placeholder="Search"></div><div class="xm"><div class="sd2"></div><div class="fl"></div></div><div class="st"></div>';
+const get=q=>q.reduce((o,k)=>o&&o[k],FS),fl=$('.fl',b),xs=$('.xs',b),go=(q,h=1)=>{
+if(h){
+H.push(p);
+F.length=0}
+p=q;
+xs.value='';
+draw()}
+;
+function draw(){
+let o=get(p);
+if(!o||typeof o!='object'){
+p=['This PC'];
+o=FS['This PC']}
+const ks=Object.keys(o).filter(k=>k.toLowerCase().includes(xs.value.toLowerCase())),bin=p[0]=='Recycle Bin';
+fl.innerHTML='';
+$('.ad',b).textContent=p.join(' › ');
+w.t(p[p.length-1]);
+ks.forEach(k=>{
+const v=o[k],d=el('div','fi','<b>'+(typeof v=='string'?'📄':v===null?'⚙️':/Disk/.test(k)?'💽':'📁')+'</b>'+k),op=()=>typeof v=='string'?launch('notepad',{
+f:k,t:v,d:o}
+):v===null?toast('Windows cannot open this file.'):go([...p,k]);
+ob(d,op);d.oncontextmenu=e=>ctx(e,bin?[['Restore',()=>restore(k)],['Delete permanently',()=>{
+delete o[k];fsx()}
+]]:[['Open',op],['Rename',()=>ask('Rename',k,n=>{
+if(n&&!(n in o)){
+o[n]=v;delete o[k];fsx()}
+}
+)],['Delete',()=>del(o,k)]]);fl.append(d)}
+);
+fl.oncontextmenu=e=>{
+if(e.target==fl)ctx(e,bin?[['Empty Recycle Bin',()=>{
+Object.keys(o).forEach(k=>delete o[k]);fsx()}
+]]:[['New folder',()=>{
+o[uniq(o,'New folder')]={
+}
+;fsx()}
+],['New text document',()=>{
+o[uniq(o,'New Text Document','.txt')]='';fsx()}
+]])}
+;
+$('.st',b).textContent=ks.length+' items'}
+$('.sd2',b).append(...[['This PC'],['This PC','Desktop'],['This PC','Documents'],['This PC','Downloads'],['This PC','Pictures'],['Recycle Bin']].map(q=>{
+const d=el('div','sl',q[q.length-1]);d.onclick=()=>go(q);return d}
+));
+$('.xn',b).onclick=e=>{
+const k=e.target.dataset.a;
+if(k=='b'&&H.length){
+F.push(p);
+go(H.pop(),0)}
+if(k=='f'&&F.length){
+H.push(p);
+go(F.pop(),0)}
+if(k=='u'&&p.length>1)go(p.slice(0,-1))}
+;
+xs.oninput=draw;
+b.addEventListener('fs',draw);
+draw()}
+/* ---------- v2: Command Prompt with a real working directory ---------- */
+function cmd2(b,w){
+w.t('Command Prompt');
+b.classList.add('cm');
+let cw=['This PC'],hi=0;
+const H=[];
+const pr=()=>'C:\\Users\\User'+(cw.length>1?'\\'+cw.slice(1).join('\\'):'')+'>',cur=()=>cw.reduce((x,k)=>x[k],FS);
+b.innerHTML='<pre class="o">Microsoft Windows [Version 10.0.19045.1]\n(c) Microsoft Corporation. All rights reserved.\nType help to see commands.\n</pre><div class="ln"><span></span><input spellcheck="false" autocapitalize="off" autocomplete="off"></div>';
+const o=$('.o',b),i=$('input',b),ps=$('.ln span',b);
+ps.textContent=pr();
+const AP={
+notepad:'notepad',calc:'calc',mspaint:'paint',paint:'paint',explorer:'explorer',cmd:'cmd',control:'settings',taskmgr:'tm',winmine:'mines'}
+,
+R={
+help:()=>'help dir cd mkdir type del echo cls date time ver whoami hostname ipconfig ping systeminfo shutdown bsod start <app> exit',
+dir:()=>{
+const d=cur();
+return ' Directory of '+pr().slice(0,-1)+'\n\n'+(Object.keys(d).map(k=>'10/09/2026  09:00 AM    '+(d[k]&&typeof d[k]=='object'?'<DIR>          ':String((d[k]||'').length).padStart(10)+' ')+k).join('\n')||'File Not Found')}
+,
+cd:r=>{
+const t=r.join(' ');
+if(!t)return pr().slice(0,-1);
+if(t=='..'){
+if(cw.length>1)cw.pop()}
+else if(t=='\\'||t=='/')cw=['This PC'];
+else{
+const c=cur(),k=Object.keys(c).find(x=>x.toLowerCase()==t.toLowerCase());
+if(k&&c[k]&&typeof c[k]=='object')cw.push(k);
+else return 'The system cannot find the path specified.'}
+ps.textContent=pr()}
+,
+mkdir:r=>{
+if(r[0]){
+cur()[r.join(' ')]={
+}
+;
+fsx()}
+}
+,type:r=>{
+const v=cur()[r.join(' ')];
+return typeof v=='string'?v:'The system cannot find the file specified.'}
+,
+del:r=>{
+const k=r.join(' ');
+if(typeof cur()[k]=='string')del(cur(),k);
+else return 'Could Not Find '+k}
+,
+cls:()=>{
+o.textContent=''}
+,echo:r=>r.join(' '),date:()=>'The current date is: '+new Date().toLocaleDateString('en-US'),time:()=>'The current time is: '+new Date().toLocaleTimeString(),
+ver:()=>'\nMicrosoft Windows [Version 10.0.19045.1]',whoami:()=>'desktop-web10\\user',hostname:()=>'DESKTOP-WEB10',
+ipconfig:()=>'Windows IP Configuration\n\nEthernet adapter Ethernet:\n   IPv4 Address. . . . . : 192.168.1.42',
+systeminfo:()=>'Host Name:         DESKTOP-WEB10\nOS Name:           Microsoft Windows 10 Pro\nOS Version:        10.0.19045 Build 19045\nSystem Type:       x64-based PC\nTotal Memory:      16,384 MB',
+ping:r=>{
+let n=0;
+o.textContent+='\nPinging '+(r[0]||'localhost')+' with 32 bytes of data:\n';
+const t=setInterval(()=>{
+o.textContent+='Reply from 127.0.0.1: bytes=32 time<1ms TTL=128\n';b.scrollTop=b.scrollHeight;if(++n==4)clearInterval(t)}
+,400)}
+,
+shutdown:r=>{
+$('#pw [data-a="'+(r.includes('/r')?'r':'s')+'"]').click()}
+,bsod:()=>{
+bsod()}
+,exit:()=>{
+w.close()}
+,
+start:r=>AP[(r[0]||'').toLowerCase()]?launch(AP[r[0].toLowerCase()]):'The system cannot find the file '+(r[0]||'')+'.'}
+;
+i.onkeydown=e=>{
+if(e.key=='Enter'){
+const c=i.value.trim(),[m='',...r]=c.split(/\s+/),x=m.toLowerCase();
+H.push(c);
+hi=H.length;
+i.value='';
+o.textContent+=pr()+c+'\n';
+const f=R[x]||(AP[x]?()=>launch(AP[x]):null),s=f?f(r):c?"'"+m+"' is not recognized as an internal or external command,\noperable program or batch file.":'';
+if(typeof s=='string'&&s)o.textContent+=s+'\n'}
+if(e.key=='ArrowUp'&&hi>0)i.value=H[--hi];
+if(e.key=='ArrowDown'){
+hi=Math.min(hi+1,H.length);
+i.value=H[hi]||''}
+b.scrollTop=b.scrollHeight}
+;
+b.onclick=()=>i.focus();
+if(!CO)i.focus()}
+/* ---------- v2: Settings with pages ---------- */
+function settings2(b,w){
+w.t('Settings');
+b.style.flexDirection='row';
+const PG={
+Personalization:()=>'<h2>Personalization</h2><h4>Choose your color mode</h4><button class="bt" data-m="light">Light</button> <button class="bt" data-m="dark">Dark</button><h4>Accent color</h4>'+AC.map(c=>'<i class="sw" data-c="'+c+'" style="background:'+c+'"></i>').join('')+'<input type="color" data-cc="1" value="#0078d7"><h4>Background</h4>'+WP.map((v,i)=>'<i class="sw wp" data-b="'+i+'" style="background:'+v+'"></i>').join('')+'<h4>Transparency effects</h4><button class="bt" data-t="1">'+(S.nb?'Off':'On')+' (tap to toggle)</button>',
+System:()=>'<h2>System</h2><h4>Brightness</h4><input type="range" min="20" max="100" data-br="1" value="'+(100-($('#dim').style.opacity||0)*125|0)+'"><h4>About</h4><p>Device name: DESKTOP-WEB10<br>Edition: Windows 10 Pro (HTML remake)<br>Version: 22H2 (OS Build 19045)<br>Screen: '+innerWidth+' × '+innerHeight+'</p>',
+Clock:()=>'<h2>Date &amp; time</h2><h4>24-hour clock</h4><button class="bt" data-h="1">'+(S.h24?'On':'Off')+' (tap to toggle)</button><p>'+new Date().toLocaleString()+'</p>',
+Update:()=>'<h2>Windows Update</h2><p id="us">You\'re up to date. Last checked: today</p><button class="bt" data-u="1">Check for updates</button>'}
+;
+b.innerHTML='<div class="sn">'+Object.keys(PG).map(k=>'<div data-p="'+k+'">'+k+'</div>').join('')+'</div><div class="sc"></div>';
+const sc=$('.sc',b),pg=k=>{
+sc.innerHTML=PG[k]();
+b.querySelectorAll('.sn div').forEach(d=>d.classList.toggle('on',d.dataset.p==k))}
+;
+pg('Personalization');
+b.onclick=e=>{
+const d=e.target.dataset,r=document.documentElement;
+if(d.p)pg(d.p);
+if(d.m){
+S.th=d.m;
+r.dataset.theme=d.m}
+if(d.c){
+S.ac=d.c;
+r.style.setProperty('--ac',d.c)}
+if(d.b){
+S.wp=+d.b;
+wp(S.wp)}
+if(d.t){
+S.nb=!S.nb;
+applyS();
+pg('Personalization')}
+if(d.h){
+S.h24=!S.h24;
+applyS();
+tick();
+pg('Clock')}
+if(d.u){
+const u=$('#us',b);
+u.textContent='Checking for updates…';
+setTimeout(()=>{
+u.textContent='Downloading updates… 100%';setTimeout(()=>{
+u.innerHTML='Updates installed. <button class="bt" data-rs="1">Restart now</button>'}
+,1200)}
+,1200)}
+if(d.rs)$('#pw [data-a="r"]').click();
+sv()}
+;
+b.oninput=e=>{
+const d=e.target.dataset;
+if(d.cc){
+S.ac=e.target.value;
+document.documentElement.style.setProperty('--ac',S.ac)}
+if(d.br){
+$('#dim').style.opacity=(100-e.target.value)/125;
+$('#br').value=e.target.value}
+sv()}
+}
+/* ---------- v2: Minesweeper ---------- */
+function mines(b,w){
+const n=9,M=10;
+let g,st,fl,sec,iv;
+b.innerHTML='<div class="mb"><button>🙂 New game</button><span class="mi"></span><span class="mi"></span></div><div class="mg"></div>';
+const bd=$('.mg',b),[i1,i2]=b.querySelectorAll('.mi'),nb=(r,c)=>{
+const a=[];
+for(let y=-1;y<2;y++)for(let x=-1;x<2;x++)(y||x)&&g[r+y]&&g[r+y][c+x]&&a.push(g[r+y][c+x]);
+return a}
+;
+function reset(){
+clearInterval(iv);
+sec=0;
+st=0;
+fl=M;
+w.t('Minesweeper');
+i1.textContent='🚩 '+fl;
+i2.textContent='⏱ 0';
+bd.innerHTML='';
+g=[...Array(n)].map((_,r)=>[...Array(n)].map((_,c)=>({
+r,c,m:0,o:0,f:0,n:0}
+)));
+g.flat().forEach(k=>{
+const d=el('div','mc');k.d=d;d.onclick=()=>opn(k);d.oncontextmenu=e=>{
+e.preventDefault();flag(k)}
+;let t;d.onpointerdown=()=>{
+t=setTimeout(()=>{
+flag(k);k.lp=1}
+,450)}
+;d.onpointerup=d.onpointerleave=()=>clearTimeout(t);bd.append(d)}
+)}
+function place(s){
+let c=0;
+while(c<M){
+const k=g[Math.random()*n|0][Math.random()*n|0];
+if(!k.m&&k!=s&&!nb(s.r,s.c).includes(k)){
+k.m=1;
+c++}
+}
+g.flat().forEach(k=>k.n=nb(k.r,k.c).filter(x=>x.m).length)}
+function opn(k){
+if(k.lp){
+k.lp=0;
+return}
+if(st==2||k.o||k.f)return;
+if(!st){
+st=1;
+place(k);
+iv=setInterval(()=>{
+if(!b.isConnected)clearInterval(iv);i2.textContent='⏱ '+ ++sec}
+,1000)}
+if(k.m){
+st=2;
+clearInterval(iv);
+g.flat().forEach(x=>{
+if(x.m){
+x.d.textContent='💣';x.d.className='mc o'}
+}
+);
+k.d.style.background='#e81123';
+w.t('Minesweeper - Game over');
+return}
+flood(k);
+if(g.flat().every(x=>x.m||x.o)){
+st=2;
+clearInterval(iv);
+w.t('Minesweeper - You win! 🎉')}
+}
+function flood(k){
+if(k.o||k.f)return;
+k.o=1;
+k.d.className='mc o';
+k.d.textContent=k.n||'';
+k.d.dataset.n=k.n;
+if(!k.n)nb(k.r,k.c).forEach(flood)}
+function flag(k){
+if(st==2||k.o)return;
+k.f=!k.f;
+fl+=k.f?-1:1;
+k.d.textContent=k.f?'🚩':'';
+i1.textContent='🚩 '+fl}
+$('.mb button',b).onclick=reset;
+reset()}
+/* ---------- v2: Task Manager ---------- */
+function taskman(b,w){
+w.t('Task Manager');
+b.innerHTML='<div class="mb"><button data-a="e">End task</button><span class="mi"></span></div><canvas width="460" height="110" style="flex:none;width:100%;height:110px;background:var(--ws)"></canvas><div class="tml" style="flex:1;overflow:auto"></div>';
+const x=$('canvas',b).getContext('2d'),L=$('.tml',b),h=[...Array(60)].map(()=>20);
+let sel=-1;
+const tick2=()=>{
+h.push(Math.min(95,Math.max(3,h[59]+(Math.random()-.5)*14+W.length*.15-.4)));
+h.shift();
+x.clearRect(0,0,460,110);
+x.strokeStyle='#17a2b8';
+x.lineWidth=2;
+x.beginPath();
+h.forEach((v,i)=>x[i?'lineTo':'moveTo'](i*460/59,110-v*1.1));
+x.stroke();
+$('.mi',b).textContent='CPU '+(h[59]|0)+'%   Memory '+(30+W.length*4)+'%';
+L.innerHTML='<div class="tr th"><span>Name</span><span>Status</span></div>'+W.map((k,i)=>'<div class="tr'+(i==sel?' s':'')+'" data-i="'+i+'"><span>'+APPS[k.id].i+' '+APPS[k.id].n+'</span><span>Running</span></div>').join('')}
+,
+iv=setInterval(()=>b.isConnected?tick2():clearInterval(iv),1000);
+tick2();
+L.onclick=e=>{
+const r=e.target.closest('.tr');
+if(r&&r.dataset.i)sel=+r.dataset.i;
+tick2()}
+;
+$('.mb',b).onclick=e=>{
+if(e.target.dataset.a){
+if(W[sel]==w)toast("Task Manager can't end itself.");
+else if(W[sel]){
+W[sel].close();
+sel=-1;
+tick2()}
+}
+}
+}
+/* ---------- v2: shell polish ---------- */
+Object.assign(APPS,{
+mines:{
+n:'Minesweeper',i:'💣',w:340,h:440,f:mines}
+,tm:{
+n:'Task Manager',i:'📊',w:480,h:440,f:taskman,one:1}
+}
+);
+APPS.explorer.f=explorer2;
+APPS.cmd.f=cmd2;
+APPS.settings.f=settings2;
+const l0=launch;
+launch=function(id,a){
+const w=l0(id,a),e=w.e;
+if(!e._s){
+e._s=1;
+const tb=$('.tb',e);
+tb.addEventListener('pointerdown',v=>{
+if(v.target.tagName!='BUTTON'&&(e.classList.contains('sl2')||e.classList.contains('sr2'))){
+e.classList.remove('sl2','sr2');e.style.cssText=e._g}
+}
+);
+tb.addEventListener('pointerup',v=>{
+if(innerWidth<700||e.classList.contains('m')||v.target.tagName=='BUTTON')return;const x=v.clientX,y=v.clientY;
+if(y<6)e.classList.add('m');else if(x<6||x>innerWidth-6){
+e._g=e.style.cssText;e.classList.add(x<6?'sl2':'sr2')}
+}
+)}
+return w}
+;
+const tvb=el('div','tbtn','❐'),tv=el('div','');
+tvb.id='tvb';
+tvb.title='Task View';
+tv.id='tvw';
+$('#sb').after(tvb);
+document.body.append(tv);
+function tvo(){
+closeAll();
+tv.innerHTML=W.length?W.map((k,i)=>'<div class="tvc" data-i="'+i+'"><b><span style="font-size:12px;display:inline">'+APPS[k.id].i+' '+$('.tt',k.e).textContent+'</span><u data-x="'+i+'">✕</u></b><span>'+APPS[k.id].i+'</span></div>').join(''):'<p>No open windows</p>';
+tv.style.display='flex'}
+tv.onclick=e=>{
+const c=e.target.closest('.tvc'),x=e.target.dataset.x;
+if(x!=null){
+W[x].close();
+tvo();
+return}
+if(c)foc(W[c.dataset.i]);
+tv.style.display='none'}
+;
+tvb.onclick=()=>tv.style.display=='flex'?tv.style.display='none':tvo();
+TL.push(['mines','💣','Minesweeper','#107c10'],['tm','📊','Task Manager','#3b4b5a']);
+$('#tl').innerHTML=TL.map(([k,i,n,c,s])=>'<div class="tl" data-k="'+k+'" style="background:'+c+';grid-column:span '+(s||1)+'"><b>'+i+'</b>'+(n||new Date().toLocaleDateString([],{
+weekday:'long',month:'long',day:'numeric'}
+))+'</div>').join('');
+const bt=el('div','','<div class="lg big"><i></i><i></i><i></i><i></i></div><div class="sp"></div>');
+bt.id='boot';
+document.body.append(bt);
+setTimeout(()=>bt.remove(),1900);
+/* ---------- v3 ---------- */
+Object.assign(APPS,{
+photos:{
+n:'Photos',i:'🖼️',w:640,h:440,f:photos}
+,stick:{
+n:'Sticky Notes',i:'🗒️',w:300,h:340,f:stick}
+}
+);
+Object.assign(RM,{
+photos:'photos',stickynot:'stick'}
+);
+const setbg=d=>{
+$('#desk').style.background=$('#lock').style.background='url("'+d+'") center/cover'}
+;
+closeAll=function(x){
+document.querySelectorAll('.pop').forEach(p=>p.id!=x&&p.classList.remove('o'));
+$('#cx').classList.remove('o')}
+;
+const l1=launch;
+launch=function(id,a){
+if(id=='notepad'&&a&&/^data:image/.test(a.t||''))id='photos';
+return l1(id,a)}
+;
+function photos(b,w,a={
+}
+){
+const dir=a.d||FS['This PC'].Pictures,ks=()=>Object.keys(dir).filter(k=>/^data:image/.test(dir[k]));
+let i=Math.max(0,ks().indexOf(a.f)),z=1;
+b.innerHTML='<div class="mb"><button data-a="p">◀</button><button data-a="n">▶</button><button data-a="i">＋</button><button data-a="o">－</button><button data-a="w">Set as background</button><button data-a="d">Delete</button></div><div class="ph"></div><div class="st"></div>';
+const ph=$('.ph',b),sh=()=>{
+const l=ks(),k=l[Math.min(i,l.length-1)];
+ph.innerHTML=k?'<img alt="">':'<p>No pictures yet. Draw something in Paint and press Save.</p>';
+if(k){
+const m=$('img',ph);
+m.src=dir[k];
+m.style.transform='scale('+z+')'}
+$('.st',b).textContent=k?k+'  ('+(Math.min(i,l.length-1)+1)+' of '+l.length+')':'0 pictures';
+w.t((k||'Photos')+' - Photos')}
+;
+b.onclick=e=>{
+const x=e.target.dataset.a,l=ks();
+if(!x||!l.length)return;
+if(x=='p')i=(i+l.length-1)%l.length;
+if(x=='n')i=(i+1)%l.length;
+if(x=='i')z=Math.min(4,z+.25);
+if(x=='o')z=Math.max(.25,z-.25);
+if(x=='w'){
+S.bg=dir[l[i]];
+S.wp=-1;
+setbg(S.bg);
+sv();
+toast('Background updated')}
+if(x=='d'){
+del(dir,l[i]);
+i=0}
+sh()}
+;
+b.addEventListener('fs',sh);
+sh()}
+function stick(b,w){
+w.t('Sticky Notes');
+const N=S.sn||(S.sn=['Welcome to Sticky Notes!\nNotes are saved in this browser.']);
+let i=0;
+b.innerHTML='<div class="mb"><button data-a="n">＋ New</button><button data-a="p">◀</button><button data-a="x">▶</button><button data-a="d">🗑️</button><span class="mi"></span></div><textarea class="sk" spellcheck="false"></textarea>';
+const t=$('textarea',b),sh=()=>{
+t.value=N[i]||'';
+t.className='sk k'+i%4;
+$('.mi',b).textContent=(i+1)+' / '+N.length}
+;
+t.oninput=()=>{
+N[i]=t.value;
+sv()}
+;
+$('.mb',b).onclick=e=>{
+const a=e.target.dataset.a;
+if(a=='n'){
+N.push('');
+i=N.length-1}
+if(a=='p')i=(i+N.length-1)%N.length;
+if(a=='x')i=(i+1)%N.length;
+if(a=='d'&&N.length>1){
+N.splice(i,1);
+i=0}
+sv();
+sh()}
+;
+sh()}
+const pa0=paint;
+paint=function(b,w){
+pa0(b,w);
+const s=el('button','','💾 Save');
+$('.mb',b).append(s);
+s.onclick=e=>{
+e.stopPropagation();
+const P=FS['This PC'].Pictures,n=uniq(P,'Drawing','.png');
+P[n]=$('canvas',b).toDataURL('image/png');
+w.t(n+' - Paint');
+fsx();
+toast('Saved to Pictures: '+n)}
+}
+;
+APPS.paint.f=paint;
+const np0=notepad;
+notepad=function(b,w,a={
+}
+){
+np0(b,w,a);
+const m=$('.mb',b),t=$('textarea',b);
+[['Find','f'],['Date','t']].forEach(([n,k])=>{
+const x=el('button','',n);x.onclick=()=>{
+if(k=='t'){
+t.setRangeText(new Date().toLocaleString(),t.selectionStart,t.selectionEnd,'end');t.focus()}
+else ask('Find what:','',q=>{
+if(!q)return;const v=t.value.toLowerCase(),s=q.toLowerCase(),i=v.indexOf(s,t.selectionEnd),j=i<0?v.indexOf(s):i;if(j<0)toast("Cannot find '"+q+"'");else{
+t.focus();t.setSelectionRange(j,j+q.length)}
+}
+)}
+;m.append(x)}
+);
+t.addEventListener('keydown',e=>{
+if((e.ctrlKey||e.metaKey)&&e.key=='s'){
+e.preventDefault();$('[data-a=s]',m).click()}
+}
+)}
+;
+APPS.notepad.f=notepad;
+const ca0=calc;
+calc=function(b,w){
+ca0(b,w);
+const M={
+'*':'×','/':'÷','-':'−',Enter:'=','=':'=',Backspace:'⌫',Escape:'C',Delete:'CE'}
+,
+h=e=>{
+if(!b.isConnected)return document.removeEventListener('keydown',h);
+if(act&&act.b==b&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){
+const k=M[e.key]||e.key,x=[...b.querySelectorAll('button')].find(y=>y.textContent==k);
+if(x){
+x.click();
+e.preventDefault()}
+}
+}
+;
+document.addEventListener('keydown',h)}
+;
+APPS.calc.f=calc;
+/* tray flyouts, real battery/network, startup chime */
+let AX,VL=.6,BT,nc=0,ch=0;
+const NW=['HomeNet-5G','CoffeeShop Guest','Linksys_2.4G','Airport Free WiFi'],
+mk=(id,h)=>{
+const d=el('div','pop fy',h);
+d.id=id;
+document.body.append(d);
+return d}
+,
+tone=(f,t,d,g=.15)=>{
+try{
+AX=AX||new(window.AudioContext||webkitAudioContext)();
+AX.resume&&AX.resume();
+const o=AX.createOscillator(),v=AX.createGain(),s=AX.currentTime+t;
+o.frequency.value=f;
+o.connect(v);
+v.connect(AX.destination);
+v.gain.setValueAtTime(0,s);
+v.gain.linearRampToValueAtTime(g*VL,s+.05);
+v.gain.exponentialRampToValueAtTime(.0001,s+d);
+o.start(s);
+o.stop(s+d)}
+catch(e){
+}
+}
+,
+NT=mk('net',''),VP=mk('vol','<h3>Volume</h3><input type="range" min="0" max="100" value="60"><span>🔊 60</span>'),
+rn=()=>{
+NT.innerHTML='<h3>Wi-Fi</h3><small>'+(navigator.onLine?'Connected, internet access':'No internet')+'</small>'+NW.map((n,i)=>'<div class="wf'+(i==nc?' on':'')+'" data-i="'+i+'"><span>📶 '+n+'</span><span>'+(i==nc?'Connected':'')+'</span></div>').join('')}
+;
+rn();
+NT.onclick=e=>{
+const r=e.target.closest('.wf');
+if(r){
+nc=+r.dataset.i;
+rn();
+toast('Connected to '+NW[nc])}
+}
+;
+VP.oninput=e=>{
+VL=e.target.value/100;
+const c=VL?VL<.4?'🔉':'🔊':'🔇';
+$('.tray [data-f=vol]').textContent=c;
+$('span',VP).textContent=c+' '+e.target.value}
+;
+VP.onchange=()=>tone(660,0,.25,.2);
+$('.tray').innerHTML='⌃ <span data-f="net">📶</span><span data-f="vol">🔊</span><span data-f="bat">🔋</span>';
+$('.tray').onclick=e=>{
+const f=e.target.dataset.f;
+if(!f)return;
+if(f=='bat')toast(BT?'Battery: '+Math.round(BT.level*100)+'%'+(BT.charging?' (charging)':''):'Battery status is not available on this device.');
+else tog(f)}
+;
+navigator.getBattery&&navigator.getBattery().then(b=>{
+BT=b;const u=()=>{
+$('.tray [data-f=bat]').textContent=(b.charging?'⚡':'🔋')+Math.round(b.level*100)+'%'}
+;u();b.onlevelchange=b.onchargingchange=u}
+).catch(()=>{
+}
+);
+addEventListener('offline',()=>{
+toast('You are offline');rn()}
+);
+addEventListener('online',()=>{
+toast('Back online');rn()}
+);
+$('#lock').addEventListener('click',()=>{
+if(!ch){
+ch=1;[[311,0],[466,.18],[415,.36],[622,.6]].forEach(([f,t])=>{
+tone(f,t,1.6);tone(f/2,t,1.6,.06)}
+)}
+}
+);
+/* ---------- v4: lots more apps ---------- */
+const ctl=(b,e,fn)=>{
+let sx,sy;
+e.onpointerdown=v=>{
+sx=v.clientX;
+sy=v.clientY}
+;
+e.onpointerup=v=>{
+const x=v.clientX-sx,y=v.clientY-sy;
+if(Math.max(Math.abs(x),Math.abs(y))>20)fn(Math.abs(x)>Math.abs(y)?x>0?'R':'L':y>0?'D':'U')}
+;
+const h=v=>{
+if(!b.isConnected)return document.removeEventListener('keydown',h);
+const d={
+ArrowUp:'U',ArrowDown:'D',ArrowLeft:'L',ArrowRight:'R'}
+[v.key];
+if(d&&act&&act.b==b){
+v.preventDefault();
+fn(d)}
+}
+;
+document.addEventListener('keydown',h)}
+;
+function snake(b,w){
+w.t('Snake');
+b.innerHTML='<div class="mb"><button>New game</button><span class="mi"></span></div><canvas width="300" height="300" style="flex:none;width:min(100%,300px);align-self:center;margin:8px;background:#111;touch-action:none"></canvas>';
+const c=$('canvas',b),x=c.getContext('2d'),n=15,s=20,sc=$('.mi',b);
+let sn,d,nd,f,pt,t;
+const nf=()=>{
+do f=[Math.random()*n|0,Math.random()*n|0];
+while(sn.some(p=>p[0]==f[0]&&p[1]==f[1]))}
+,
+step=()=>{
+if(!b.isConnected)return clearInterval(t);
+d=nd;
+const h=[sn[0][0]+(d=='R')-(d=='L'),sn[0][1]+(d=='D')-(d=='U')];
+if(h[0]<0||h[1]<0||h[0]>=n||h[1]>=n||sn.some(p=>p[0]==h[0]&&p[1]==h[1])){
+clearInterval(t);
+sc.textContent='Game over: '+pt;
+return}
+sn.unshift(h);
+if(h[0]==f[0]&&h[1]==f[1]){
+sc.textContent='Score '+ ++pt;
+nf()}
+else sn.pop();
+x.fillStyle='#111';
+x.fillRect(0,0,300,300);
+x.fillStyle='#e74856';
+x.fillRect(f[0]*s+2,f[1]*s+2,s-4,s-4);
+x.fillStyle='#10c040';
+sn.forEach(p=>x.fillRect(p[0]*s+1,p[1]*s+1,s-2,s-2))}
+,
+rst=()=>{
+clearInterval(t);
+sn=[[7,7],[6,7],[5,7]];
+d=nd='R';
+pt=0;
+nf();
+t=setInterval(step,130);
+sc.textContent='Score 0'}
+;
+ctl(b,c,k=>{
+if({
+U:'D',D:'U',L:'R',R:'L'}
+[k]!=d)nd=k}
+);
+$('.mb button',b).onclick=rst;
+rst()}
+function g2048(b,w){
+w.t('2048');
+b.innerHTML='<div class="mb"><button>New game</button><span class="mi"></span></div><div class="g4"></div>';
+const bd=$('.g4',b),sc=$('.mi',b);
+let g,pts;
+const add=()=>{
+const e=[];
+g.forEach((v,i)=>v||e.push(i));
+if(e.length)g[e[Math.random()*e.length|0]]=Math.random()<.9?2:4}
+,
+draw=()=>{
+bd.innerHTML=g.map(v=>'<div class="t4" style="background:hsl('+(40-Math.log2(v||1)*3)+',90%,'+(v?Math.max(35,92-Math.log2(v)*5):85)+'%);color:'+(v>4?'#fff':'#444')+'">'+(v||'')+'</div>').join('');
+sc.textContent='Score '+pts}
+,
+rst=()=>{
+g=Array(16).fill(0);
+pts=0;
+add();
+add();
+draw()}
+,
+mv=k=>{
+const o=g.join();
+for(let i=0;i<4;i++){
+const ix=[0,1,2,3].map(j=>k=='L'?i*4+j:k=='R'?i*4+3-j:k=='U'?j*4+i:(3-j)*4+i);
+let r=ix.map(j=>g[j]).filter(Boolean);
+for(let j=0;j<r.length-1;j++)if(r[j]==r[j+1]){
+r[j]*=2;
+pts+=r[j];
+r.splice(j+1,1)}
+while(r.length<4)r.push(0);
+ix.forEach((j,m)=>g[j]=r[m])}
+if(g.join()!=o){
+add();
+draw()}
+if(!g.includes(0)&&!g.some((v,i)=>v==g[i+1]&&i%4<3||v==g[i+4]))sc.textContent='Game over: '+pts}
+;
+ctl(b,bd,mv);
+$('.mb button',b).onclick=rst;
+rst()}
+function ttt(b,w){
+w.t('Tic-Tac-Toe');
+b.innerHTML='<div class="mb"><button>New game</button><span class="mi"></span></div><div class="tt3"></div>';
+const bd=$('.tt3',b),sc=$('.mi',b),L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+let g,over;
+const win=p=>L.find(l=>l.every(i=>g[i]==p)),draw=()=>{
+bd.innerHTML=g.map((v,i)=>'<div data-i="'+i+'">'+v+'</div>').join('')}
+,
+end=()=>{
+const x=win('✕'),o=win('○');
+if(x||o||!g.includes('')){
+over=1;
+sc.textContent=x?'You win! 🎉':o?'Computer wins':'Draw'}
+}
+,
+ai=()=>{
+const f=g.map((v,i)=>v?-1:i).filter(i=>i>=0),t=p=>f.find(i=>{
+g[i]=p;const r=win(p);g[i]='';return r}
+),m=t('○')??t('✕')??(g[4]?undefined:4);
+g[m??f[Math.random()*f.length|0]]='○'}
+,
+rst=()=>{
+g=Array(9).fill('');
+over=0;
+sc.textContent='You are ✕';
+draw()}
+;
+bd.onclick=e=>{
+const i=e.target.dataset.i;
+if(i==null||over||g[i])return;
+g[i]='✕';
+end();
+if(!over){
+ai();
+end()}
+draw()}
+;
+$('.mb button',b).onclick=rst;
+rst()}
+function piano(b,w){
+w.t('Piano');
+const N=[['C',262],['D',294],['E',330],['F',349],['G',392],['A',440],['B',494],['C',523]],B=[['C♯',277,1],['D♯',311,2],['F♯',370,4],['G♯',415,5],['A♯',466,6]],K='asdfghjk',BK={
+w:0,e:1,t:2,y:3,u:4}
+;
+b.innerHTML='<div class="pn">'+N.map(([n,f])=>'<b data-f="'+f+'">'+n+'</b>').join('')+B.map(([n,f,k])=>'<i data-f="'+f+'" style="left:'+k*12.5+'%">'+n+'</i>').join('')+'</div><div class="st">Tap the keys, or press A S D F G H J K and W E T Y U</div>';
+const p=$('.pn',b),pl=f=>{
+tone(f,0,1.2,.3);
+const e=p.querySelector('[data-f="'+f+'"]');
+e.classList.add('on');
+setTimeout(()=>e.classList.remove('on'),180)}
+;
+p.onpointerdown=e=>{
+const f=e.target.dataset.f;
+if(f)pl(+f)}
+;
+const h=e=>{
+if(!b.isConnected)return document.removeEventListener('keydown',h);
+if(act&&act.b==b&&!e.repeat){
+const k=e.key.toLowerCase(),i=K.indexOf(k);
+if(i>=0)pl(N[i][1]);
+else if(k in BK)pl(B[BK[k]][1])}
+}
+;
+document.addEventListener('keydown',h)}
+function aclock(b,w){
+w.t('Alarms & Clock');
+b.innerHTML='<div class="mb"><button data-a="s">Stopwatch</button><button data-a="t">Timer</button><button data-a="w">World clock</button></div><div class="ck"><div class="big"></div><div class="row"></div></div>';
+const big=$('.big',b),row=$('.row',b),Z=[['Local'],['New York','America/New_York'],['London','Europe/London'],['Tokyo','Asia/Tokyo'],['Sydney','Australia/Sydney']];
+let m='s',acc=0,st=0,run=0,tl=300000;
+const f=ms=>{
+const s=Math.max(0,ms)/1000;
+return String(s/60|0).padStart(2,'0')+':'+(s%60).toFixed(1).padStart(4,'0')}
+,
+stop=()=>{
+if(run){
+m=='s'?acc+=Date.now()-st:tl-=Date.now()-st;
+run=0}
+}
+,
+upd=()=>{
+const n=Date.now();
+if(m=='s')big.textContent=f(acc+(run?n-st:0));
+else if(m=='t'){
+const l=tl-(run?n-st:0);
+big.textContent=f(l);
+if(run&&l<=0){
+run=0;
+tl=0;
+toast('⏰ Timer finished!');
+tone(880,0,.5);
+tone(880,.6,.5);
+view()}
+}
+else big.innerHTML=Z.map(([c,z])=>'<div class="tr"><span>'+c+'</span><span>'+new Date().toLocaleTimeString([],{
+timeZone:z,hour:'numeric',minute:'2-digit',second:'2-digit'}
+)+'</span></div>').join('')}
+,
+view=()=>{
+big.style.fontSize=m=='w'?'16px':'';
+row.innerHTML=m=='w'?'':'<button class="bt" data-a="go">'+(run?'Pause':'Start')+'</button> <button class="bt" data-a="rs">Reset</button>'+(m=='t'?' <button class="bt" data-a="p">+1 min</button>':'');
+upd()}
+;
+$('.mb',b).onclick=e=>{
+const a=e.target.dataset.a;
+if(a){
+stop();
+m=a;
+view()}
+}
+;
+row.onclick=e=>{
+const a=e.target.dataset.a,n=Date.now();
+if(a=='go'){
+if(run)stop();
+else{
+st=n;
+run=1}
+}
+if(a=='rs'){
+run=0;
+acc=0;
+tl=300000}
+if(a=='p')tl+=60000;
+view()}
+;
+const iv=setInterval(()=>b.isConnected?upd():clearInterval(iv),100);
+view()}
+function todo(b,w){
+w.t('To Do');
+const T=S.td||(S.td=[{
+t:'Try the new apps',d:0}
+]);
+b.innerHTML='<div class="mb"><input class="xs" style="flex:1;width:auto;margin:4px;padding:6px" placeholder="Add a task and press Enter"></div><div style="flex:1;overflow:auto"></div>';
+const L=b.lastChild,inp=$('input',b),dr=()=>{
+L.innerHTML=T.map((x,k)=>'<div class="tr" data-k="'+k+'"><span style="'+(x.d?'text-decoration:line-through;opacity:.6':'')+'">'+(x.d?'✅':'⭕')+' '+x.t.replace(/</g,'&lt;')+'</span><u data-x="'+k+'" style="text-decoration:none">🗑️</u></div>').join('')||'<p style="padding:12px">All done! 🎉</p>'}
+;
+inp.onkeydown=e=>{
+if(e.key=='Enter'&&inp.value.trim()){
+T.push({
+t:inp.value.trim(),d:0}
+);
+inp.value='';
+sv();
+dr()}
+}
+;
+L.onclick=e=>{
+const x=e.target.dataset.x,r=e.target.closest('.tr');
+if(x!=null)T.splice(x,1);
+else if(r)T[r.dataset.k].d^=1;
+sv();
+dr()}
+;
+dr()}
+function cal2(b,w){
+w.t('Calendar');
+const E=S.ev||(S.ev={
+}
+);
+let d=new Date(),sel=new Date().toDateString();
+d.setDate(1);
+b.innerHTML='<div class="mb"><button data-a="p">◀</button><button data-a="n">▶</button><button data-a="t">Today</button><button data-a="a">＋ Add event</button><span class="mi"></span></div><div class="cg2"></div><div style="overflow:auto;flex:none;max-height:35%"></div>';
+const g=$('.cg2',b),l=b.lastChild,
+dr=()=>{
+const y=d.getFullYear(),m=d.getMonth(),n=new Date(y,m+1,0).getDate(),td=new Date().toDateString();
+$('.mi',b).textContent=d.toLocaleDateString([],{
+month:'long',year:'numeric'}
+);
+let h=['S','M','T','W','T','F','S'].map(x=>'<b>'+x+'</b>').join('')+'<i></i>'.repeat(d.getDay());
+for(let k=1;k<=n;k++){
+const s=new Date(y,m,k).toDateString();
+h+='<div data-s="'+s+'" class="'+(s==td?'td ':'')+(s==sel?'sl3':'')+'">'+k+(E[s]?'<small>●</small>':'')+'</div>'}
+g.innerHTML=h;
+l.innerHTML='<div class="st">'+sel+' (tap an event to delete it)</div>'+(E[sel]||[]).map((t,i)=>'<div class="tr" data-i="'+i+'"><span>'+t.replace(/</g,'&lt;')+'</span><u style="text-decoration:none">✕</u></div>').join('')}
+;
+$('.mb',b).onclick=e=>{
+const a=e.target.dataset.a;
+if(a=='p')d.setMonth(d.getMonth()-1);
+if(a=='n')d.setMonth(d.getMonth()+1);
+if(a=='t'){
+d=new Date();
+d.setDate(1);
+sel=new Date().toDateString()}
+if(a=='a')return ask('New event on '+sel,'',t=>{
+if(t){
+(E[sel]=E[sel]||[]).push(t);sv();dr()}
+}
+);
+dr()}
+;
+g.onclick=e=>{
+const s=e.target.closest('[data-s]');
+if(s){
+sel=s.dataset.s;
+dr()}
+}
+;
+l.onclick=e=>{
+const r=e.target.closest('.tr');
+if(r){
+E[sel].splice(r.dataset.i,1);
+if(!E[sel].length)delete E[sel];
+sv();
+dr()}
+}
+;
+dr()}
+function conv(b,w){
+w.t('Unit Converter');
+const U={
+Length:{
+m:1,km:1e3,cm:.01,mi:1609.344,ft:.3048,in:.0254}
+,Weight:{
+kg:1,g:.001,lb:.45359237,oz:.0283495}
+,Temperature:{
+'°C':0,'°F':0,K:0}
+,Volume:{
+L:1,mL:.001,gal:3.78541,cup:.236588}
+}
+;
+b.innerHTML='<div class="cvw"><select></select><input type="number" value="1"><select></select><select></select><div class="cvr"></div></div>';
+const [C,fs,ts]=b.querySelectorAll('select'),v=$('input',b),r=$('.cvr',b),opt=a=>a.map(x=>'<option>'+x+'</option>').join('');
+const go=()=>{
+const u=U[C.value],x=parseFloat(v.value);
+if(isNaN(x)){
+r.textContent='';
+return}
+let o;
+if(C.value=='Temperature'){
+const c=fs.value=='°C'?x:fs.value=='°F'?(x-32)*5/9:x-273.15;
+o=ts.value=='°C'?c:ts.value=='°F'?c*9/5+32:c+273.15}
+else o=x*u[fs.value]/u[ts.value];
+r.textContent=(+o.toPrecision(8))+' '+ts.value}
+,
+cat=()=>{
+fs.innerHTML=ts.innerHTML=opt(Object.keys(U[C.value]));
+ts.selectedIndex=1;
+go()}
+;
+C.innerHTML=opt(Object.keys(U));
+C.onchange=cat;
+v.oninput=fs.onchange=ts.onchange=go;
+cat()}
+function wpad(b,w){
+w.t('WordPad');
+b.innerHTML='<div class="mb"><button data-c="bold"><b>B</b></button><button data-c="italic"><i>I</i></button><button data-c="underline"><u>U</u></button><button data-c="insertUnorderedList">• List</button><button data-s="1">💾 Save</button><span class="mi"></span></div><div class="wpd" contenteditable="true" spellcheck="false"></div>';
+const d=$('.wpd',b),m=$('.mb',b);
+m.onmousedown=e=>e.preventDefault();
+m.onclick=e=>{
+const t=e.target.closest('button');
+if(!t)return;
+if(t.dataset.c)document.execCommand(t.dataset.c);
+if(t.dataset.s){
+const D=FS['This PC'].Documents,n=uniq(D,'Document','.txt');
+D[n]=d.innerText;
+fsx();
+toast('Saved '+n+' to Documents')}
+d.focus()}
+;
+d.oninput=()=>$('.mi',b).textContent=d.innerText.trim().split(/\s+/).filter(Boolean).length+' words'}
+function typer(b,w){
+w.t('Typing Test');
+const P=['The quick brown fox jumps over the lazy dog while the sun sets slowly behind the distant hills.','Programming is the art of telling another human what one wants the computer to do.','A journey of a thousand miles begins with a single step and a very good pair of shoes.'];
+b.innerHTML='<div class="cvw"><div class="tpt"></div><textarea class="tpi" placeholder="Start typing here…" spellcheck="false"></textarea><div class="tpr">Type the text above. Timing starts on your first key.</div><button class="bt">New text</button></div>';
+const t=$('.tpt',b),i=$('textarea',b),r=$('.tpr',b);
+let tx,st;
+const nw=()=>{
+tx=P[Math.random()*P.length|0];
+t.textContent=tx;
+i.value='';
+st=0;
+i.disabled=false;
+i.focus()}
+;
+i.oninput=()=>{
+if(!st)st=Date.now();
+const v=i.value;
+t.innerHTML=[...tx].map((c,k)=>'<span style="'+(k<v.length?(v[k]==c?'color:#10893e':'color:#e81123;text-decoration:underline'):'opacity:.7')+'">'+c+'</span>').join('');
+const m=(Date.now()-st)/60000,ok=[...v].filter((c,k)=>c==tx[k]).length;
+r.textContent=Math.round(v.length/5/Math.max(m,.02))+' WPM, accuracy '+Math.round(ok/Math.max(v.length,1)*100)+'%';
+if(v.length>=tx.length){
+i.disabled=true;
+r.textContent+=' (finished! 🎉)'}
+}
+;
+$('button',b).onclick=nw;
+nw()}
+function pwgen(b,w){
+w.t('Password Generator');
+b.innerHTML='<div class="cvw"><div class="cvr" style="word-break:break-all;font:20px Consolas,monospace"></div><label>Length <input type="range" min="8" max="64" value="16"> <span>16</span></label><label><input type="checkbox" checked> Include symbols</label><button class="bt">Generate</button><button class="bt">Copy</button></div>';
+const o=$('.cvr',b),r=$('input[type=range]',b),s=$('input[type=checkbox]',b),[g,c]=b.querySelectorAll('button');
+const gen=()=>{
+const ch='abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'+(s.checked?'!@#$%^&*-_=+?':''),a=crypto.getRandomValues(new Uint32Array(+r.value));
+o.textContent=[...a].map(x=>ch[x%ch.length]).join('');
+$('span',b).textContent=r.value}
+;
+g.onclick=gen;
+r.oninput=s.onchange=gen;
+c.onclick=()=>{
+try{
+navigator.clipboard.writeText(o.textContent).then(()=>toast('Copied to clipboard')).catch(()=>toast('Select the text to copy it.'))}
+catch(e){
+toast('Select the text to copy it.')}
+}
+;
+gen()}
+Object.assign(APPS,{
+snake:{
+n:'Snake',i:'🐍',w:340,h:440,f:snake}
+,g2048:{
+n:'2048',i:'🔢',w:360,h:470,f:g2048}
+,ttt:{
+n:'Tic-Tac-Toe',i:'⭕',w:340,h:420,f:ttt}
+,piano:{
+n:'Piano',i:'🎹',w:520,h:260,f:piano}
+,aclock:{
+n:'Alarms & Clock',i:'⏰',w:380,h:380,f:aclock}
+,todo:{
+n:'To Do',i:'✅',w:380,h:420,f:todo}
+,cal2:{
+n:'Calendar',i:'📅',w:420,h:480,f:cal2}
+,conv:{
+n:'Unit Converter',i:'📐',w:340,h:400,f:conv}
+,wpad:{
+n:'WordPad',i:'📃',w:560,h:420,f:wpad}
+,typer:{
+n:'Typing Test',i:'🏁',w:480,h:400,f:typer}
+,pwgen:{
+n:'Password Generator',i:'🔑',w:420,h:360,f:pwgen}
+}
+);
+Object.assign(RM,{
+snake:'snake','2048':'g2048',calendar:'cal2',wordpad:'wpad',write:'wpad',pwgen:'pwgen',piano:'piano',todo:'todo',clock:'aclock'}
+);
+TL.push(['snake','🐍','Snake','#2d7d32'],['g2048','🔢','2048','#c88b00'],['piano','🎹','Piano','#6b4eaa'],['aclock','⏰','Alarms & Clock','#0a6e8a'],['todo','✅','To Do','#2564cf'],['cal2','📅','Calendar','#a4262c'],['wpad','📃','WordPad','#1d5fa6'],['conv','📐','Converter','#00796b'],['photos','🖼️','Photos','#7a3e9d'],['stick','🗒️','Sticky Notes','#b8860b'],['ttt','⭕','Tic-Tac-Toe','#c13b6c'],['typer','🏁','Typing Test','#555'],['pwgen','🔑','Password Gen','#6c3f2a']);
+$('#tl').innerHTML=TL.map(([k,i,n,c,s])=>'<div class="tl" data-k="'+k+'" style="background:'+c+';grid-column:span '+(s||1)+'"><b>'+i+'</b>'+(n||new Date().toLocaleDateString([],{
+weekday:'long',month:'long',day:'numeric'}
+))+'</div>').join('');
+applyS();
+if(S.wp==-1&&S.bg)setbg(S.bg);
+icons();
+alist();
+tick();
+/* =====================================================================
+   WINDOWS 10 REMAKE — POWER TOOLS EXPANSION PACK
+   These are real client-side utilities. They run locally in this HTML file.
+   ===================================================================== */
+
+/* Small DOM helpers scoped to the expansion pack. */
+const XTOOLS = {
+  esc(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+  },
+  button(label, action, extra = '') {
+    return '<button class="bt" data-xaction="' + action + '" ' + extra + '>' + label + '</button>';
+  },
+  field(label, id, value = '', type = 'text') {
+    return '<label style="display:block;margin:10px 0">' + label +
+      '<input id="' + id + '" type="' + type + '" value="' +
+      this.esc(value) + '" style="display:block;width:100%;padding:9px;margin-top:5px">' +
+      '</label>';
+  },
+  section(title, body) {
+    return '<section style="padding:12px;margin:10px 0;border:1px solid var(--ln,#ccc);border-radius:8px">' +
+      '<h3 style="margin:0 0 10px">' + title + '</h3>' + body + '</section>';
+  },
+  bindButtons(root, handler) {
+    root.addEventListener('click', event => {
+      const button = event.target.closest('[data-xaction]');
+      if (button) handler(button.dataset.xaction, button, event);
+    });
+  },
+  download(filename, content, mime = 'text/plain') {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+};
+
+/* ---------------------------------------------------------------------
+   Stopwatch — start, pause, reset, and record lap times.
+   --------------------------------------------------------------------- */
+function stopwatchTool(b, w) {
+  w.t('Stopwatch');
+  b.innerHTML = `
+    <div style="padding:18px;text-align:center">
+      <div style="font-size:42px;font-variant-numeric:tabular-nums" id="swDisplay">00:00.00</div>
+      <p style="color:var(--mut,#666)">A simple precision stopwatch</p>
+      <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+        <button class="bt" data-xaction="start">▶ Start</button>
+        <button class="bt" data-xaction="lap">＋ Lap</button>
+        <button class="bt" data-xaction="reset">↺ Reset</button>
+      </div>
+      <ol id="swLaps" style="text-align:left;max-height:230px;overflow:auto"></ol>
+    </div>`;
+  let running = false;
+  let startedAt = 0;
+  let elapsed = 0;
+  let raf = 0;
+  let lapNumber = 0;
+  const display = b.querySelector('#swDisplay');
+  const laps = b.querySelector('#swLaps');
+  const format = ms => {
+    const centiseconds = Math.floor(ms / 10) % 100;
+    const seconds = Math.floor(ms / 1000) % 60;
+    const minutes = Math.floor(ms / 60000) % 60;
+    const hours = Math.floor(ms / 3600000);
+    const pad = n => String(n).padStart(2, '0');
+    return (hours ? pad(hours) + ':' : '') + pad(minutes) + ':' +
+      pad(seconds) + '.' + pad(centiseconds);
+  };
+  const render = () => {
+    const value = elapsed + (running ? performance.now() - startedAt : 0);
+    display.textContent = format(value);
+    if (running) raf = requestAnimationFrame(render);
+  };
+  XTOOLS.bindButtons(b, action => {
+    if (action === 'start') {
+      if (running) {
+        elapsed += performance.now() - startedAt;
+        running = false;
+        cancelAnimationFrame(raf);
+        b.querySelector('[data-xaction="start"]').textContent = '▶ Resume';
+      } else {
+        startedAt = performance.now();
+        running = true;
+        b.querySelector('[data-xaction="start"]').textContent = 'Ⅱ Pause';
+        render();
+      }
+    }
+    if (action === 'lap') {
+      const value = elapsed + (running ? performance.now() - startedAt : 0);
+      lapNumber += 1;
+      const li = document.createElement('li');
+      li.textContent = 'Lap ' + lapNumber + ' — ' + format(value);
+      laps.prepend(li);
+    }
+    if (action === 'reset') {
+      running = false;
+      elapsed = 0;
+      lapNumber = 0;
+      cancelAnimationFrame(raf);
+      display.textContent = '00:00.00';
+      laps.innerHTML = '';
+      b.querySelector('[data-xaction="start"]').textContent = '▶ Start';
+    }
+  });
+  w.close = ((oldClose) => () => { cancelAnimationFrame(raf); oldClose(); })(w.close);
+}
+
+/* ---------------------------------------------------------------------
+   Countdown timer — configurable minutes and seconds with an alert.
+   --------------------------------------------------------------------- */
+function countdownTool(b, w) {
+  w.t('Timer');
+  b.innerHTML = `
+    <div style="padding:18px">
+      <h2 style="text-align:center" id="timerReadout">05:00</h2>
+      <div style="display:flex;gap:8px">
+        <label style="flex:1">Minutes<input id="timerMinutes" type="number" min="0" max="999" value="5" style="width:100%;padding:8px"></label>
+        <label style="flex:1">Seconds<input id="timerSeconds" type="number" min="0" max="59" value="0" style="width:100%;padding:8px"></label>
+      </div>
+      <div style="display:flex;gap:8px;margin:14px 0;justify-content:center">
+        <button class="bt" data-xaction="begin">▶ Start</button>
+        <button class="bt" data-xaction="pause">Ⅱ Pause</button>
+        <button class="bt" data-xaction="clear">↺ Reset</button>
+      </div>
+      <p id="timerStatus" aria-live="polite">Ready when you are.</p>
+      <progress id="timerProgress" value="0" max="300" style="width:100%"></progress>
+    </div>`;
+  let remaining = 300;
+  let total = 300;
+  let interval = null;
+  const readout = b.querySelector('#timerReadout');
+  const status = b.querySelector('#timerStatus');
+  const progress = b.querySelector('#timerProgress');
+  const show = () => {
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    readout.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    progress.max = Math.max(total, 1);
+    progress.value = total - remaining;
+  };
+  const stop = () => { clearInterval(interval); interval = null; };
+  XTOOLS.bindButtons(b, action => {
+    if (action === 'begin' && !interval) {
+      if (remaining <= 0) {
+        const mins = Math.max(0, Math.min(999, Number(b.querySelector('#timerMinutes').value) || 0));
+        const secs = Math.max(0, Math.min(59, Number(b.querySelector('#timerSeconds').value) || 0));
+        remaining = mins * 60 + secs;
+        total = remaining;
+      }
+      if (!remaining) { status.textContent = 'Choose a duration first.'; return; }
+      status.textContent = 'Timer running…';
+      interval = setInterval(() => {
+        remaining -= 1;
+        show();
+        if (remaining <= 0) {
+          remaining = 0;
+          stop();
+          status.textContent = '⏰ Time is up!';
+          try { if (navigator.vibrate) navigator.vibrate([150, 80, 150]); } catch (_) {}
+          toast('Timer finished!');
+        }
+      }, 1000);
+    }
+    if (action === 'pause') { stop(); status.textContent = 'Paused.'; }
+    if (action === 'clear') {
+      stop();
+      remaining = Math.max(0, Number(b.querySelector('#timerMinutes').value) || 0) * 60 +
+        Math.max(0, Math.min(59, Number(b.querySelector('#timerSeconds').value) || 0));
+      total = remaining;
+      status.textContent = 'Ready when you are.';
+      show();
+    }
+  });
+  w.close = ((oldClose) => () => { stop(); oldClose(); })(w.close);
+  show();
+}
+
+/* ---------------------------------------------------------------------
+   Text statistics — words, characters, paragraphs, and reading time.
+   --------------------------------------------------------------------- */
+function textStatsTool(b, w) {
+  w.t('Text Statistics');
+  b.innerHTML = `
+    <div style="padding:14px">
+      <h2>Text Statistics</h2>
+      <textarea id="statsText" placeholder="Paste or type your text here…" style="width:100%;height:210px;resize:vertical;padding:10px"></textarea>
+      <div id="statsResults" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px"></div>
+      <button class="bt" data-xaction="copy" style="margin-top:10px">Copy summary</button>
+      <button class="bt" data-xaction="clear" style="margin-top:10px">Clear</button>
+    </div>`;
+  const input = b.querySelector('#statsText');
+  const results = b.querySelector('#statsResults');
+  let summary = '';
+  const update = () => {
+    const text = input.value;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const sentences = (text.match(/[.!?]+(?=\s|$)/g) || []).length;
+    const paragraphs = text.trim() ? text.trim().split(/\n\s*\n/).length : 0;
+    const letters = (text.match(/[^\s]/g) || []).length;
+    const reading = Math.max(1, Math.ceil(words / 220));
+    const values = [
+      ['Words', words], ['Characters', text.length], ['No spaces', letters],
+      ['Sentences', sentences], ['Paragraphs', paragraphs], ['Reading time', reading + ' min']
+    ];
+    results.innerHTML = values.map(([label, value]) =>
+      '<div style="padding:12px;border-radius:7px;background:var(--card,#eee)"><small>' + label +
+      '</small><div style="font-size:22px;font-weight:600">' + value + '</div></div>').join('');
+    summary = values.map(([label, value]) => label + ': ' + value).join('\n');
+  };
+  input.addEventListener('input', update);
+  XTOOLS.bindButtons(b, action => {
+    if (action === 'clear') { input.value = ''; update(); input.focus(); }
+    if (action === 'copy') {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(summary).then(() => toast('Summary copied')).catch(() => toast(summary));
+      } else toast(summary);
+    }
+  });
+  update();
+}
+
+/* ---------------------------------------------------------------------
+   JSON Studio — parse, format, compact, and validate JSON safely.
+   --------------------------------------------------------------------- */
+function jsonStudioTool(b, w) {
+  w.t('JSON Studio');
+  b.innerHTML = `
+    <div style="padding:12px;display:flex;flex-direction:column;height:100%;gap:8px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="bt" data-xaction="format">Format</button>
+        <button class="bt" data-xaction="compact">Compact</button>
+        <button class="bt" data-xaction="validate">Validate</button>
+        <button class="bt" data-xaction="sample">Example</button>
+        <button class="bt" data-xaction="download">Download .json</button>
+      </div>
+      <textarea id="jsonInput" spellcheck="false" style="width:100%;flex:1;min-height:180px;padding:10px;font-family:monospace" placeholder='{"hello":"world"}'></textarea>
+      <div id="jsonStatus" role="status" style="padding:8px;background:var(--card,#eee);border-radius:6px">Paste JSON to begin.</div>
+    </div>`;
+  const input = b.querySelector('#jsonInput');
+  const status = b.querySelector('#jsonStatus');
+  const parse = () => JSON.parse(input.value);
+  XTOOLS.bindButtons(b, action => {
+    if (action === 'sample') {
+      input.value = JSON.stringify({ app: 'Windows 10 Remake', version: 1, features: ['desktop', 'windows', 'tools'], enabled: true }, null, 2);
+      status.textContent = 'Example JSON loaded.';
+    }
+    if (action === 'format' || action === 'compact' || action === 'validate' || action === 'download') {
+      try {
+        const value = parse();
+        if (action === 'format') input.value = JSON.stringify(value, null, 2);
+        if (action === 'compact') input.value = JSON.stringify(value);
+        if (action === 'download') XTOOLS.download('data.json', JSON.stringify(value, null, 2), 'application/json');
+        const kind = Array.isArray(value) ? 'array' : value === null ? 'null' : typeof value;
+        status.textContent = '✓ Valid JSON — top-level type: ' + kind;
+      } catch (error) {
+        status.textContent = 'Invalid JSON: ' + error.message;
+      }
+    }
+  });
+}
+
+/* ---------------------------------------------------------------------
+   Color Studio — live HEX/RGB/HSL values with copyable color codes.
+   --------------------------------------------------------------------- */
+function colorStudioTool(b, w) {
+  w.t('Color Studio');
+  b.innerHTML = `
+    <div style="padding:16px">
+      <h2>Color Studio</h2>
+      <div id="colorPreview" style="height:110px;border-radius:10px;background:#0078d7;border:1px solid #888"></div>
+      <label style="display:block;margin:12px 0">Pick a color <input id="colorPicker" type="color" value="#0078d7" style="width:100%;height:45px"></label>
+      <label style="display:block;margin:12px 0">HEX <input id="colorHex" value="#0078d7" style="width:100%;padding:8px"></label>
+      <p id="colorRgb">RGB: 0, 120, 215</p>
+      <p id="colorHsl">HSL: 207°, 100%, 42%</p>
+      <button class="bt" data-xaction="copyhex">Copy HEX</button>
+      <button class="bt" data-xaction="random">Random color</button>
+      <button class="bt" data-xaction="invert">Invert</button>
+    </div>`;
+  const picker = b.querySelector('#colorPicker');
+  const hex = b.querySelector('#colorHex');
+  const preview = b.querySelector('#colorPreview');
+  const rgbText = b.querySelector('#colorRgb');
+  const hslText = b.querySelector('#colorHsl');
+  const update = value => {
+    if (!/^#[0-9a-f]{6}$/i.test(value)) return;
+    picker.value = value;
+    hex.value = value.toLowerCase();
+    preview.style.background = value;
+    const r = parseInt(value.slice(1, 3), 16);
+    const g = parseInt(value.slice(3, 5), 16);
+    const bl = parseInt(value.slice(5, 7), 16);
+    rgbText.textContent = 'RGB: ' + r + ', ' + g + ', ' + bl;
+    const rr = r / 255, gg = g / 255, bb = bl / 255;
+    const max = Math.max(rr, gg, bb), min = Math.min(rr, gg, bb);
+    let h = 0, s = 0, l = (max + min) / 2;
+    if (max !== min) {
+      const d = max - min;
+      s = l > .5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case rr: h = (gg - bb) / d + (gg < bb ? 6 : 0); break;
+        case gg: h = (bb - rr) / d + 2; break;
+        default: h = (rr - gg) / d + 4;
+      }
+      h /= 6;
+    }
+    hslText.textContent = 'HSL: ' + Math.round(h * 360) + '°, ' + Math.round(s * 100) + '%, ' + Math.round(l * 100) + '%';
+  };
+  picker.addEventListener('input', () => update(picker.value));
+  hex.addEventListener('change', () => update(hex.value));
+  XTOOLS.bindButtons(b, action => {
+    if (action === 'random') update('#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'));
+    if (action === 'invert') {
+      const n = parseInt(hex.value.slice(1), 16) ^ 0xffffff;
+      update('#' + n.toString(16).padStart(6, '0'));
+    }
+    if (action === 'copyhex') {
+      navigator.clipboard?.writeText(hex.value).then(() => toast('Color copied')).catch(() => toast(hex.value));
+    }
+  });
+}
+
+/* ---------------------------------------------------------------------
+   World Clock — view several time zones and refresh automatically.
+   --------------------------------------------------------------------- */
+function worldClockTool(b, w) {
+  w.t('World Clock');
+  const zones = [
+    ['Local time', Intl.DateTimeFormat().resolvedOptions().timeZone],
+    ['New York', 'America/New_York'],
+    ['Los Angeles', 'America/Los_Angeles'],
+    ['London', 'Europe/London'],
+    ['Paris', 'Europe/Paris'],
+    ['Tokyo', 'Asia/Tokyo'],
+    ['Sydney', 'Australia/Sydney'],
+    ['UTC', 'UTC']
+  ];
+  b.innerHTML = '<div style="padding:14px"><h2>World Clock</h2><div id="worldClockList"></div><p style="color:var(--mut,#666)">Times update every second using your device clock.</p></div>';
+  const list = b.querySelector('#worldClockList');
+  const render = () => {
+    const now = new Date();
+    list.innerHTML = zones.map(([name, zone]) => {
+      let value;
+      try { value = new Intl.DateTimeFormat(undefined, { timeZone: zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).format(now); }
+      catch (_) { value = 'Time zone unavailable'; }
+      let date;
+      try { date = new Intl.DateTimeFormat(undefined, { timeZone: zone, weekday: 'short', month: 'short', day: 'numeric' }).format(now); }
+      catch (_) { date = ''; }
+      return '<div style="display:flex;justify-content:space-between;gap:12px;padding:10px;border-bottom:1px solid var(--ln,#ddd)"><div><b>' + XTOOLS.esc(name) + '</b><div style="font-size:12px;color:var(--mut,#666)">' + XTOOLS.esc(zone) + '</div></div><div style="text-align:right"><b>' + XTOOLS.esc(value) + '</b><div style="font-size:12px;color:var(--mut,#666)">' + XTOOLS.esc(date) + '</div></div></div>';
+    }).join('');
+  };
+  render();
+  const timer = setInterval(render, 1000);
+  w.close = ((oldClose) => () => { clearInterval(timer); oldClose(); })(w.close);
+}
+
+/* ---------------------------------------------------------------------
+   Focus Session — a small Pomodoro timer with a configurable work block.
+   --------------------------------------------------------------------- */
+function focusTool(b, w) {
+  w.t('Focus Session');
+  b.innerHTML = `
+    <div style="padding:18px;text-align:center">
+      <h2>Focus Session</h2>
+      <p>Choose a work interval, then focus until the timer ends.</p>
+      <label>Work minutes <input id="focusMinutes" type="number" min="1" max="180" value="25" style="width:80px;padding:8px"></label>
+      <div id="focusClock" style="font-size:52px;font-weight:600;margin:18px 0;font-variant-numeric:tabular-nums">25:00</div>
+      <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+        <button class="bt" data-xaction="start">Start focus</button>
+        <button class="bt" data-xaction="pause">Pause</button>
+        <button class="bt" data-xaction="reset">Reset</button>
+      </div>
+      <p id="focusMessage" aria-live="polite">Ready to focus?</p>
+      <progress id="focusProgress" value="0" max="1500" style="width:100%"></progress>
+    </div>`;
+  let duration = 1500;
+  let left = duration;
+  let timer = null;
+  const clock = b.querySelector('#focusClock');
+  const message = b.querySelector('#focusMessage');
+  const progress = b.querySelector('#focusProgress');
+  const render = () => {
+    clock.textContent = String(Math.floor(left / 60)).padStart(2, '0') + ':' + String(left % 60).padStart(2, '0');
+    progress.max = duration;
+    progress.value = duration - left;
+  };
+  const stop = () => { clearInterval(timer); timer = null; };
+  XTOOLS.bindButtons(b, action => {
+    if (action === 'start' && !timer) {
+      if (left <= 0) {
+        duration = Math.max(1, Math.min(180, Number(b.querySelector('#focusMinutes').value) || 25)) * 60;
+        left = duration;
+      }
+      message.textContent = 'Focus mode is running. You’ve got this!';
+      timer = setInterval(() => {
+        left -= 1;
+        render();
+        if (left <= 0) {
+          left = 0;
+          stop();
+          message.textContent = 'Session complete — take a short break.';
+          toast('Focus session complete!');
+          render();
+        }
+      }, 1000);
+    }
+    if (action === 'pause') { stop(); message.textContent = 'Session paused.'; }
+    if (action === 'reset') {
+      stop();
+      duration = Math.max(1, Math.min(180, Number(b.querySelector('#focusMinutes').value) || 25)) * 60;
+      left = duration;
+      message.textContent = 'Ready to focus?';
+      render();
+    }
+  });
+  w.close = ((oldClose) => () => { stop(); oldClose(); })(w.close);
+  render();
+}
+
+/* ---------------------------------------------------------------------
+   Markdown preview — safe, intentionally limited Markdown rendering.
+   Raw HTML is escaped so pasted content cannot inject markup into the app.
+   --------------------------------------------------------------------- */
+function markdownTool(b, w) {
+  w.t('Markdown Preview');
+  b.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;height:100%;padding:10px;min-height:280px">
+      <div style="display:flex;flex-direction:column;min-height:0"><h3>Markdown</h3><textarea id="mdSource" style="flex:1;min-height:220px;padding:10px;font-family:monospace" placeholder="# Hello\n\nWrite **bold** text here."></textarea><button class="bt" data-xaction="sample">Load example</button><button class="bt" data-xaction="save">Download .md</button></div>
+      <div style="min-width:0;overflow:auto"><h3>Preview</h3><div id="mdPreview" style="padding:12px;border:1px solid var(--ln,#ddd);border-radius:8px;overflow-wrap:anywhere"></div></div>
+    </div>`;
+  const source = b.querySelector('#mdSource');
+  const preview = b.querySelector('#mdPreview');
+  const render = () => {
+    let html = XTOOLS.esc(source.value);
+    html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.*)$/gm, '<h2>$1</h2>')
+      .replace(/^# (.*)$/gm, '<h1>$1</h1>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/^\- (.*)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+      .replace(/\n/g, '<br>');
+    preview.innerHTML = html || '<span style="color:var(--mut,#666)">Your preview will appear here.</span>';
+  };
+  source.addEventListener('input', render);
+  XTOOLS.bindButtons(b, action => {
+    if (action === 'sample') {
+      source.value = '# Welcome\n\nThis is **bold** and this is *italic*.\n\n- One item\n- Another item\n\nUse `code` for short snippets.';
+      render();
+    }
+    if (action === 'save') XTOOLS.download('notes.md', source.value, 'text/markdown');
+  });
+  render();
+}
+
+/* ---------------------------------------------------------------------
+   Random Lab — generate numbers, dice rolls, and shuffled lists.
+   --------------------------------------------------------------------- */
+function randomLabTool(b, w) {
+  w.t('Random Lab');
+  b.innerHTML = `
+    <div style="padding:14px">
+      <h2>Random Lab</h2>
+      <section style="padding:12px;border:1px solid var(--ln,#ddd);border-radius:8px;margin:10px 0">
+        <h3>Random number</h3>
+        <div style="display:flex;gap:8px"><input id="randMin" type="number" value="1" style="width:50%;padding:8px"><input id="randMax" type="number" value="100" style="width:50%;padding:8px"></div>
+        <button class="bt" data-xaction="number">Generate number</button><b id="randResult" style="font-size:24px;margin-left:12px">—</b>
+      </section>
+      <section style="padding:12px;border:1px solid var(--ln,#ddd);border-radius:8px;margin:10px 0">
+        <h3>Dice roller</h3><button class="bt" data-xaction="dice">🎲 Roll d6</button><button class="bt" data-xaction="d20">Roll d20</button><b id="diceResult" style="font-size:24px;margin-left:12px">—</b>
+      </section>
+      <section style="padding:12px;border:1px solid var(--ln,#ddd);border-radius:8px;margin:10px 0">
+        <h3>Shuffle a list</h3><textarea id="shuffleInput" style="width:100%;height:80px;padding:8px" placeholder="Enter one item per line"></textarea><button class="bt" data-xaction="shuffle">Shuffle list</button><pre id="shuffleResult" style="white-space:pre-wrap"></pre>
+      </section>
+    </div>`;
+  XTOOLS.bindButtons(b, action => {
+    if (action === 'number') {
+      let min = Math.ceil(Number(b.querySelector('#randMin').value) || 0);
+      let max = Math.floor(Number(b.querySelector('#randMax').value) || 0);
+      if (min > max) [min, max] = [max, min];
+      const result = min + Math.floor(Math.random() * (max - min + 1));
+      b.querySelector('#randResult').textContent = result;
+    }
+    if (action === 'dice' || action === 'd20') {
+      const sides = action === 'dice' ? 6 : 20;
+      b.querySelector('#diceResult').textContent = 1 + Math.floor(Math.random() * sides);
+    }
+    if (action === 'shuffle') {
+      const lines = b.querySelector('#shuffleInput').value.split(/\r?\n/).filter(line => line.trim());
+      for (let i = lines.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [lines[i], lines[j]] = [lines[j], lines[i]];
+      }
+      b.querySelector('#shuffleResult').textContent = lines.join('\n');
+    }
+  });
+}
+
+/* Register the new utilities with the same desktop app/window manager. */
+Object.assign(APPS, {
+  stopwatch: { n: 'Stopwatch', i: '⏱️', w: 380, h: 430, f: stopwatchTool },
+  timer: { n: 'Timer', i: '⏲️', w: 380, h: 400, f: countdownTool },
+  textstats: { n: 'Text Statistics', i: '📊', w: 470, h: 520, f: textStatsTool },
+  jsonstudio: { n: 'JSON Studio', i: '{ }', w: 620, h: 480, f: jsonStudioTool },
+  colorstudio: { n: 'Color Studio', i: '🎨', w: 360, h: 500, f: colorStudioTool },
+  worldclock: { n: 'World Clock', i: '🌍', w: 420, h: 570, f: worldClockTool },
+  focus: { n: 'Focus Session', i: '🍅', w: 390, h: 470, f: focusTool },
+  markdown: { n: 'Markdown Preview', i: '📝', w: 700, h: 520, f: markdownTool },
+  randomlab: { n: 'Random Lab', i: '🎲', w: 430, h: 600, f: randomLabTool }
+});
+
+Object.assign(RM, {
+  stopwatch: 'stopwatch', timer: 'timer', stats: 'textstats',
+  json: 'jsonstudio', colors: 'colorstudio', worldclock: 'worldclock',
+  focus: 'focus', markdown: 'markdown', random: 'randomlab'
+});
+
+TL.push(
+  ['stopwatch', '⏱️', 'Stopwatch', '#0067b8'],
+  ['timer', '⏲️', 'Timer', '#6b4eaa'],
+  ['textstats', '📊', 'Text Statistics', '#217346'],
+  ['jsonstudio', '{ }', 'JSON Studio', '#b45f06'],
+  ['colorstudio', '🎨', 'Color Studio', '#a4262c'],
+  ['worldclock', '🌍', 'World Clock', '#0078d4'],
+  ['focus', '🍅', 'Focus Session', '#c43e1c'],
+  ['markdown', '📝', 'Markdown Preview', '#555555'],
+  ['randomlab', '🎲', 'Random Lab', '#2d7d32']
+);
+
+/* Add expansion apps to the searchable Start menu and refresh task tiles. */
+try {
+  alist();
+  $('#tl').innerHTML = TL.map(([k, i, n, c, span]) =>
+    '<div class="tl" data-k="' + k + '" style="background:' + c + ';grid-column:span ' +
+    (span || 1) + '"><b>' + i + '</b>' + (n || new Date().toLocaleDateString([], {
+      weekday: 'long', month: 'long', day: 'numeric'
+    })) + '</div>').join('');
+} catch (expansionError) {
+  console.warn('Power tools loaded, but the Start menu could not refresh.', expansionError);
+}
+
+/* Keyboard shortcuts for the added tools. */
+document.addEventListener('keydown', event => {
+  if (event.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+  if (event.altKey && event.shiftKey && event.key.toLowerCase() === 't') {
+    event.preventDefault();
+    launch('timer');
+  }
+  if (event.altKey && event.shiftKey && event.key.toLowerCase() === 's') {
+    event.preventDefault();
+    launch('stopwatch');
+  }
+  if (event.altKey && event.shiftKey && event.key.toLowerCase() === 'j') {
+    event.preventDefault();
+    launch('jsonstudio');
+  }
+});
+
+/* =====================================================================
+   EXTRA UTILITIES — measurement conversion and password quality checks.
+   ===================================================================== */
+
+/* Unit Converter Pro supports common length, mass, temperature, and data units. */
+function unitConverterProTool(b, w) {
+  w.t('Unit Converter Pro');
+  const groups = {
+    Length: { meters: 1, kilometers: 1000, centimeters: .01, millimeters: .001, miles: 1609.344, yards: .9144, feet: .3048, inches: .0254 },
+    Mass: { kilograms: 1, grams: .001, milligrams: .000001, pounds: .45359237, ounces: .028349523125, stones: 6.35029318 },
+    Data: { bytes: 1, kilobytes: 1000, megabytes: 1000000, gigabytes: 1000000000, kibibytes: 1024, mebibytes: 1048576, gibibytes: 1073741824 },
+    Volume: { liters: 1, milliliters: .001, gallonsUS: 3.785411784, quartsUS: .946352946, cupsUS: .2365882365, tablespoonsUS: .0147867648 },
+    Speed: { metersPerSecond: 1, kilometersPerHour: 1 / 3.6, milesPerHour: .44704, knots: .514444 }
+  };
+  b.innerHTML = `
+    <div style="padding:16px">
+      <h2>Unit Converter Pro</h2>
+      <label style="display:block;margin:10px 0">Category<select id="ucCategory" style="display:block;width:100%;padding:9px"></select></label>
+      <label style="display:block;margin:10px 0">From<select id="ucFrom" style="display:block;width:100%;padding:9px"></select></label>
+      <label style="display:block;margin:10px 0">Amount<input id="ucAmount" type="number" value="1" style="display:block;width:100%;padding:9px"></label>
+      <label style="display:block;margin:10px 0">To<select id="ucTo" style="display:block;width:100%;padding:9px"></select></label>
+      <div id="ucResult" style="font-size:25px;font-weight:600;padding:14px;border-radius:8px;background:var(--card,#eee);overflow-wrap:anywhere"></div>
+      <p style="color:var(--mut,#666)">Temperature conversions are handled separately using exact Celsius/Fahrenheit/Kelvin formulas.</p>
+    </div>`;
+  const category = b.querySelector('#ucCategory');
+  const from = b.querySelector('#ucFrom');
+  const to = b.querySelector('#ucTo');
+  const amount = b.querySelector('#ucAmount');
+  const result = b.querySelector('#ucResult');
+  const allGroups = { ...groups, Temperature: { Celsius: 1, Fahrenheit: 1, Kelvin: 1 } };
+  category.innerHTML = Object.keys(allGroups).map(name => '<option>' + name + '</option>').join('');
+  const fillUnits = () => {
+    const names = Object.keys(allGroups[category.value]);
+    from.innerHTML = names.map(name => '<option>' + name + '</option>').join('');
+    to.innerHTML = names.map((name, index) => '<option' + (index === 1 ? ' selected' : '') + '>' + name + '</option>').join('');
+    convert();
+  };
+  const convertTemperature = (value, source, target) => {
+    let celsius = value;
+    if (source === 'Fahrenheit') celsius = (value - 32) * 5 / 9;
+    if (source === 'Kelvin') celsius = value - 273.15;
+    if (target === 'Fahrenheit') return celsius * 9 / 5 + 32;
+    if (target === 'Kelvin') return celsius + 273.15;
+    return celsius;
+  };
+  const convert = () => {
+    const value = Number(amount.value);
+    if (!Number.isFinite(value)) { result.textContent = 'Enter a valid number.'; return; }
+    let converted;
+    if (category.value === 'Temperature') converted = convertTemperature(value, from.value, to.value);
+    else converted = value * allGroups[category.value][from.value] / allGroups[category.value][to.value];
+    result.textContent = Number(converted.toPrecision(12)).toLocaleString() + ' ' + to.value;
+  };
+  category.addEventListener('change', fillUnits);
+  from.addEventListener('change', convert);
+  to.addEventListener('change', convert);
+  amount.addEventListener('input', convert);
+  fillUnits();
+}
+
+/* Password Lab scores a password locally; it never sends the password anywhere. */
+function passwordLabTool(b, w) {
+  w.t('Password Lab');
+  b.innerHTML = `
+    <div style="padding:16px">
+      <h2>Password Lab</h2>
+      <p>Check a password's rough strength on this device. This is a guide, not a guarantee.</p>
+      <label style="display:block">Password<input id="plPassword" type="password" autocomplete="off" style="display:block;width:100%;padding:10px;margin:8px 0"></label>
+      <label><input id="plReveal" type="checkbox"> Show password</label>
+      <div style="height:9px;border-radius:9px;background:var(--ln,#ddd);overflow:hidden;margin:14px 0"><div id="plMeter" style="height:100%;width:0%;transition:width .2s"></div></div>
+      <h3 id="plLabel">Enter a password</h3>
+      <p id="plBits">Estimated entropy: —</p>
+      <ul id="plAdvice"></ul>
+      <button class="bt" data-xaction="generate">Generate strong password</button>
+      <button class="bt" data-xaction="copy">Copy password</button>
+      <p style="font-size:12px;color:var(--mut,#666)">Avoid reusing passwords. Never share a real password with anyone.</p>
+    </div>`;
+  const input = b.querySelector('#plPassword');
+  const reveal = b.querySelector('#plReveal');
+  const meter = b.querySelector('#plMeter');
+  const label = b.querySelector('#plLabel');
+  const bits = b.querySelector('#plBits');
+  const advice = b.querySelector('#plAdvice');
+  const update = () => {
+    const value = input.value;
+    let pool = 0;
+    if (/[a-z]/.test(value)) pool += 26;
+    if (/[A-Z]/.test(value)) pool += 26;
+    if (/[0-9]/.test(value)) pool += 10;
+    if (/[^A-Za-z0-9]/.test(value)) pool += 33;
+    const entropy = value && pool ? Math.round(value.length * Math.log2(pool)) : 0;
+    const score = Math.max(0, Math.min(100, entropy / 1.2));
+    meter.style.width = score + '%';
+    label.textContent = !value ? 'Enter a password' : score < 25 ? 'Very weak' : score < 45 ? 'Weak' : score < 65 ? 'Fair' : score < 85 ? 'Strong' : 'Very strong';
+    bits.textContent = 'Estimated entropy: ' + (value ? entropy + ' bits (rough estimate)' : '—');
+    const tips = [];
+    if (value.length < 12) tips.push('Use at least 12 characters; longer is generally better.');
+    if (!/[a-z]/.test(value) || !/[A-Z]/.test(value)) tips.push('Consider mixing upper- and lowercase letters.');
+    if (!/[0-9]/.test(value)) tips.push('Add numbers if they help you make a memorable unique password.');
+    if (!/[^A-Za-z0-9]/.test(value)) tips.push('Consider adding symbols or using a longer passphrase.');
+    if (/(.)\1{2,}/.test(value)) tips.push('Avoid repeated characters.');
+    if (/password|qwerty|123456|letmein/i.test(value)) tips.push('Avoid common words and predictable sequences.');
+    if (!tips.length && value) tips.push('Good signs. Make sure it is unique to this account.');
+    advice.innerHTML = tips.map(tip => '<li>' + XTOOLS.esc(tip) + '</li>').join('');
+  };
+  input.addEventListener('input', update);
+  reveal.addEventListener('change', () => { input.type = reveal.checked ? 'text' : 'password'; });
+  XTOOLS.bindButtons(b, action => {
+    if (action === 'generate') {
+      const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%_-+=';
+      const bytes = new Uint32Array(20);
+      if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(bytes);
+      else for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 4294967296);
+      input.value = Array.from(bytes, n => alphabet[n % alphabet.length]).join('');
+      update();
+    }
+    if (action === 'copy') {
+      if (!input.value) { toast('Generate or enter a password first.'); return; }
+      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(input.value).then(() => toast('Password copied')).catch(() => toast('Copy is unavailable in this browser.'));
+      else toast('Copy is unavailable in this browser.');
+    }
+  });
+  update();
+}
+
+Object.assign(APPS, {
+  unitpro: { n: 'Unit Converter Pro', i: '📐', w: 400, h: 540, f: unitConverterProTool },
+  passwordlab: { n: 'Password Lab', i: '🔐', w: 410, h: 510, f: passwordLabTool }
+});
+Object.assign(RM, { unitpro: 'unitpro', convertpro: 'unitpro', passwordlab: 'passwordlab' });
+TL.push(
+  ['unitpro', '📐', 'Unit Converter Pro', '#00796b'],
+  ['passwordlab', '🔐', 'Password Lab', '#5b2c83']
+);
+try {
+  alist();
+  $('#tl').innerHTML = TL.map(([k, i, n, c, span]) =>
+    '<div class="tl" data-k="' + k + '" style="background:' + c + ';grid-column:span ' +
+    (span || 1) + '"><b>' + i + '</b>' + (n || new Date().toLocaleDateString([], {
+      weekday: 'long', month: 'long', day: 'numeric'
+    })) + '</div>').join('');
+} catch (expansionError) {
+  console.warn('Additional utilities registered; a shell refresh was skipped.', expansionError);
+}
+
+
+/* =====================================================================
+   POWER TOOLS EXPANSION PACK 2 — MORE BUILT-IN WINDOWS UTILITIES
+   All utilities run locally in the browser; no external services required.
+   ===================================================================== */
+
+function gradientStudioTool(b, w) {
+  w.t('Gradient Studio');
+  b.innerHTML = `
+    <div style="padding:14px;overflow:auto;height:100%">
+      <h2 style="margin-top:0">CSS Gradient Studio</h2>
+      <div id="gsPreview" style="height:145px;border-radius:10px;border:1px solid #888;margin:12px 0"></div>
+      <label>First color <input id="gsA" type="color" value="#0078d7"></label>
+      <label style="margin-left:14px">Second color <input id="gsB" type="color" value="#8e44ad"></label>
+      <p>Angle: <input id="gsAngle" type="range" min="0" max="360" value="135"><span id="gsAngleV">135°</span></p>
+      <p>Gradient type <select id="gsType"><option value="linear">Linear</option><option value="radial">Radial</option></select></p>
+      <textarea id="gsCode" rows="3" style="width:100%;font-family:Consolas,monospace"></textarea>
+      <button class="bt" data-xaction="copy">Copy CSS</button>
+      <button class="bt" data-xaction="random">Random colors</button>
+      <button class="bt" data-xaction="download">Download CSS</button>
+    </div>`;
+  const a=b.querySelector('#gsA'), c=b.querySelector('#gsB'), angle=b.querySelector('#gsAngle');
+  const type=b.querySelector('#gsType'), preview=b.querySelector('#gsPreview'), code=b.querySelector('#gsCode');
+  const update=()=>{
+    const css=type.value==='linear'
+      ? `linear-gradient(${angle.value}deg, ${a.value}, ${c.value})`
+      : `radial-gradient(circle, ${a.value}, ${c.value})`;
+    preview.style.background=css; code.value=`background: ${css};`;
+    b.querySelector('#gsAngleV').textContent=angle.value+'°';
+  };
+  [a,c,angle,type].forEach(el=>el.addEventListener('input',update));
+  XTOOLS.bindButtons(b,(action)=>{
+    if(action==='copy') navigator.clipboard?.writeText(code.value).then(()=>toast('CSS copied')).catch(()=>toast('Select and copy the CSS manually.'));
+    if(action==='random') { a.value='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0'); c.value='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0'); update(); }
+    if(action==='download') XTOOLS.download('gradient.css',code.value,'text/css');
+  });
+  update();
+}
+
+function regexTesterTool(b, w) {
+  w.t('Regex Tester');
+  b.innerHTML=`<div style="padding:14px;overflow:auto;height:100%">
+    <h2 style="margin-top:0">Regular Expression Tester</h2>
+    <label>Pattern<input id="rxPattern" value="\\b\\w{4,}\\b" style="display:block;width:100%;padding:8px"></label>
+    <label>Flags<input id="rxFlags" value="gi" style="width:80px;padding:6px"></label>
+    <label>Test text<textarea id="rxText" rows="6" style="display:block;width:100%">Windows 10 remake. Test regular expressions against this sample text!</textarea></label>
+    <button class="bt" data-xaction="run">Test pattern</button>
+    <button class="bt" data-xaction="clear">Clear results</button>
+    <p id="rxStatus" role="status">Ready.</p><div id="rxResults"></div>
+  </div>`;
+  const pattern=b.querySelector('#rxPattern'),flags=b.querySelector('#rxFlags'),sample=b.querySelector('#rxText');
+  const status=b.querySelector('#rxStatus'),results=b.querySelector('#rxResults');
+  const run=()=>{
+    results.innerHTML='';
+    try {
+      const re=new RegExp(pattern.value,flags.value);
+      const text=sample.value; let match; const found=[]; let safety=0;
+      if(re.global) {
+        while((match=re.exec(text)) && safety++<500) {
+          found.push({value:match[0],index:match.index});
+          if(match[0]==='') re.lastIndex++;
+        }
+      } else { match=re.exec(text); if(match) found.push({value:match[0],index:match.index}); }
+      status.textContent=`${found.length} match(es).`;
+      found.forEach((item,index)=>{
+        const row=document.createElement('div'); row.style.cssText='padding:7px;border-bottom:1px solid var(--ln,#ccc)';
+        const strong=document.createElement('b'); strong.textContent=`#${index+1} `;
+        const code=document.createElement('code'); code.textContent=item.value;
+        const small=document.createElement('small'); small.textContent=` at index ${item.index}`;
+        row.append(strong,code,small); results.append(row);
+      });
+      if(!found.length) results.textContent='No matches found.';
+    } catch(error) { status.textContent='Invalid expression: '+error.message; }
+  };
+  XTOOLS.bindButtons(b,(action)=>{if(action==='run')run();if(action==='clear'){results.innerHTML='';status.textContent='Cleared.';}});
+  run();
+}
+
+function encoderStudioTool(b, w) {
+  w.t('Encoder Studio');
+  b.innerHTML=`<div style="padding:14px;overflow:auto;height:100%">
+    <h2 style="margin-top:0">Encoder / Decoder</h2>
+    <p>Convert text using Base64 or URL encoding. This runs in your browser.</p>
+    <label>Input<textarea id="enInput" rows="6" style="display:block;width:100%">Hello from Windows 10!</textarea></label>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin:10px 0">
+      <button class="bt" data-xaction="b64e">Base64 encode</button><button class="bt" data-xaction="b64d">Base64 decode</button>
+      <button class="bt" data-xaction="urle">URL encode</button><button class="bt" data-xaction="urld">URL decode</button>
+    </div>
+    <label>Output<textarea id="enOutput" rows="6" style="display:block;width:100%"></textarea></label>
+    <button class="bt" data-xaction="copy">Copy output</button><button class="bt" data-xaction="swap">Move output to input</button>
+    <p id="enStatus" aria-live="polite"></p>
+  </div>`;
+  const input=b.querySelector('#enInput'),output=b.querySelector('#enOutput'),status=b.querySelector('#enStatus');
+  const toB64=s=>btoa(Array.from(new TextEncoder().encode(s),x=>String.fromCharCode(x)).join(''));
+  const fromB64=s=>new TextDecoder().decode(Uint8Array.from(atob(s),c=>c.charCodeAt(0)));
+  XTOOLS.bindButtons(b,(action)=>{
+    try {
+      if(action==='b64e') output.value=toB64(input.value);
+      if(action==='b64d') output.value=fromB64(input.value.trim());
+      if(action==='urle') output.value=encodeURIComponent(input.value);
+      if(action==='urld') output.value=decodeURIComponent(input.value);
+      if(action==='swap') input.value=output.value;
+      if(action==='copy') navigator.clipboard?.writeText(output.value).then(()=>status.textContent='Copied.').catch(()=>status.textContent='Select the output and copy it.');
+      else status.textContent='Done.';
+    } catch(error) { status.textContent='Could not convert input: '+error.message; }
+  });
+}
+
+function expenseTrackerTool(b, w) {
+  w.t('Expense Tracker');
+  const storageKey='win10.expenses.v1';
+  let entries=[];
+  try { entries=JSON.parse(localStorage.getItem(storageKey)||'[]'); if(!Array.isArray(entries))entries=[]; } catch(_){entries=[];}
+  b.innerHTML=`<div style="padding:14px;overflow:auto;height:100%">
+    <h2 style="margin-top:0">Expense Tracker</h2><p>Track sample expenses locally in this browser.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <label>Description<input id="exName" placeholder="Groceries" style="display:block;width:100%;padding:8px"></label>
+      <label>Amount<input id="exAmount" type="number" min="0" step="0.01" placeholder="25.00" style="display:block;width:100%;padding:8px"></label>
+      <label>Category<select id="exCategory" style="display:block;width:100%;padding:8px"><option>Food</option><option>Transport</option><option>Bills</option><option>Entertainment</option><option>Shopping</option><option>Other</option></select></label>
+      <label>Date<input id="exDate" type="date" style="display:block;width:100%;padding:8px"></label>
+    </div>
+    <button class="bt" data-xaction="add">Add expense</button><button class="bt" data-xaction="export">Export CSV</button>
+    <h3>Total: <span id="exTotal">$0.00</span></h3><div id="exList"></div>
+  </div>`;
+  b.querySelector('#exDate').value=new Date().toISOString().slice(0,10);
+  const save=()=>{try{localStorage.setItem(storageKey,JSON.stringify(entries));}catch(_){toast('Could not save expense data.');}};
+  const render=()=>{
+    b.querySelector('#exTotal').textContent=entries.reduce((sum,x)=>sum+x.amount,0).toLocaleString(undefined,{style:'currency',currency:'USD'});
+    const list=b.querySelector('#exList'); list.innerHTML='';
+    if(!entries.length){list.textContent='No expenses yet.';return;}
+    entries.slice().reverse().forEach(item=>{
+      const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;align-items:center;padding:9px;border-bottom:1px solid var(--ln,#ccc)';
+      const detail=document.createElement('div');detail.style.flex='1';
+      const name=document.createElement('b');name.textContent=item.name;
+      const meta=document.createElement('div');meta.style.cssText='font-size:12px;color:var(--mut,#777)';meta.textContent=`${item.category} · ${item.date}`;
+      const amount=document.createElement('strong');amount.textContent=item.amount.toLocaleString(undefined,{style:'currency',currency:'USD'});
+      const remove=document.createElement('button');remove.className='bt';remove.textContent='×';remove.title='Delete expense';remove.onclick=()=>{entries=entries.filter(x=>x.id!==item.id);save();render();};
+      detail.append(name,meta);row.append(detail,amount,remove);list.append(row);
+    });
+  };
+  XTOOLS.bindButtons(b,(action)=>{
+    if(action==='add'){
+      const name=b.querySelector('#exName').value.trim(),amount=Number(b.querySelector('#exAmount').value);
+      if(!name||!Number.isFinite(amount)||amount<0){toast('Enter a description and valid amount.');return;}
+      entries.push({id:Date.now()+Math.random(),name,amount,category:b.querySelector('#exCategory').value,date:b.querySelector('#exDate').value||new Date().toISOString().slice(0,10)});
+      b.querySelector('#exName').value='';b.querySelector('#exAmount').value='';save();render();
+    }
+    if(action==='export'){
+      const csv=['Description,Amount,Category,Date',...entries.map(x=>[x.name,x.amount,x.category,x.date].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','))].join('\n');
+      XTOOLS.download('expenses.csv',csv,'text/csv');
+    }
+  });
+  render();
+}
+
+function habitTrackerTool(b, w) {
+  w.t('Habit Tracker');
+  const key='win10.habits.v1'; let habits=[];
+  try {habits=JSON.parse(localStorage.getItem(key)||'[]');if(!Array.isArray(habits))habits=[];}catch(_){habits=[];}
+  const today=new Date().toISOString().slice(0,10);
+  b.innerHTML=`<div style="padding:14px;overflow:auto;height:100%"><h2 style="margin-top:0">Habit Tracker</h2>
+    <p>Build routines one day at a time. Check-ins are saved in this browser.</p>
+    <div style="display:flex;gap:6px"><input id="hbName" placeholder="Add a habit" style="flex:1;min-width:0;padding:9px"><button class="bt" data-xaction="add">Add</button></div>
+    <p id="hbSummary"></p><div id="hbList"></div><button class="bt" data-xaction="export">Export habits</button>
+  </div>`;
+  const persist=()=>{try{localStorage.setItem(key,JSON.stringify(habits));}catch(_){toast('Could not save habits.');}};
+  const render=()=>{
+    const list=b.querySelector('#hbList');list.innerHTML='';
+    const done=habits.filter(h=>h.days.includes(today)).length;
+    b.querySelector('#hbSummary').textContent=`${done} of ${habits.length} habits completed today`;
+    habits.forEach(h=>{
+      const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;align-items:center;padding:10px;border-bottom:1px solid var(--ln,#ccc)';
+      const check=document.createElement('input');check.type='checkbox';check.checked=h.days.includes(today);check.setAttribute('aria-label','Complete '+h.name);
+      check.onchange=()=>{h.days=check.checked?[...new Set([...h.days,today])]:h.days.filter(d=>d!==today);persist();render();};
+      const name=document.createElement('div');name.style.flex='1';name.textContent=h.name;
+      const count=document.createElement('small');count.textContent=`${h.days.length} check-ins`;
+      const remove=document.createElement('button');remove.className='bt';remove.textContent='Delete';remove.onclick=()=>{habits=habits.filter(x=>x.id!==h.id);persist();render();};
+      row.append(check,name,count,remove);list.append(row);
+    });
+    if(!habits.length)list.textContent='Add your first habit above.';
+  };
+  XTOOLS.bindButtons(b,(action)=>{
+    if(action==='add'){const name=b.querySelector('#hbName').value.trim();if(!name)return;habits.push({id:Date.now()+Math.random(),name,days:[]});b.querySelector('#hbName').value='';persist();render();}
+    if(action==='export')XTOOLS.download('habits.json',JSON.stringify(habits,null,2),'application/json');
+  });
+  b.querySelector('#hbName').addEventListener('keydown',e=>{if(e.key==='Enter')b.querySelector('[data-xaction="add"]').click();});
+  render();
+}
+
+function contrastCheckerTool(b, w) {
+  w.t('Contrast Checker');
+  b.innerHTML=`<div style="padding:14px;overflow:auto;height:100%"><h2 style="margin-top:0">Color Contrast Checker</h2>
+    <label>Text color <input id="ccFg" type="color" value="#111111"></label>
+    <label style="margin-left:12px">Background <input id="ccBg" type="color" value="#ffffff"></label>
+    <div id="ccPreview" style="padding:25px;border-radius:8px;margin:14px 0;border:1px solid #888"><strong style="font-size:22px">The quick brown fox</strong><p>Sample text preview for accessibility.</p></div>
+    <h3>Contrast ratio: <span id="ccRatio">—</span></h3><p id="ccResult"></p>
+    <p style="font-size:12px">WCAG guidance: 4.5:1 for normal text, 3:1 for large text.</p>
+  </div>`;
+  const fg=b.querySelector('#ccFg'),bg=b.querySelector('#ccBg'),preview=b.querySelector('#ccPreview');
+  const luminance=hex=>{
+    const rgb=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(v=>v<=0.04045?v/12.92:Math.pow((v+0.055)/1.055,2.4));
+    return .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2];
+  };
+  const update=()=>{
+    preview.style.color=fg.value;preview.style.background=bg.value;
+    const a=luminance(fg.value),z=luminance(bg.value),ratio=(Math.max(a,z)+.05)/(Math.min(a,z)+.05);
+    b.querySelector('#ccRatio').textContent=ratio.toFixed(2)+':1';
+    b.querySelector('#ccResult').textContent=(ratio>=7?'AAA normal text · AA large text':ratio>=4.5?'AA normal text · AA large text':ratio>=3?'Fails normal text · Passes large text':'Does not meet AA text contrast');
+  };
+  fg.addEventListener('input',update);bg.addEventListener('input',update);update();
+}
+
+function networkDashboardTool(b, w) {
+  w.t('System & Network Dashboard');
+  b.innerHTML=`<div style="padding:14px;overflow:auto;height:100%"><h2 style="margin-top:0">System Dashboard</h2>
+    <p>This page reports information available to this browser. It does not scan networks or change system settings.</p>
+    <div id="ndStatus" style="padding:12px;border-radius:8px;background:var(--card,#eee);margin-bottom:12px"></div>
+    <div id="ndDetails"></div><button class="bt" data-xaction="refresh">Refresh</button>
+  </div>`;
+  const render=()=>{
+    const online=navigator.onLine;
+    b.querySelector('#ndStatus').textContent=online?'● Browser reports an online connection':'● Browser reports offline status';
+    const data=[['Platform',navigator.platform||'Unavailable'],['Language',navigator.language||'Unavailable'],['Cookies enabled',navigator.cookieEnabled?'Yes':'No'],['Screen',`${screen.width} × ${screen.height}`],['Viewport',`${innerWidth} × ${innerHeight}`],['Color depth',`${screen.colorDepth} bit`],['Logical CPU cores',navigator.hardwareConcurrency||'Not reported'],['Memory estimate',navigator.deviceMemory?`${navigator.deviceMemory} GB`:'Not reported'],['User agent',navigator.userAgent]];
+    const details=b.querySelector('#ndDetails');details.innerHTML='';
+    data.forEach(([label,value])=>{const row=document.createElement('div');row.style.cssText='padding:9px;border-bottom:1px solid var(--ln,#ccc)';const title=document.createElement('b');title.textContent=label+': ';const val=document.createElement('span');val.textContent=value;row.append(title,val);details.append(row);});
+  };
+  XTOOLS.bindButtons(b,action=>{if(action==='refresh')render();});
+  window.addEventListener('online',render);window.addEventListener('offline',render);render();
+}
+
+function scratchpadTool(b, w) {
+  w.t('Scratchpad');
+  const key='win10.scratchpad.v1';
+  b.innerHTML=`<div style="padding:12px;height:100%;display:flex;flex-direction:column;gap:8px"><h2 style="margin:0">Scratchpad</h2>
+    <p style="margin:0;color:var(--mut,#777)">Quick notes saved locally in this browser.</p>
+    <textarea id="spText" style="flex:1;min-height:150px;width:100%;resize:none;font:14px Consolas,monospace" placeholder="Write something down..."></textarea>
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="bt" data-xaction="save">Save now</button><button class="bt" data-xaction="download">Download .txt</button><button class="bt" data-xaction="clear">Clear</button><span id="spStatus" style="align-self:center;font-size:12px"></span></div>
+  </div>`;
+  const area=b.querySelector('#spText'),status=b.querySelector('#spStatus');
+  try{area.value=localStorage.getItem(key)||'';}catch(_){status.textContent='Local storage unavailable';}
+  const save=()=>{try{localStorage.setItem(key,area.value);status.textContent='Saved at '+new Date().toLocaleTimeString();}catch(_){status.textContent='Save failed';}};
+  let saveDelay;
+  area.addEventListener('input',()=>{clearTimeout(saveDelay);saveDelay=setTimeout(save,300);});
+  XTOOLS.bindButtons(b,action=>{
+    if(action==='save')save();
+    if(action==='download')XTOOLS.download('scratchpad.txt',area.value,'text/plain');
+    if(action==='clear'&&confirm('Clear all scratchpad text?')){area.value='';save();}
+  });
+}
+
+function csvStudioTool(b, w) {
+  w.t('CSV Studio');
+  b.innerHTML=`<div style="padding:14px;overflow:auto;height:100%"><h2 style="margin-top:0">CSV Studio</h2>
+    <p>Paste CSV data to preview rows, count records, and download it again.</p>
+    <textarea id="csvInput" rows="7" style="width:100%;font-family:Consolas,monospace">Name,Role,Status\nExplorer,File manager,Ready\nNotepad,Text editor,Ready\nPaint,Drawing,Ready</textarea>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0"><button class="bt" data-xaction="preview">Preview table</button><button class="bt" data-xaction="download">Download CSV</button><button class="bt" data-xaction="sample">Load sample</button></div>
+    <p id="csvStatus"></p><div id="csvPreview" style="overflow:auto"></div>
+  </div>`;
+  const input=b.querySelector('#csvInput'),status=b.querySelector('#csvStatus'),preview=b.querySelector('#csvPreview');
+  const parse=line=>{const out=[];let value='',quoted=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'&&line[i+1]==='"'&&quoted){value+='"';i++;}else if(ch==='"'){quoted=!quoted;}else if(ch===','&&!quoted){out.push(value);value='';}else value+=ch;}out.push(value);return out;};
+  const render=()=>{
+    const rows=input.value.split(/\r?\n/).filter(line=>line.length).map(parse);preview.innerHTML='';
+    if(!rows.length){status.textContent='No data.';return;}
+    const table=document.createElement('table');table.style.cssText='border-collapse:collapse;width:100%;font-size:12px';
+    rows.slice(0,300).forEach((row,ri)=>{const tr=document.createElement('tr');row.forEach(value=>{const cell=document.createElement(ri===0?'th':'td');cell.textContent=value;cell.style.cssText='padding:6px;border:1px solid var(--ln,#ccc);text-align:left';tr.append(cell);});table.append(tr);});
+    preview.append(table);status.textContent=`${rows.length} row(s), ${Math.max(...rows.map(r=>r.length))} column(s). Preview limited to 300 rows.`;
+  };
+  XTOOLS.bindButtons(b,action=>{
+    if(action==='preview')render();
+    if(action==='download')XTOOLS.download('data.csv',input.value,'text/csv');
+    if(action==='sample'){input.value='Name,Role,Status\nExplorer,File manager,Ready\nNotepad,Text editor,Ready\nPaint,Drawing,Ready';render();}
+  });
+  render();
+}
+
+function scientificCalculatorTool(b, w) {
+  w.t('Scientific Calculator');
+  b.innerHTML=`<div style="padding:14px;overflow:auto;height:100%"><h2 style="margin-top:0">Scientific Calculator</h2>
+    <input id="scInput" value="sqrt(81) + sin(PI / 2)" style="width:100%;padding:10px;font:16px Consolas,monospace">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0">
+      ${['7','8','9','/','4','5','6','*','1','2','3','-','0','.','(',')','+','PI','sqrt(','sin(','cos(','tan(','log(','abs('].map(v=>`<button class="bt" data-sci="${v}">${v}</button>`).join('')}
+    </div><button class="bt" data-xaction="calculate">Calculate</button><button class="bt" data-xaction="clear">Clear</button>
+    <h3 id="scResult">Result appears here</h3><p style="font-size:12px">Supported functions: sqrt, sin, cos, tan, log, abs, floor, ceil, round, PI, E. Expressions are parsed without eval.</p>
+  </div>`;
+  const input=b.querySelector('#scInput'),result=b.querySelector('#scResult');
+  const calculate=()=>{
+    const allowed={PI:Math.PI,E:Math.E,sqrt:Math.sqrt,sin:Math.sin,cos:Math.cos,tan:Math.tan,log:Math.log,abs:Math.abs,floor:Math.floor,ceil:Math.ceil,round:Math.round};
+    const expr=input.value.trim();
+    if(!expr||!/^[0-9+\-*/().,%\sA-Za-z]+$/.test(expr)){result.textContent='Unsupported characters in expression.';return;}
+    const tokens=expr.match(/[A-Za-z]+|(?:\d*\.)?\d+|[()+\-*/%,]/g)||[];
+    if(tokens.join('')!==expr.replace(/\s/g,'')){result.textContent='Could not parse expression.';return;}
+    let pos=0;
+    const peek=()=>tokens[pos],take=()=>tokens[pos++];
+    const primary=()=>{
+      const t=take();
+      if(t==='('){const v=add();if(take()!==')')throw Error('Missing closing parenthesis');return v;}
+      if(t==='-')return -primary();if(t==='+')return primary();
+      if(/^\d/.test(t||''))return Number(t);
+      if(t in allowed){if(typeof allowed[t]==='number')return allowed[t];if(take()!=='(')throw Error('Function requires parentheses');const v=add();if(take()!==')')throw Error('Missing function parenthesis');return allowed[t](v);}
+      throw Error('Unexpected token: '+t);
+    };
+    const mul=()=>{let v=primary();while(['*','/','%'].includes(peek())){const op=take(),n=primary();v=op==='*'?v*n:op==='/'?v/n:v%n;}return v;};
+    const add=()=>{let v=mul();while(['+','-'].includes(peek())){const op=take(),n=mul();v=op==='+'?v+n:v-n;}return v;};
+    try{const value=add();if(pos!==tokens.length)throw Error('Unexpected token: '+peek());result.textContent=Number.isFinite(value)?'Result: '+value:'Result is not finite.';}catch(error){result.textContent='Error: '+error.message;}
+  };
+  b.querySelectorAll('[data-sci]').forEach(button=>button.onclick=()=>{input.value+=button.dataset.sci;input.focus();});
+  XTOOLS.bindButtons(b,action=>{if(action==='calculate')calculate();if(action==='clear'){input.value='';result.textContent='Cleared.';}});
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')calculate();});
+}
+
+function registerExpansionPackTwo() {
+  const apps = {
+    gradientstudio:{n:'Gradient Studio',i:'🌈',w:520,h:520,f:gradientStudioTool},
+    regextester:{n:'Regex Tester',i:'🔎',w:560,h:540,f:regexTesterTool},
+    encoderstudio:{n:'Encoder Studio',i:'🔁',w:520,h:530,f:encoderStudioTool},
+    expenses:{n:'Expense Tracker',i:'💸',w:520,h:560,f:expenseTrackerTool},
+    habits:{n:'Habit Tracker',i:'📈',w:500,h:540,f:habitTrackerTool},
+    contrast:{n:'Contrast Checker',i:'🌓',w:450,h:480,f:contrastCheckerTool},
+    sysdashboard:{n:'System Dashboard',i:'📊',w:540,h:560,f:networkDashboardTool},
+    scratchpad:{n:'Scratchpad',i:'🗒️',w:500,h:500,f:scratchpadTool},
+    csvstudio:{n:'CSV Studio',i:'📑',w:580,h:560,f:csvStudioTool},
+    scicalc:{n:'Scientific Calculator',i:'🧪',w:440,h:560,f:scientificCalculatorTool}
+  };
+  Object.assign(APPS,apps);
+  Object.assign(RM,{gradient:'gradientstudio',regex:'regextester',encoder:'encoderstudio',expense:'expenses',habit:'habits',dashboard:'sysdashboard',scratch:'scratchpad',csv:'csvstudio',scientific:'scicalc'});
+  const tiles=[
+    ['gradientstudio','🌈','Gradient Studio','#6c3483'],['regextester','🔎','Regex Tester','#2874a6'],
+    ['encoderstudio','🔁','Encoder Studio','#117864'],['expenses','💸','Expense Tracker','#b9770e'],
+    ['habits','📈','Habit Tracker','#2471a3'],['contrast','🌓','Contrast Checker','#515a5a'],
+    ['sysdashboard','📊','System Dashboard','#1f618d'],['scratchpad','🗒️','Scratchpad','#9a7d0a'],
+    ['csvstudio','📑','CSV Studio','#2874a6'],['scicalc','🧪','Scientific Calculator','#7d3c98']
+  ];
+  tiles.forEach(tile=>TL.push(tile));
+  $('#tl').innerHTML=TL.map(([k,i,n,c,s])=>'<div class="tl" data-k="'+k+'" style="background:'+c+';grid-column:span '+(s||1)+'"><b>'+i+'</b>'+(n||new Date().toLocaleDateString([], {weekday:'long',month:'long',day:'numeric'}))+'</div>').join('');
+  alist();
+}
+
+try { registerExpansionPackTwo(); }
+catch (expansionPackTwoError) { console.warn('Expansion Pack 2 could not refresh all launch surfaces.', expansionPackTwoError); }
+
+/* End of Power Tools Expansion Pack 2. */
+
+
+/* End of Power Tools Expansion Pack. */
+
+/* =====================================================================
+   WINDOWS 10 REMAKE — EXPANSION PACK 3
+   Eight additional working apps, wired into Start search and live tiles.
+   All processing stays in the browser except when the user chooses to
+   download a file or explicitly runs code in the sandboxed playground.
+   ===================================================================== */
+
+const P3 = {
+  esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); },
+  button(text, action) { return `<button class="bt" data-xaction="${action}">${text}</button>`; },
+  row(label, control) { return `<label class="p3-label"><span>${label}</span>${control}</label>`; },
+  copy(text, success = 'Copied to clipboard.') {
+    if (!navigator.clipboard || !navigator.clipboard.writeText) { toast('Clipboard access is unavailable here. Select the text and copy it manually.'); return; }
+    navigator.clipboard.writeText(text).then(() => toast(success)).catch(() => toast('Clipboard blocked. Select the text and copy it manually.'));
+  }
+};
+
+function kanbanDeskTool(b, w) {
+  w.t('Kanban Desk');
+  const key = 'win10.kanban.v1';
+  let tasks = [];
+  try { tasks = JSON.parse(localStorage.getItem(key) || '[]'); if (!Array.isArray(tasks)) tasks = []; } catch (_) { tasks = []; }
+  const states = [{id:'todo',name:'To do',color:'#547dbf'},{id:'doing',name:'In progress',color:'#b17a13'},{id:'done',name:'Done',color:'#27864a'}];
+  b.innerHTML = `<div class="p3-app"><div class="p3-head"><div><h2>Kanban Desk</h2><p>Organize work into columns. Drag cards across columns or use the move menu.</p></div></div>
+    <div class="p3-entry"><input id="kbTitle" placeholder="Add a task…" maxlength="180"><select id="kbState"><option value="todo">To do</option><option value="doing">In progress</option><option value="done">Done</option></select>${P3.button('＋ Add task','add')}${P3.button('Export JSON','export')}</div>
+    <div id="kbBoard" class="p3-kanban"></div><p id="kbCount" class="p3-muted"></p></div>`;
+  const persist = () => { try { localStorage.setItem(key, JSON.stringify(tasks)); } catch (_) { toast('Storage is full; export the board to keep a copy.'); } };
+  const render = () => {
+    const board = b.querySelector('#kbBoard'); board.innerHTML = '';
+    states.forEach(state => {
+      const col = document.createElement('section'); col.className = 'p3-column'; col.dataset.state = state.id;
+      col.innerHTML = `<div class="p3-column-head" style="border-top:4px solid ${state.color}"><b>${state.name}</b><span>${tasks.filter(t=>t.state===state.id).length}</span></div><div class="p3-cards"></div>`;
+      const cards = col.querySelector('.p3-cards');
+      tasks.filter(t=>t.state===state.id).forEach(task => {
+        const card = document.createElement('article'); card.className = 'p3-task'; card.draggable = true; card.dataset.id = task.id;
+        const title = document.createElement('div'); title.className='p3-task-title'; title.textContent=task.title;
+        const meta = document.createElement('small'); meta.textContent = 'Added ' + new Date(task.created).toLocaleDateString();
+        const controls = document.createElement('div'); controls.className='p3-task-controls';
+        const move = document.createElement('select'); move.setAttribute('aria-label','Move task'); move.dataset.moveId=task.id;
+        states.forEach(s=>{const op=document.createElement('option');op.value=s.id;op.textContent='Move: '+s.name;op.selected=s.id===task.state;move.append(op);});
+        const del=document.createElement('button');del.className='bt';del.textContent='×';del.title='Delete task';del.dataset.deleteId=task.id;
+        controls.append(move,del); card.append(title,meta,controls); cards.append(card);
+      });
+      col.addEventListener('dragover',e=>{e.preventDefault();col.classList.add('p3-drop');});
+      col.addEventListener('dragleave',()=>col.classList.remove('p3-drop'));
+      col.addEventListener('drop',e=>{e.preventDefault();col.classList.remove('p3-drop');const id=e.dataTransfer.getData('text/plain');const task=tasks.find(t=>String(t.id)===id);if(task){task.state=state.id;persist();render();}});
+      cards.querySelectorAll('.p3-task').forEach(card=>card.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',card.dataset.id)));
+      board.append(col);
+    });
+    b.querySelector('#kbCount').textContent = `${tasks.length} task(s) · ${tasks.filter(t=>t.state==='done').length} completed · saved in this browser`;
+  };
+  XTOOLS.bindButtons(b,action=>{
+    if(action==='add') { const input=b.querySelector('#kbTitle'),title=input.value.trim();if(!title){input.focus();return;}tasks.push({id:Date.now()+Math.random(),title,state:b.querySelector('#kbState').value,created:Date.now()});input.value='';persist();render();input.focus(); }
+    if(action==='export') XTOOLS.download('kanban-board.json',JSON.stringify(tasks,null,2),'application/json');
+  });
+  b.addEventListener('change',e=>{const id=e.target.dataset.moveId;if(id){const t=tasks.find(x=>String(x.id)===id);if(t){t.state=e.target.value;persist();render();}}});
+  b.addEventListener('click',e=>{const id=e.target.dataset.deleteId;if(id){tasks=tasks.filter(t=>String(t.id)!==id);persist();render();}});
+  b.querySelector('#kbTitle').addEventListener('keydown',e=>{if(e.key==='Enter')b.querySelector('[data-xaction="add"]').click();});
+  render();
+}
+
+function imageLabTool(b, w) {
+  w.t('Image Lab');
+  b.innerHTML = `<div class="p3-app"><h2>Image Lab</h2><p>Open a local image, rotate it, apply grayscale, and download a PNG. The image stays in this page.</p>
+    <div class="p3-entry"><input id="ilFile" type="file" accept="image/*"><span id="ilInfo" class="p3-muted">No image loaded</span></div>
+    <div class="p3-entry">${P3.button('↶ Rotate left','left')}${P3.button('↷ Rotate right','right')}${P3.button('Grayscale','gray')}${P3.button('Reset','reset')}${P3.button('Download PNG','download')}</div>
+    <div class="p3-canvas-wrap"><canvas id="ilCanvas" width="640" height="360"></canvas></div><p id="ilStatus" class="p3-muted">Choose an image to begin.</p></div>`;
+  const canvas=b.querySelector('#ilCanvas'),ctx=canvas.getContext('2d'),file=b.querySelector('#ilFile');
+  let image=null,rotation=0,gray=false,objectUrl='';
+  const draw=()=>{
+    if(!image)return;const scale=Math.min(1,1400/image.naturalWidth,900/image.naturalHeight),iw=Math.max(1,Math.round(image.naturalWidth*scale)),ih=Math.max(1,Math.round(image.naturalHeight*scale)),odd=Math.abs(rotation%180)===90;
+    canvas.width=odd?ih:iw;canvas.height=odd?iw:ih;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.save();ctx.filter=gray?'grayscale(1)':'none';ctx.translate(canvas.width/2,canvas.height/2);ctx.rotate(rotation*Math.PI/180);ctx.drawImage(image,-iw/2,-ih/2,iw,ih);ctx.restore();
+    b.querySelector('#ilInfo').textContent=`${image.naturalWidth} × ${image.naturalHeight} pixels`;
+    b.querySelector('#ilStatus').textContent=`Rotation ${((rotation%360)+360)%360}° · Grayscale ${gray?'on':'off'}`;
+  };
+  file.addEventListener('change',()=>{const f=file.files&&file.files[0];if(!f)return;if(!f.type.startsWith('image/')){toast('Choose a supported image file.');return;}if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=URL.createObjectURL(f);const next=new Image();next.onload=()=>{image=next;rotation=0;gray=false;draw();};next.onerror=()=>toast('That image could not be opened.');next.src=objectUrl;});
+  XTOOLS.bindButtons(b,action=>{
+    if(action==='left'&&image){rotation-=90;draw();}
+    if(action==='right'&&image){rotation+=90;draw();}
+    if(action==='gray'&&image){gray=!gray;draw();}
+    if(action==='reset'&&image){rotation=0;gray=false;draw();}
+    if(action==='download'&&image){canvas.toBlob(blob=>{if(!blob){toast('Could not create the PNG.');return;}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='image-lab.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);},'image/png');}
+  });
+  const oldClose=w.close;w.close=()=>{if(objectUrl)URL.revokeObjectURL(objectUrl);oldClose();};
+}
+
+function toneStudioTool(b, w) {
+  w.t('Tone Studio');
+  b.innerHTML = `<div class="p3-app"><h2>Tone Studio</h2><p>Generate a simple test tone with your browser's Web Audio API. Start at low volume.</p>
+    ${P3.row('Frequency (Hz)','<input id="tsFrequency" type="range" min="60" max="2000" value="440">')}
+    <div class="p3-entry"><b id="tsFreqLabel">440 Hz</b><select id="tsWave"><option value="sine">Sine</option><option value="triangle">Triangle</option><option value="square">Square</option><option value="sawtooth">Sawtooth</option></select></div>
+    ${P3.row('Volume (keep it low)','<input id="tsVolume" type="range" min="0" max="20" value="8">')}
+    <div class="p3-entry">${P3.button('▶ Start tone','start')}${P3.button('■ Stop tone','stop')}</div><div id="tsStatus" class="p3-status">Stopped</div>
+    <p class="p3-muted">Audio starts only after you press Start. Your volume may differ from the slider setting.</p></div>`;
+  let ac=null,osc=null,gain=null;
+  const frequency=b.querySelector('#tsFrequency'),volume=b.querySelector('#tsVolume'),wave=b.querySelector('#tsWave'),status=b.querySelector('#tsStatus');
+  const sync=()=>{b.querySelector('#tsFreqLabel').textContent=frequency.value+' Hz';if(osc)osc.frequency.setTargetAtTime(Number(frequency.value),ac.currentTime,.03);if(gain)gain.gain.setTargetAtTime(Number(volume.value)/100,ac.currentTime,.03);if(osc)osc.type=wave.value;};
+  const stop=()=>{if(osc){try{osc.stop();}catch(_){}try{osc.disconnect();gain.disconnect();}catch(_){}osc=null;gain=null;}status.textContent='Stopped';};
+  frequency.addEventListener('input',sync);volume.addEventListener('input',sync);wave.addEventListener('change',sync);
+  XTOOLS.bindButtons(b,action=>{
+    if(action==='start'){
+      if(osc)return;
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx){status.textContent='Web Audio is not supported in this browser.';return;}
+      try{ac=ac||new AudioCtx();if(ac.state==='suspended')ac.resume();osc=ac.createOscillator();gain=ac.createGain();osc.type=wave.value;osc.frequency.value=Number(frequency.value);gain.gain.value=Number(volume.value)/100;osc.connect(gain);gain.connect(ac.destination);osc.start();status.textContent='Playing · '+frequency.value+' Hz';}catch(error){stop();status.textContent='Could not start audio: '+error.message;}
+    }
+    if(action==='stop')stop();
+  });
+  const oldClose=w.close;w.close=()=>{stop();if(ac)ac.close().catch(()=>{});oldClose();};
+}
+
+function diffCheckerTool(b, w) {
+  w.t('Diff Checker');
+  b.innerHTML = `<div class="p3-app"><h2>Diff Checker</h2><p>Compare two text snippets line by line. Lines that differ at the same position are shown in red and green.</p>
+    <div class="p3-two"><label>Original<textarea id="dfA" rows="10" spellcheck="false">Windows 10\nFile Explorer\nSettings\nNotepad</textarea></label><label>Modified<textarea id="dfB" rows="10" spellcheck="false">Windows 10 Remake\nFile Explorer\nNew Settings\nNotepad</textarea></label></div>
+    <div class="p3-entry">${P3.button('Compare text','compare')}${P3.button('Swap sides','swap')}${P3.button('Download report','download')}</div><div id="dfSummary" class="p3-status">Ready to compare.</div><div id="dfResults" class="p3-diff"></div></div>`;
+  const a=b.querySelector('#dfA'),z=b.querySelector('#dfB'),summary=b.querySelector('#dfSummary'),results=b.querySelector('#dfResults');let report='';
+  const compare=()=>{
+    const aa=a.value.replace(/\r/g,'').split('\n'),zz=z.value.replace(/\r/g,'').split('\n'),max=Math.max(aa.length,zz.length);let changed=0,added=0,removed=0;results.innerHTML='';const lines=[];
+    for(let i=0;i<max;i++){
+      const av=aa[i],zv=zz[i];let kind='same',prefix=' ';
+      if(av===undefined){kind='added';prefix='+';added++;}else if(zv===undefined){kind='removed';prefix='−';removed++;}else if(av!==zv){kind='changed';prefix='~';changed++;}
+      const row=document.createElement('div');row.className='p3-diff-line '+kind;const num=document.createElement('span');num.className='p3-diff-num';num.textContent=String(i+1).padStart(3,'0');const mark=document.createElement('b');mark.textContent=prefix;const content=document.createElement('code');content.textContent=av===undefined?zv:av;row.append(num,mark,content);results.append(row);
+      if(kind==='changed'){const alt=document.createElement('div');alt.className='p3-diff-line added';const n=document.createElement('span');n.className='p3-diff-num';n.textContent=String(i+1).padStart(3,'0');const m=document.createElement('b');m.textContent='+';const c=document.createElement('code');c.textContent=zv;alt.append(n,m,c);results.append(alt);}
+      lines.push(`${prefix} ${av===undefined?zv:av}`);if(kind==='changed')lines.push(`+ ${zv}`);
+    }
+    report=lines.join('\n');summary.textContent=`${changed} changed line(s), ${added} added, ${removed} removed.`;
+  };
+  XTOOLS.bindButtons(b,action=>{if(action==='compare')compare();if(action==='swap'){const v=a.value;a.value=z.value;z.value=v;compare();}if(action==='download'){if(!report)compare();XTOOLS.download('text-diff.txt',report,'text/plain');}});compare();
+}
+
+function textToolkitTool(b, w) {
+  w.t('Text Toolkit');
+  b.innerHTML = `<div class="p3-app"><h2>Text Toolkit</h2><p>Transform text without uploading it anywhere.</p>
+    <textarea id="txSource" rows="9" spellcheck="false" placeholder="Paste text here…">Windows 10 Remake\nMore apps\nMore features\nWindows 10 Remake</textarea>
+    <div class="p3-button-grid">${[['Uppercase','upper'],['lowercase','lower'],['Title Case','title'],['Sentence case','sentence'],['Trim lines','trim'],['Remove blank lines','nonblank'],['Sort A → Z','sort'],['Sort Z → A','sortrev'],['Remove duplicates','unique'],['Reverse lines','reverse'],['Clear','clear']].map(x=>P3.button(x[0],x[1])).join('')}</div>
+    <div class="p3-entry">${P3.button('Copy result','copy')}${P3.button('Download .txt','download')}</div><p id="txStats" class="p3-status"></p>
+  </div>`;
+  const input=b.querySelector('#txSource'),stats=b.querySelector('#txStats');let output=input.value;
+  const updateStats=()=>{output=input.value;const words=output.trim()?output.trim().split(/\s+/).length:0;stats.textContent=`${output.length} characters · ${words} words · ${output.split(/\n/).length} lines`;};
+  input.addEventListener('input',updateStats);
+  XTOOLS.bindButtons(b,action=>{
+    const lines=input.value.replace(/\r/g,'').split('\n');
+    if(action==='upper')input.value=input.value.toUpperCase();
+    if(action==='lower')input.value=input.value.toLowerCase();
+    if(action==='title')input.value=input.value.toLowerCase().replace(/\b[\p{L}\p{N}]/gu,ch=>ch.toUpperCase());
+    if(action==='sentence')input.value=input.value.toLowerCase().replace(/(^\s*|[.!?]\s+)([a-z])/g,(m,a,c)=>a+c.toUpperCase());
+    if(action==='trim')input.value=lines.map(x=>x.trim()).join('\n');
+    if(action==='nonblank')input.value=lines.filter(x=>x.trim()).join('\n');
+    if(action==='sort')input.value=lines.slice().sort((a,z)=>a.localeCompare(z)).join('\n');
+    if(action==='sortrev')input.value=lines.slice().sort((a,z)=>z.localeCompare(a)).join('\n');
+    if(action==='unique')input.value=[...new Set(lines)].join('\n');
+    if(action==='reverse')input.value=lines.reverse().join('\n');
+    if(action==='clear')input.value='';
+    if(action==='copy')P3.copy(input.value);
+    if(action==='download')XTOOLS.download('text-toolkit.txt',input.value,'text/plain');
+    updateStats();
+  });updateStats();
+}
+
+function flexboxStudioTool(b, w) {
+  w.t('Flexbox Studio');
+  b.innerHTML = `<div class="p3-app"><h2>Flexbox Studio</h2><p>Adjust the controls and see the flex layout update live.</p>
+    <div class="p3-flex-controls">
+      ${P3.row('Direction','<select id="fxDirection"><option>row</option><option>row-reverse</option><option>column</option><option>column-reverse</option></select>')}
+      ${P3.row('Justify content','<select id="fxJustify"><option>flex-start</option><option>center</option><option>flex-end</option><option>space-between</option><option>space-around</option><option>space-evenly</option></select>')}
+      ${P3.row('Align items','<select id="fxAlign"><option>stretch</option><option>flex-start</option><option>center</option><option>flex-end</option><option>baseline</option></select>')}
+      ${P3.row('Wrap','<select id="fxWrap"><option>nowrap</option><option>wrap</option><option>wrap-reverse</option></select>')}
+      ${P3.row('Gap','<input id="fxGap" type="range" min="0" max="40" value="10">')}
+      ${P3.row('Items','<input id="fxItems" type="range" min="2" max="12" value="6">')}
+    </div><div id="fxPreview" class="p3-flex-preview"></div><textarea id="fxCode" rows="6" readonly spellcheck="false" style="width:100%;font:13px Consolas,monospace"></textarea>
+    <div class="p3-entry">${P3.button('Copy CSS','copy')}${P3.button('Download CSS','download')}${P3.button('Reset','reset')}</div></div>`;
+  const ids=['fxDirection','fxJustify','fxAlign','fxWrap','fxGap','fxItems'],controls=ids.map(id=>b.querySelector('#'+id)),preview=b.querySelector('#fxPreview'),code=b.querySelector('#fxCode');
+  const update=()=>{const [dir,justify,align,wrap,gap,count]=controls.map(x=>x.value);preview.style.cssText=`display:flex;flex-direction:${dir};justify-content:${justify};align-items:${align};flex-wrap:${wrap};gap:${gap}px;min-height:190px;max-height:360px;overflow:auto;padding:10px;background:var(--ws);border:1px solid var(--bd);`;
+    preview.innerHTML='';for(let i=1;i<=Number(count);i++){const item=document.createElement('div');item.className='p3-flex-item';item.textContent=i;preview.append(item);}code.value=`.container {\n  display: flex;\n  flex-direction: ${dir};\n  justify-content: ${justify};\n  align-items: ${align};\n  flex-wrap: ${wrap};\n  gap: ${gap}px;\n}`;};
+  controls.forEach(x=>x.addEventListener('input',update));
+  XTOOLS.bindButtons(b,action=>{if(action==='copy')P3.copy(code.value,'Flexbox CSS copied.');if(action==='download')XTOOLS.download('flexbox-layout.css',code.value,'text/css');if(action==='reset'){controls[0].value='row';controls[1].value='flex-start';controls[2].value='stretch';controls[3].value='nowrap';controls[4].value='10';controls[5].value='6';update();}});update();
+}
+
+function storageInspectorTool(b, w) {
+  w.t('Storage Inspector');
+  b.innerHTML = `<div class="p3-app"><h2>Storage Inspector</h2><p>Inspect localStorage keys visible to this HTML file's browser origin. Values can contain private notes, so review before exporting.</p>
+    <div class="p3-entry"><input id="siFilter" placeholder="Filter by key…"><button class="bt" data-xaction="refresh">Refresh</button><button class="bt" data-xaction="export">Export JSON</button></div>
+    <div id="siStatus" class="p3-status"></div><div id="siList"></div><p class="p3-muted">Deleting a key can remove saved data from an app. There is no bulk-delete button.</p></div>`;
+  const render=()=>{const list=b.querySelector('#siList'),filter=b.querySelector('#siFilter').value.toLowerCase();list.innerHTML='';let count=0,total=0,rows=[];
+    try{for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key===null)continue;const value=localStorage.getItem(key)||'';total+=key.length+value.length;rows.push({key,value});}}catch(error){b.querySelector('#siStatus').textContent='Storage could not be read: '+error.message;return;}
+    const shown=rows.filter(row=>row.key.toLowerCase().includes(filter));count=shown.length;b.querySelector('#siStatus').textContent=`${count} key(s) shown · ${rows.length} total · approximately ${total.toLocaleString()} UTF-16 characters`;
+    shown.forEach(row=>{const item=document.createElement('div');item.className='p3-storage-row';const main=document.createElement('div');main.className='p3-storage-main';const name=document.createElement('b');name.textContent=row.key;const size=document.createElement('small');size.textContent=`${row.value.length.toLocaleString()} characters`;const value=document.createElement('pre');value.className='p3-storage-value';value.textContent=row.value.length>800?row.value.slice(0,800)+'… (preview truncated)':row.value;value.hidden=true;const reveal=document.createElement('button');reveal.className='bt';reveal.textContent='Show value';reveal.onclick=()=>{value.hidden=!value.hidden;reveal.textContent=value.hidden?'Show value':'Hide value';};const del=document.createElement('button');del.className='bt';del.textContent='Delete key';del.onclick=()=>{if(confirm(`Delete localStorage key "${row.key}"?`)){try{localStorage.removeItem(row.key);render();}catch(error){toast('Could not delete key: '+error.message);}}};main.append(name,size,value);const actions=document.createElement('div');actions.className='p3-entry';actions.append(reveal,del);item.append(main,actions);list.append(item);});
+    if(!shown.length)list.textContent='No matching keys.';
+  };
+  b.querySelector('#siFilter').addEventListener('input',render);
+  XTOOLS.bindButtons(b,action=>{if(action==='refresh')render();if(action==='export'){try{const data={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k!==null)data[k]=localStorage.getItem(k);}XTOOLS.download('local-storage-export.json',JSON.stringify(data,null,2),'application/json');}catch(error){toast('Could not export storage: '+error.message);}}});render();
+}
+
+function webPlaygroundTool(b, w) {
+  w.t('Web Playground');
+  b.innerHTML = `<div class="p3-app"><h2>Web Playground</h2><p>Write a small HTML, CSS, and JavaScript demo and preview it in a sandboxed frame.</p>
+    <div class="p3-code-editors"><label>HTML<textarea id="wpHtml" spellcheck="false"><h1>Hello, Windows!</h1>\n<p>Edit the HTML, CSS, or JavaScript, then press Run.</p>\n<button onclick="document.getElementById('out').textContent='It works!'">Test button</button>\n<p id="out"></p></textarea></label>
+      <label>CSS<textarea id="wpCss" spellcheck="false">body { font: 16px system-ui; padding: 20px; color: #18324a; }\nbutton { background: #0078d7; color: white; border: 0; padding: 9px 14px; border-radius: 5px; }</textarea></label>
+      <label>JavaScript<textarea id="wpJs" spellcheck="false">console.log('Hello from the sandbox');</textarea></label></div>
+    <div class="p3-entry">${P3.button('▶ Run preview','run')}${P3.button('Load example','sample')}${P3.button('Download HTML','download')}</div>
+    <iframe id="wpFrame" title="Sandboxed preview" sandbox="allow-scripts" referrerpolicy="no-referrer" style="display:block;width:100%;height:230px;background:white;border:1px solid #888;border-radius:5px"></iframe>
+    <p class="p3-muted">Preview runs with scripts enabled inside an isolated iframe. Do not paste code you do not trust.</p></div>`;
+  const h=b.querySelector('#wpHtml'),c=b.querySelector('#wpCss'),j=b.querySelector('#wpJs'),frame=b.querySelector('#wpFrame');
+  const source=()=>`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${c.value.replace(/<\/style/gi,'<\\/style')}</style></head><body>${h.value}<script>${j.value.replace(/<\/script/gi,'<\\/script')}<\/script></body></html>`;
+  const run=()=>{frame.srcdoc=source();};
+  XTOOLS.bindButtons(b,action=>{if(action==='run')run();if(action==='sample'){h.value='<h1>My mini web page</h1>\n<p>This preview is running in a sandbox.</p>\n<button id="hello">Say hello</button>\n<p id="message"></p>';c.value='body { font: 16px system-ui; padding: 20px; }\nbutton { background: #0078d7; color: white; border: 0; border-radius: 5px; padding: 10px; }';j.value="document.getElementById('hello').onclick = () => document.getElementById('message').textContent = 'Hello there!';";run();}if(action==='download')XTOOLS.download('web-playground.html',source(),'text/html');});run();
+}
+
+function registerExpansionPackThree() {
+  const apps = {
+    kanban:{n:'Kanban Desk',i:'🗂️',w:780,h:570,f:kanbanDeskTool},
+    imagelab:{n:'Image Lab',i:'🖼️',w:700,h:570,f:imageLabTool},
+    tonestudio:{n:'Tone Studio',i:'🎵',w:430,h:460,f:toneStudioTool},
+    diffchecker:{n:'Diff Checker',i:'🆚',w:760,h:570,f:diffCheckerTool},
+    texttoolkit:{n:'Text Toolkit',i:'🔠',w:600,h:570,f:textToolkitTool},
+    flexboxstudio:{n:'Flexbox Studio',i:'📦',w:640,h:600,f:flexboxStudioTool},
+    storageinspector:{n:'Storage Inspector',i:'🧰',w:650,h:570,f:storageInspectorTool},
+    webplayground:{n:'Web Playground',i:'🌐',w:820,h:680,f:webPlaygroundTool}
+  };
+  Object.assign(APPS, apps);
+  Object.assign(RM, {kanban:'kanban',board:'kanban',imagelab:'imagelab',tone:'tonestudio',audio:'tonestudio',diff:'diffchecker',texttools:'texttoolkit',flexbox:'flexboxstudio',storage:'storageinspector',webplayground:'webplayground',playground:'webplayground'});
+  const tiles = [
+    ['kanban','🗂️','Kanban Desk','#315b83'],['imagelab','🖼️','Image Lab','#6c3483'],
+    ['tonestudio','🎵','Tone Studio','#117864'],['diffchecker','🆚','Diff Checker','#7d3c98'],
+    ['texttoolkit','🔠','Text Toolkit','#2874a6'],['flexboxstudio','📦','Flexbox Studio','#b9770e'],
+    ['storageinspector','🧰','Storage Inspector','#515a5a'],['webplayground','🌐','Web Playground','#1f618d']
+  ];
+  tiles.forEach(tile=>TL.push(tile));
+  $('#tl').innerHTML = TL.map(([k,i,n,c,s])=>'<div class="tl" data-k="'+k+'" style="background:'+c+';grid-column:span '+(s||1)+'"><b>'+i+'</b>'+(n||new Date().toLocaleDateString([], {weekday:'long',month:'long',day:'numeric'}))+'</div>').join('');
+  alist();
+}
+
+try { registerExpansionPackThree(); }
+catch (expansionPackThreeError) { console.warn('Expansion Pack 3 could not refresh all launch surfaces.', expansionPackThreeError); }
+
+/* End of Expansion Pack 3. */
+
+</script>
+</body>
+</html>
