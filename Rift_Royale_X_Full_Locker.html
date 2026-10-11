@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>RIFT ROYALE X — Season X Fan Prototype</title>
+<style>
+:root{--cyan:#5ee7ff;--purple:#bd67ff;--yellow:#ffe45b;--panel:rgba(13,20,38,.91);--line:rgba(153,205,255,.28)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#091424;color:#fff;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;user-select:none}
+#game{display:block;width:100vw;height:100vh;touch-action:none;cursor:crosshair}
+.overlay{position:fixed;inset:0;pointer-events:none}.topbar{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.panel{background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 32px #0007;backdrop-filter:blur(10px);border-radius:12px;padding:10px 13px}
+.brand{font-weight:1000;font-style:italic;letter-spacing:1px;font-size:18px;text-shadow:0 2px 0 #6531a5}.brand b{color:var(--yellow)}.sub{font-size:10px;letter-spacing:2px;color:#a9bdd7;font-weight:800;margin-top:2px}
+.stats{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.stat{min-width:74px;text-align:center}.stat strong{display:block;font-size:19px}.stat small{font-size:9px;letter-spacing:1.4px;color:#9cb3d2;font-weight:900}
+.leftstack{position:absolute;left:14px;top:104px;width:230px;display:grid;gap:8px}.barrow{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:11px;font-weight:900}.meter{height:8px;flex:1;background:#ffffff18;border-radius:20px;overflow:hidden}.fill{height:100%;width:100%;border-radius:20px;transition:width .15s}.health{background:#42f28c}.shield{background:#42bfff}.xp{background:#d15cff}
+.rightstack{position:absolute;right:14px;top:104px;width:220px}.minimap{width:100%;aspect-ratio:1.22;display:block;border-radius:8px;border:1px solid #ffffff30;background:#0b2332}.miniTitle{display:flex;justify-content:space-between;font-size:10px;font-weight:900;letter-spacing:1px;margin-bottom:7px;color:#d5e4ff}
+.location{font-size:12px;font-weight:1000;letter-spacing:1.2px;color:var(--yellow)}.muted{color:#9eb2d0;font-size:11px;line-height:1.45}
+.bottom{position:absolute;left:50%;bottom:15px;transform:translateX(-50%);display:flex;align-items:flex-end;gap:10px}.weaponbar{display:flex;gap:6px;padding:7px;background:var(--panel);border:1px solid var(--line);border-radius:13px;pointer-events:auto}.slot{width:63px;height:60px;border:1px solid #ffffff22;border-radius:8px;background:#18243b;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;cursor:pointer}.slot.active{border:2px solid var(--yellow);background:#493d2a;transform:translateY(-5px)}.slot .emoji{font-size:24px}.slot small{font-size:9px;color:#bed0e8;font-weight:900}.slot .key{position:absolute;top:3px;left:5px;font-size:9px;color:#c2d3ed}
+.ammo{min-width:130px}.ammo strong{font-size:24px}.ammo span{color:#9eb2d0;font-size:12px}
+.hint{position:absolute;bottom:102px;left:50%;transform:translateX(-50%);font-size:11px;color:#d5e4ff;text-align:center;text-shadow:0 2px 4px #000;white-space:nowrap}
+.toast{position:absolute;top:90px;left:50%;transform:translateX(-50%);background:#151d35eF;border:1px solid #9d79ff;border-radius:10px;padding:10px 16px;font-weight:900;font-size:12px;opacity:0;transition:opacity .2s;white-space:nowrap}
+.center{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(120deg,#071526d9,#160c2be8);pointer-events:auto}
+.card{width:min(660px,calc(100vw - 28px));padding:28px;border-radius:20px;border:1px solid #a5a5ff55;background:linear-gradient(145deg,#142642f5,#21123cf5);box-shadow:0 30px 100px #000a}
+.kicker{font-size:11px;font-weight:1000;letter-spacing:4px;color:var(--cyan)}h1{font-size:clamp(38px,8vw,72px);line-height:.88;margin:13px 0 12px;font-weight:1000;font-style:italic;letter-spacing:-3px;text-shadow:0 5px 0 #5d2792}h1 span{color:var(--yellow)}.desc{max-width:520px;color:#b8c9e3;line-height:1.55;font-size:14px}.buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.btn{border:0;border-radius:9px;padding:13px 18px;font-weight:1000;letter-spacing:.6px;cursor:pointer;background:var(--yellow);color:#1a2032;box-shadow:0 4px 0 #a78628}.btn.secondary{background:#263a5c;color:#fff;box-shadow:0 4px 0 #111c31;border:1px solid #ffffff22}.gridinfo{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:20px}.infobox{padding:12px;background:#ffffff08;border:1px solid #ffffff16;border-radius:9px}.infobox b{display:block;font-size:13px}.infobox small{color:#a6bad8;font-size:10px}
+.endTitle{font-size:44px;font-weight:1000;font-style:italic}.hide{display:none!important}
+.mobile{display:none;position:fixed;bottom:120px;left:15px;right:15px;justify-content:space-between;pointer-events:none}.stick{width:112px;height:112px;border-radius:50%;background:#dceaff18;border:1px solid #ffffff45;pointer-events:auto;position:relative;touch-action:none}.nub{position:absolute;left:34px;top:34px;width:42px;height:42px;background:#dceaff55;border:1px solid #ffffff75;border-radius:50%}.firebtn{width:66px;height:66px;border-radius:50%;border:2px solid #ffffff90;background:#e54b4b99;color:white;font-weight:1000;pointer-events:auto;align-self:flex-end;touch-action:none}
+
+.lobby-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:20px;border-bottom:1px solid #ffffff22;padding-bottom:9px}
+.lobby-tab{border:1px solid #ffffff20;background:#ffffff08;color:#b8c9e3;border-radius:7px;padding:9px 11px;font-size:10px;font-weight:1000;letter-spacing:1px;cursor:pointer}
+.lobby-tab.selected{background:#ffe45b;color:#1a2032;border-color:#ffe45b}
+.lobby-panel{padding-top:14px}.lobby-hero{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lobby-hero h2,.lobby-panel h2{font-size:25px;margin:6px 0;font-weight:1000;font-style:italic;letter-spacing:-.7px}
+.hero-badge{width:78px;height:78px;flex-shrink:0;display:grid;place-items:center;border:3px solid #ffe45b;border-radius:20px;transform:rotate(7deg);font-size:46px;font-weight:1000;font-style:italic;color:#ffe45b;text-shadow:3px 3px #9b4fff;background:linear-gradient(145deg,#282b59,#8b40b2)}
+.skin-grid,.reward-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:13px 0}
+.skin-card,.reward-card{min-width:0;text-align:left;border:1px solid #ffffff20;border-radius:10px;background:#ffffff08;color:#fff;padding:9px;display:flex;flex-direction:column;gap:5px;cursor:pointer}
+.skin-card.chosen{border:2px solid #ffe45b;background:#ffe45b12}
+.skin-preview{height:62px;border-radius:7px;display:grid;place-items:center;font-size:48px;color:#fff;text-shadow:0 3px 8px #0008}
+.cyan-skin{background:linear-gradient(135deg,#163c68,#42e4ff)}.ember-skin{background:linear-gradient(135deg,#612d28,#ff9d42)}.violet-skin{background:linear-gradient(135deg,#29194f,#c36bff)}.lime-skin{background:linear-gradient(135deg,#254b34,#a8f85a)}
+.skin-card b,.reward-card b{font-size:10px;line-height:1.2}.skin-card small,.reward-card small{font-size:9px;color:#a9bdd7}
+.pass-progress{padding:13px;border-radius:10px;background:#ffffff08;border:1px solid #ffffff18;margin:12px 0}
+.pass-progress>div:first-child{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}.pass-progress small{font-size:9px;color:#a9bdd7}
+.reward-card{min-height:112px;justify-content:center}.reward-card span{font-size:25px}.reward-card.unlocked{border-color:#ffe45b66;background:#ffe45b0d}
+.quest-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #ffffff18}.quest-row>span{font-size:23px}.quest-row div{flex:1;display:flex;flex-direction:column;gap:3px}.quest-row b{font-size:12px}.quest-row small{font-size:10px;color:#a9bdd7}.quest-row strong{font-size:10px;color:#ffe45b}
+.chest-prompt{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);padding:8px 12px;background:#10182bea;border:1px solid #ffe45b;border-radius:8px;font-size:11px;font-weight:1000}
+
+.locker-layout{display:grid;grid-template-columns:minmax(180px,.78fr) minmax(0,1.5fr);gap:12px;align-items:start}
+.locker-preview{position:sticky;top:0;min-height:360px;border:1px solid #ffffff22;border-radius:12px;background:radial-gradient(circle at 50% 35%,#7657ad55,transparent 42%),linear-gradient(145deg,#182b4b,#11192c);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:13px;overflow:hidden}
+.preview-rarity{font-size:9px;letter-spacing:2px;font-weight:1000;color:#d5a5ff;align-self:flex-start}
+.locker-avatar{height:170px;width:130px;position:relative;margin:14px auto 4px;filter:drop-shadow(0 8px 8px #0007);--avatar-color:#52e5ff}
+.locker-avatar .avatar-head{position:absolute;width:42px;height:45px;border-radius:13px 13px 16px 16px;top:15px;left:44px;background:linear-gradient(135deg,#f1c7a5,#9c6a68);border:3px solid #222c47}
+.locker-avatar .avatar-body{position:absolute;width:64px;height:70px;border-radius:15px 15px 9px 9px;top:57px;left:33px;background:linear-gradient(135deg,var(--avatar-color),#28365c);border:3px solid #dceaff88}
+.locker-avatar .avatar-arm{position:absolute;width:20px;height:66px;top:62px;background:var(--avatar-color);border:2px solid #dceaff66;border-radius:10px}
+.locker-avatar .avatar-arm.left{left:17px;transform:rotate(9deg)}.locker-avatar .avatar-arm.right{right:17px;transform:rotate(-9deg)}
+.locker-avatar .avatar-leg{position:absolute;width:25px;height:48px;top:119px;background:#28365c;border:2px solid #dceaff55;border-radius:7px}
+.locker-avatar .avatar-leg.left{left:38px;transform:rotate(3deg)}.locker-avatar .avatar-leg.right{right:38px;transform:rotate(-3deg)}
+.locker-avatar .avatar-back{position:absolute;width:40px;height:47px;left:5px;top:67px;border-radius:12px;background:#bd67ff;border:3px solid #e8c5ff;z-index:0;transform:rotate(-8deg)}
+.preview-name{font-size:16px;font-weight:1000;font-style:italic;text-align:center;letter-spacing:.5px}
+.preview-desc{font-size:10px;color:#afc2df;text-align:center;margin:4px 0 12px}
+.locker-equip{width:100%;padding:10px;font-size:11px}
+.locker-catalog{max-height:54vh;overflow:auto;padding-right:3px}
+.locker-section-title{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:1.5px;font-weight:1000;margin:5px 0 8px;color:#d8e6ff}
+.locker-section-title small{font-size:8px;color:#9db1d0;letter-spacing:1px}
+.cosmetic-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:13px}
+.cosmetic-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;padding:8px;border:1px solid #ffffff1c;background:#ffffff08;border-radius:8px;color:white;text-align:left;cursor:pointer}
+.cosmetic-card>span{width:100%;height:38px;display:grid;place-items:center;background:linear-gradient(145deg,#2a3b5e,#33204e);border-radius:6px;font-size:22px}
+.cosmetic-card b{font-size:9px;line-height:1.2}.cosmetic-card small{font-size:7px;color:#a9bdd7;line-height:1.3}
+.cosmetic-card.chosen{border:2px solid #ffe45b;background:#ffe45b12}
+
+@media(max-width:760px){.lobby-tabs{gap:4px}.lobby-tab{padding:8px 7px;font-size:9px}.lobby-hero h2,.lobby-panel h2{font-size:20px}.hero-badge{width:55px;height:55px;font-size:32px}.skin-grid,.reward-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.skin-preview{height:44px}.skin-grid{max-height:none;overflow:visible}.lobby-panel{max-height:64vh;overflow:auto}.locker-layout{grid-template-columns:1fr}.locker-preview{position:relative;min-height:245px}.locker-avatar{height:135px;margin:6px auto 2px;transform:scale(.82);transform-origin:top center}.locker-catalog{max-height:none;overflow:visible}.cosmetic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+@media(max-width:760px){.brand{font-size:14px}.leftstack{top:90px;width:170px;left:8px}.rightstack{top:90px;right:8px;width:145px}.panel{padding:8px}.stat{min-width:51px}.stat strong{font-size:15px}.stat small{font-size:8px}.bottom{bottom:8px;gap:5px}.slot{width:47px;height:50px}.slot .emoji{font-size:20px}.ammo{min-width:80px}.ammo strong{font-size:18px}.hint{bottom:72px;font-size:9px}.mobile{display:flex}.gridinfo{grid-template-columns:1fr 1fr 1fr}.card{padding:21px}}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div class="overlay" id="hud">
+ <div class="topbar">
+  <div class="panel"><div class="brand">RIFT <b>ROYALE X</b></div><div class="sub">CHAPTER ZERO • SEASON X FAN BUILD</div></div>
+  <div class="stats">
+   <div class="panel stat"><strong id="alive">21</strong><small>REMAINING</small></div>
+   <div class="panel stat"><strong id="elims">0</strong><small>ELIMS</small></div>
+   <div class="panel stat"><strong id="timer">00:00</strong><small>TIME</small></div>
+  </div>
+ </div>
+ <div class="leftstack">
+  <div class="panel">
+   <div class="location" id="locName">DUSTY DEPOT</div>
+   <div class="muted" id="locDesc">A dusty industrial landmark. Loot up.</div>
+   <div class="barrow">HP <div class="meter"><div class="fill health" id="hpbar"></div></div><b id="hpnum">100</b></div>
+   <div class="barrow">SHIELD <div class="meter"><div class="fill shield" id="shbar"></div></div><b id="shnum">50</b></div>
+   <div class="barrow">RIFT CHARGE <div class="meter"><div class="fill xp" id="riftbar"></div></div></div>
+  </div>
+  <div class="panel muted"><b style="color:#fff">STORM STATUS</b><div id="stormText" style="margin-top:5px">Safe zone is forming…</div><div class="barrow"><div class="meter"><div class="fill" id="stormbar" style="background:#b05cff;width:100%"></div></div></div></div>
+ </div>
+ <div class="rightstack panel">
+  <div class="miniTitle"><span>ISLAND RADAR</span><span id="phase">PHASE 1</span></div>
+  <canvas id="mini" class="minimap" width="260" height="210"></canvas>
+  <div class="muted" style="margin-top:7px">Purple rings = Rift Zones<br>Yellow dot = you • Red = rivals</div>
+ </div>
+ <div class="toast" id="toast">RIFT ANOMALY DETECTED</div>
+ <div class="hint">WASD / ARROWS MOVE • MOUSE AIM & FIRE • E PICK UP • Q RIFT DASH • 1–5 SWITCH • B BUILD WALL</div>
+ <div class="bottom">
+  <div class="ammo panel"><div><strong id="ammo">30</strong> <span id="reserve">/ 120</span></div><div class="muted" id="weaponName">ASSAULT RIFLE</div></div>
+  <div class="weaponbar" id="weaponbar">
+   <div class="slot active" data-slot="0"><span class="key">1</span><span class="emoji">🔫</span><small>RIFLE</small></div>
+   <div class="slot" data-slot="1"><span class="key">2</span><span class="emoji">💥</span><small>SHOTGUN</small></div>
+   <div class="slot" data-slot="2"><span class="key">3</span><span class="emoji">🎯</span><small>SCOUT</small></div>
+   <div class="slot" data-slot="3"><span class="key">4</span><span class="emoji">🧪</span><small>HEAL</small></div>
+   <div class="slot" data-slot="4"><span class="key">5</span><span class="emoji">🧱</span><small>BUILD</small></div>
+  </div>
+ </div>
+</div>
+<div class="mobile" id="mobileControls"><div class="stick" id="stick"><div class="nub" id="nub"></div></div><button class="firebtn" id="firebtn">FIRE</button></div>
+<div class="center" id="menu">
+ <div class="card">
+  <div class="kicker">TIME IS BROKEN • DROP IN</div>
+  <h1>RIFT ROYALE<br><span>SEASON X</span></h1>
+  <p class="desc">An original, playable top-down battle royale prototype inspired by the chaotic Season X era. Explore a hand-built island, loot weapons, fight AI rivals, survive the closing storm, and dash through unstable Rift Zones. Fan-made project — not an official Fortnite game.</p>
+  <div class="lobby-tabs">
+   <button class="lobby-tab selected" data-tab="lobby">LOBBY</button>
+   <button class="lobby-tab" data-tab="locker">LOCKER</button>
+   <button class="lobby-tab" data-tab="pass">BATTLE PASS</button>
+   <button class="lobby-tab" data-tab="quests">QUESTS</button>
+  </div>
+  <section class="lobby-panel" id="tab-lobby">
+   <div class="lobby-hero"><div><div class="kicker">SOLO • ISLAND QUEUE</div><h2>READY TO RIFT?</h2><p class="desc">Your drop. Your story. Survive the storm.</p></div><div class="hero-badge">X</div></div>
+   <div class="buttons"><button class="btn" id="start">DEPLOY TO ISLAND ▶</button><button class="btn secondary" id="how">HOW TO PLAY</button></div>
+   <div class="gridinfo"><div class="infobox"><b>21 FIGHTERS</b><small>AI rivals roam the island</small></div><div class="infobox"><b>5 RIFT ZONES</b><small>Strange energy hotspots</small></div><div class="infobox"><b>LOOT + BUILD</b><small>Collect gear and place cover</small></div></div>
+  </section>
+  <section class="lobby-panel hide" id="tab-locker">
+   <div class="kicker">YOUR COLLECTION</div><h2>LOCKER</h2>
+   <div class="locker-layout">
+    <div class="locker-preview">
+     <div class="preview-rarity" id="previewRarity">RARE OUTFIT</div>
+     <div class="locker-avatar" id="lockerAvatar"><div class="avatar-back"></div><div class="avatar-head"></div><div class="avatar-body"></div><div class="avatar-arm left"></div><div class="avatar-arm right"></div><div class="avatar-leg left"></div><div class="avatar-leg right"></div></div>
+     <div class="preview-name" id="previewName">RIFT RUNNER</div>
+     <div class="preview-desc" id="previewDesc">Born from a broken timeline.</div>
+     <button class="btn locker-equip" id="equipSkin">EQUIP OUTFIT</button>
+    </div>
+    <div class="locker-catalog">
+     <div class="locker-section-title">OUTFITS <small id="outfitCount">4 ITEMS</small></div>
+     <div class="skin-grid">
+      <button class="skin-card chosen" data-skin="cyan"><span class="skin-preview cyan-skin">●</span><b>RIFT RUNNER</b><small>RARE • OUTFIT</small></button>
+      <button class="skin-card" data-skin="ember"><span class="skin-preview ember-skin">●</span><b>EMBER X</b><small>EPIC • OUTFIT</small></button>
+      <button class="skin-card" data-skin="violet"><span class="skin-preview violet-skin">●</span><b>GLITCH GHOST</b><small>EPIC • OUTFIT</small></button>
+      <button class="skin-card" data-skin="lime"><span class="skin-preview lime-skin">●</span><b>TOXIC TRAIL</b><small>UNCOMMON • OUTFIT</small></button>
+     </div>
+     <div class="locker-section-title">BACK BLINGS <small>4 ITEMS</small></div>
+     <div class="cosmetic-grid">
+      <button class="cosmetic-card chosen" data-cosmetic="back" data-item="rift-core"><span>💠</span><b>RIFT CORE</b><small>RARE • BACK BLING</small></button>
+      <button class="cosmetic-card" data-cosmetic="back" data-item="mini-mech"><span>🤖</span><b>MINI MECH</b><small>EPIC • BACK BLING</small></button>
+      <button class="cosmetic-card" data-cosmetic="back" data-item="time-pack"><span>⌛</span><b>TIME PACK</b><small>RARE • BACK BLING</small></button>
+      <button class="cosmetic-card" data-cosmetic="back" data-item="none"><span>🚫</span><b>NONE</b><small>NO BACK BLING</small></button>
+     </div>
+     <div class="locker-section-title">PICKAXES <small>4 ITEMS</small></div>
+     <div class="cosmetic-grid">
+      <button class="cosmetic-card chosen" data-cosmetic="pickaxe" data-item="rift-axe"><span>⛏️</span><b>RIFT AXE</b><small>RARE • PICKAXE</small></button>
+      <button class="cosmetic-card" data-cosmetic="pickaxe" data-item="star-hammer"><span>🔨</span><b>STAR HAMMER</b><small>EPIC • PICKAXE</small></button>
+      <button class="cosmetic-card" data-cosmetic="pickaxe" data-item="pixel-blade"><span>🗡️</span><b>PIXEL BLADE</b><small>RARE • PICKAXE</small></button>
+      <button class="cosmetic-card" data-cosmetic="pickaxe" data-item="none"><span>🚫</span><b>NONE</b><small>NO PICKAXE</small></button>
+     </div>
+     <div class="locker-section-title">GLIDERS <small>4 ITEMS</small></div>
+     <div class="cosmetic-grid">
+      <button class="cosmetic-card chosen" data-cosmetic="glider" data-item="rift-wings"><span>🪽</span><b>RIFT WINGS</b><small>RARE • GLIDER</small></button>
+      <button class="cosmetic-card" data-cosmetic="glider" data-item="storm-sail"><span>⛵</span><b>STORM SAIL</b><small>EPIC • GLIDER</small></button>
+      <button class="cosmetic-card" data-cosmetic="glider" data-item="neon-board"><span>🛹</span><b>NEON BOARD</b><small>RARE • GLIDER</small></button>
+      <button class="cosmetic-card" data-cosmetic="glider" data-item="none"><span>🚫</span><b>NONE</b><small>NO GLIDER</small></button>
+     </div>
+     <div class="locker-section-title">EMOTES <small>4 ITEMS</small></div>
+     <div class="cosmetic-grid">
+      <button class="cosmetic-card chosen" data-cosmetic="emote" data-item="dance"><span>🕺</span><b>RIFT DANCE</b><small>RARE • EMOTE</small></button>
+      <button class="cosmetic-card" data-cosmetic="emote" data-item="gg"><span>🏆</span><b>GG</b><small>UNCOMMON • EMOTE</small></button>
+      <button class="cosmetic-card" data-cosmetic="emote" data-item="robot"><span>🤖</span><b>ROBOT</b><small>RARE • EMOTE</small></button>
+      <button class="cosmetic-card" data-cosmetic="emote" data-item="none"><span>🚫</span><b>NONE</b><small>NO EMOTE</small></button>
+     </div>
+    </div>
+   </div>
+   <div class="desc" id="skinStatus">Equipped: RIFT RUNNER • RIFT CORE • RIFT AXE • RIFT WINGS • RIFT DANCE</div>
+  </section>
+  <section class="lobby-panel hide" id="tab-pass">
+   <div class="kicker">SEASON X • FAN CONCEPT</div><h2>RIFT PASS</h2>
+   <div class="pass-progress"><div><b>LEVEL <span id="passLevel">1</span></b><small><span id="passXp">0</span> / 100 XP TO NEXT LEVEL</small></div><div class="meter"><div class="fill xp" id="passBar" style="width:0%"></div></div></div>
+   <div class="reward-grid">
+    <div class="reward-card unlocked"><span>🪙</span><b>100 RIFT COINS</b><small>LEVEL 1 • CLAIMED</small></div>
+    <div class="reward-card"><span>🪂</span><b>RIFT GLIDER</b><small>LEVEL 3</small></div>
+    <div class="reward-card"><span>⚡</span><b>VORTEX TRAIL</b><small>LEVEL 5</small></div>
+    <div class="reward-card"><span>👑</span><b>TIME KING</b><small>LEVEL 10</small></div>
+   </div>
+   <p class="desc">Earn prototype XP by surviving and eliminating rivals. This fan pass is cosmetic progression only.</p>
+  </section>
+  <section class="lobby-panel hide" id="tab-quests">
+   <div class="kicker">FIELD OBJECTIVES</div><h2>RIFT CHALLENGES</h2>
+   <div class="quest-row"><span>🎯</span><div><b>Warm-up round</b><small>Deal damage to rivals</small></div><strong id="questDamage">0 / 250</strong></div>
+   <div class="quest-row"><span>📦</span><div><b>Scavenger</b><small>Collect loot drops</small></div><strong id="questLoot">0 / 5</strong></div>
+   <div class="quest-row"><span>🌀</span><div><b>Rift traveler</b><small>Use your rift dash</small></div><strong id="questDash">0 / 3</strong></div>
+   <p class="desc">Objectives update during a match. Progress is kept for this session.</p>
+  </section>
+  <p class="desc" id="howText" style="display:none;margin-top:12px">Move with WASD or arrow keys. Aim with your mouse and hold click to shoot. Press E near loot to collect it. Q performs a rift dash. B places a temporary wall. Find glowing chests around the island for extra loot. On phones, use the movement pad and FIRE button.</p>
+ </div>
+</div>
+<div class="center hide" id="end">
+ <div class="card" style="text-align:center"><div class="kicker">MATCH COMPLETE</div><div class="endTitle" id="endTitle">VICTORY ROYALE!</div><p class="desc" id="endDesc" style="margin:12px auto">You survived the rift.</p><div class="buttons" style="justify-content:center"><button class="btn" id="again">PLAY AGAIN</button><button class="btn secondary" id="back">MAIN MENU</button></div></div>
+</div>
+<script>
+(()=>{
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),mini=document.getElementById('mini'),mx=mini.getContext('2d');
+let W=innerWidth,H=innerHeight,dpr=Math.min(devicePixelRatio||1,2);
+function resize(){W=innerWidth;H=innerHeight;canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}
+addEventListener('resize',resize);resize();
+const MAP={w:2600,h:1900};
+const locations=[
+{name:'DUSTY DEPOT',x:1280,y:900,desc:'Industrial hangars and plenty of cover.',color:'#bd9b6a',type:'depot'},
+{name:'TILTED TOWN',x:870,y:620,desc:'A time-rift western town. Watch the rooftops.',color:'#c79d70',type:'town'},
+{name:'RETAIL ROW',x:1750,y:690,desc:'Suburban blocks with scattered loot.',color:'#e1a0a0',type:'retail'},
+{name:'MEGA MALL',x:1950,y:1190,desc:'A huge shopping complex and risky loot.',color:'#9f9be5',type:'mall'},
+{name:'FATAL FIELDS',x:820,y:1330,desc:'Open farmland. Bring your own cover.',color:'#b4c778',type:'farm'},
+{name:'PARADISE PALMS',x:2130,y:1510,desc:'Hot sand, tall palms, and bright sunshine.',color:'#d8b777',type:'desert'},
+{name:'POLAR PEAK',x:520,y:320,desc:'Icy cliffs with a strange purple glow.',color:'#a7d7ed',type:'snow'},
+{name:'SUNNY STEPS',x:1450,y:350,desc:'Ancient stone terraces on a sunny ridge.',color:'#dfbd7c',type:'ruins'},
+{name:'SHIFTY SHAFTS',x:420,y:1050,desc:'Old mine tunnels and hidden supplies.',color:'#8c9b9c',type:'mine'},
+{name:'RIFT RESEARCH LAB',x:1530,y:1530,desc:'Scientists tried to understand the anomalies.',color:'#8b85d6',type:'lab'}
+];
+const rifts=[{x:870,y:620,r:180,name:'TILTED TIME RIFT'},{x:1750,y:690,r:155,name:'RETAIL GLITCH'},{x:1950,y:1190,r:170,name:'MALL LOOP'},{x:520,y:320,r:140,name:'POLAR FRACTURE'},{x:1530,y:1530,r:190,name:'RIFT LAB' }];
+const weapons=[
+{name:'ASSAULT RIFLE',ammo:30,reserve:150,mag:30,damage:18,rate:145,speed:780,spread:.045,pellets:1,color:'#ffdf70'},
+{name:'PUMP SHOTGUN',ammo:5,reserve:35,mag:5,damage:12,rate:620,speed:600,spread:.34,pellets:8,color:'#ff9b65'},
+{name:'SCOUT BURST',ammo:12,reserve:72,mag:12,damage:34,rate:390,speed:1000,spread:.018,pellets:1,color:'#77e5ff'},
+{name:'MED-MIST',ammo:3,reserve:0,mag:3,damage:0,rate:500,speed:0,spread:0,pellets:0,color:'#7dffae'},
+{name:'BUILD MODE',ammo:0,reserve:0,mag:0,damage:0,rate:300,speed:0,spread:0,pellets:0,color:'#b2a0ff'}
+];
+let career={xp:0,level:1,damage:0,loot:0,dashes:0},selectedSkin='cyan';
+let state,keys={},mouse={x:W/2,y:H/2,down:false},touchMove={x:0,y:0},touchFire=false,last=0,cam={x:0,y:0},toastTimer=0;
+function rand(a,b){return a+Math.random()*(b-a)}function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function circleRectHit(c,r){return c.x>r.x-c.r&&c.x<r.x+r.w+c.r&&c.y>r.y-c.r&&c.y<r.y+r.h+c.r}
+function makeWorld(){
+ const buildings=[],trees=[],rocks=[],loot=[],chests=[],bots=[],bullets=[],walls=[];
+ // scattered biome props and building clusters around POIs
+ locations.forEach((l,li)=>{
+  const count=l.type==='depot'?10:l.type==='town'?13:l.type==='mall'?8:7;
+  for(let i=0;i<count;i++){
+   const w=rand(40,105),h=rand(36,88),x=clamp(l.x+rand(-170,170),50,MAP.w-w-50),y=clamp(l.y+rand(-140,140),50,MAP.h-h-50);
+   buildings.push({x,y,w,h,color:l.color,roof:rand(0,1),hp:100});
+  }
+  for(let i=0;i<17;i++){trees.push({x:clamp(l.x+rand(-240,240),25,MAP.w-25),y:clamp(l.y+rand(-190,190),25,MAP.h-25),r:rand(10,21),type:rand(0,1)})}
+  for(let i=0;i<5;i++)loot.push({x:l.x+rand(-110,110),y:l.y+rand(-90,90),kind:['ammo','shield','med','rifle','shotgun','materials'][Math.floor(rand(0,6))],active:true});
+ });
+ for(let i=0;i<85;i++)trees.push({x:rand(35,MAP.w-35),y:rand(35,MAP.h-35),r:rand(9,20),type:rand(0,1)});
+ for(let i=0;i<60;i++)rocks.push({x:rand(20,MAP.w-20),y:rand(20,MAP.h-20),r:rand(6,18)});
+ for(let i=0;i<20;i++)loot.push({x:rand(50,MAP.w-50),y:rand(50,MAP.h-50),kind:['ammo','shield','med','rifle','materials'][Math.floor(rand(0,5))],active:true});
+ for(let i=0;i<18;i++)chests.push({x:rand(80,MAP.w-80),y:rand(80,MAP.h-80),active:true,opened:false});
+ const p={x:MAP.w/2,y:MAP.h/2,r:13,hp:100,shield:50,angle:0,speed:245,materials:80,rift:100,weapon:0,ammo:weapons.map(w=>w.ammo),reserve:weapons.map(w=>w.reserve),lastShot:0,lastDash:0,lastBuild:0,elims:0};
+ for(let i=0;i<20;i++){let a=rand(0,Math.PI*2),rr=rand(350,1100);bots.push({x:clamp(p.x+Math.cos(a)*rr,40,MAP.w-40),y:clamp(p.y+Math.sin(a)*rr,40,MAP.h-40),r:12,hp:rand(55,100),shield:rand(0,50),angle:rand(0,6),speed:rand(90,135),lastShot:0,think:rand(.1,1.5),target:null,dead:false,flash:0,color:['#ff6c78','#c77dff','#ffae4e','#66d9ff'][i%4]})}
+ return {p,buildings,trees,rocks,loot,chests,bots,bullets,walls,elapsed:0,storm:{x:MAP.w/2,y:MAP.h/2,r:1120,target:880,phase:1,next:55},running:true,won:false};
+}
+function start(){career={xp:0,level:1,damage:0,loot:0,dashes:0};updatePass();updateQuests();state=makeWorld();document.getElementById('menu').classList.add('hide');document.getElementById('end').classList.add('hide');toast('DROP COMPLETE — LOOT UP');last=performance.now()}
+document.getElementById('start').onclick=start;document.getElementById('again').onclick=start;document.getElementById('back').onclick=()=>{document.getElementById('end').classList.add('hide');document.getElementById('menu').classList.remove('hide')};
+document.getElementById('how').onclick=()=>{let e=document.getElementById('howText');e.style.display=e.style.display==='none'?'block':'none'};
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.style.opacity=1;toastTimer=2.2}
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(!state||!state.running)return;if('12345'.includes(e.key))selectWeapon(+e.key-1);if(e.key.toLowerCase()==='e')pickup();if(e.key.toLowerCase()==='q')dash();if(e.key.toLowerCase()==='b')buildWall();if(e.key.toLowerCase()==='r')reload()});
+addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+canvas.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY});
+canvas.addEventListener('mousedown',e=>{if(e.button===0)mouse.down=true});addEventListener('mouseup',()=>mouse.down=false);
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+document.querySelectorAll('.slot').forEach(el=>el.addEventListener('click',()=>selectWeapon(+el.dataset.slot)));
+function selectWeapon(i){if(!state)return;state.p.weapon=i;document.querySelectorAll('.slot').forEach(e=>e.classList.toggle('active',+e.dataset.slot===i));document.getElementById('weaponName').textContent=weapons[i].name;updateHud()}
+function reload(){if(!state)return;let p=state.p,i=p.weapon,w=weapons[i];if(i>=3||p.ammo[i]>=w.mag||p.reserve[i]<=0)return;let n=Math.min(w.mag-p.ammo[i],p.reserve[i]);p.ammo[i]+=n;p.reserve[i]-=n;toast('RELOADED')}
+function worldMouse(){return {x:mouse.x+cam.x-W/2,y:mouse.y+cam.y-H/2}}
+function moveEntity(e,dx,dy){let nx=clamp(e.x+dx,e.r,MAP.w-e.r),ny=clamp(e.y+dy,e.r,MAP.h-e.r);for(const b of state.buildings){if(circleRectHit({x:nx,y:ny,r:e.r},b)){if(!circleRectHit({x:nx,y:e.y,r:e.r},b))nx=e.x;else if(!circleRectHit({x:e.x,y:ny,r:e.r},b))ny=e.y;else{nx=e.x;ny=e.y}}}for(const w of state.walls){if(circleRectHit({x:nx,y:ny,r:e.r},w)){nx=e.x;ny=e.y}}e.x=nx;e.y=ny}
+function dash(){if(!state||!state.running)return;let p=state.p,now=state.elapsed;if(p.rift<35||now-p.lastDash<2.8)return;let a=p.angle;p.rift-=35;p.lastDash=now;career.dashes++;updateQuests();moveEntity(p,Math.cos(a)*185,Math.sin(a)*185);for(let i=0;i<15;i++)state.bullets.push({x:p.x+rand(-18,18),y:p.y+rand(-18,18),vx:rand(-80,80),vy:rand(-80,80),life:.35,r:3,color:'#c46aff',damage:0,owner:'rift'});toast('RIFT DASH!')}
+function buildWall(){if(!state||!state.running)return;let p=state.p;if(p.materials<10||state.elapsed-p.lastBuild<.25)return;let x=p.x+Math.cos(p.angle)*65,y=p.y+Math.sin(p.angle)*65;state.walls.push({x:x-27,y:y-7,w:54,h:14,hp:100,life:24});p.materials-=10;p.lastBuild=state.elapsed;toast('QUICK WALL BUILT')}
+function pickup(){if(!state)return;let p=state.p,nearChest=state.chests.find(c=>c.active&&dist(p,c)<52);if(nearChest){nearChest.active=false;nearChest.opened=true;let kinds=['ammo','shield','med','rifle','shotgun','materials'];let k=kinds[Math.floor(rand(0,kinds.length))];state.loot.push({x:nearChest.x+rand(-18,18),y:nearChest.y+rand(-18,18),kind:k,active:true});state.loot.push({x:nearChest.x+rand(-20,20),y:nearChest.y+rand(-20,20),kind:kinds[Math.floor(rand(0,kinds.length))],active:true});career.xp+=25;career.loot++;toast('CHEST OPENED • +25 XP');updatePass();return}let found=null;for(const l of state.loot){if(l.active&&dist(p,l)<43){found=l;break}}if(!found){toast('NO LOOT IN REACH');return}found.active=false;career.loot++;career.xp+=10;updatePass();switch(found.kind){case'ammo':p.reserve[0]+=36;p.reserve[1]+=8;toast('AMMO +36');break;case'shield':p.shield=Math.min(100,p.shield+25);toast('SHIELD +25');break;case'med':p.hp=Math.min(100,p.hp+35);toast('MED KIT +35 HP');break;case'rifle':p.ammo[0]=Math.min(weapons[0].mag,p.ammo[0]+15);p.reserve[0]+=45;toast('RIFLE AMMO FOUND');break;case'shotgun':p.ammo[1]=Math.min(weapons[1].mag,p.ammo[1]+3);p.reserve[1]+=12;toast('SHOTGUN SHELLS FOUND');break;case'materials':p.materials+=25;toast('MATERIALS +25');break}updateHud()}
+function fire(from,angle,weaponIndex,owner){const w=weapons[weaponIndex];for(let k=0;k<w.pellets;k++){let a=angle+rand(-w.spread,w.spread);state.bullets.push({x:from.x+Math.cos(a)*17,y:from.y+Math.sin(a)*17,vx:Math.cos(a)*w.speed,vy:Math.sin(a)*w.speed,life:1.5,r:weaponIndex===1?3:2,color:w.color,damage:w.damage,owner,weapon:weaponIndex})}}
+function hurt(e,damage){if(e.shield>0){let d=Math.min(e.shield,damage);e.shield-=d;damage-=d}if(damage>0)e.hp-=damage}
+function update(dt){
+ if(!state||!state.running)return;const s=state,p=s.p;s.elapsed+=dt;
+ let dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+touchMove.x,dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+touchMove.y;let len=Math.hypot(dx,dy);if(len>1){dx/=len;dy/=len}moveEntity(p,dx*p.speed*dt,dy*p.speed*dt);
+ cam.x=clamp(p.x, W/2,MAP.w-W/2);cam.y=clamp(p.y,H/2,MAP.h-H/2);
+ let wm=worldMouse();p.angle=Math.atan2(wm.y-p.y,wm.x-p.x);
+ if((mouse.down||touchFire)&&p.weapon<3&&s.elapsed-p.lastShot>weapons[p.weapon].rate/1000){if(p.ammo[p.weapon]>0){fire(p,p.angle,p.weapon,'player');p.ammo[p.weapon]--;p.lastShot=s.elapsed}else if(p.reserve[p.weapon]>0)reload();else toast('OUT OF AMMO — FIND LOOT')}
+ if(p.weapon===3&&keys[' ']&&s.elapsed-p.lastShot>.6&&p.ammo[3]>0){p.hp=Math.min(100,p.hp+30);p.ammo[3]--;p.lastShot=s.elapsed;toast('MED-MIST +30')}
+ if(p.weapon===4&&mouse.down)buildWall();
+ // rift energy and storm
+ p.rift=Math.min(100,p.rift+dt*2.2);
+ if(s.elapsed>s.storm.next){s.storm.phase++;s.storm.target=Math.max(140,s.storm.target-155);s.storm.next+=48;toast('STORM EYE SHRINKING!')}
+ s.storm.r=Math.max(s.storm.target,s.storm.r-dt*2.8);
+ let pd=Math.hypot(p.x-s.storm.x,p.y-s.storm.y);if(pd>s.storm.r){hurt(p,dt*7);if(Math.floor(s.elapsed)%3===0)document.getElementById('stormText').textContent='YOU ARE IN THE STORM!';}else document.getElementById('stormText').textContent='Safe zone shrinking in '+Math.max(0,Math.ceil(s.storm.next-s.elapsed))+'s';
+ // bots
+ for(const b of s.bots){if(b.dead)continue;b.think-=dt;b.flash=Math.max(0,b.flash-dt);let d=dist(b,p);if(b.think<=0){b.think=rand(.3,.8);if(d<560)b.target={x:p.x+rand(-80,80),y:p.y+rand(-80,80)};else b.target={x:clamp(b.x+rand(-250,250),40,MAP.w-40),y:clamp(b.y+rand(-250,250),40,MAP.h-40)}}if(b.target){let a=Math.atan2(b.target.y-b.y,b.target.x-b.x);b.angle=a;if(d>210)moveEntity(b,Math.cos(a)*b.speed*dt,Math.sin(a)*b.speed*dt);else if(d<125)moveEntity(b,-Math.cos(a)*b.speed*.7*dt,-Math.sin(a)*b.speed*.7*dt)}
+  if(d<440&&s.elapsed-b.lastShot>rand(.6,1.4)){b.lastShot=s.elapsed;let a=Math.atan2(p.y-b.y,p.x-b.x)+rand(-.18,.18);s.bullets.push({x:b.x,y:b.y,vx:Math.cos(a)*450,vy:Math.sin(a)*450,life:1.2,r:3,color:'#ff626f',damage:rand(5,11),owner:'bot'})}
+  if(Math.hypot(b.x-s.storm.x,b.y-s.storm.y)>s.storm.r) b.hp-=dt*4;
+  if(b.hp<=0){b.dead=true;s.loot.push({x:b.x,y:b.y,kind:['ammo','shield','med','materials'][Math.floor(rand(0,4))],active:true});if(d<500)toast('RIVAL ELIMINATED');}
+ }
+ // bullets collision
+ for(let i=s.bullets.length-1;i>=0;i--){let bu=s.bullets[i];bu.x+=bu.vx*dt;bu.y+=bu.vy*dt;bu.life-=dt;if(bu.life<=0||bu.x<0||bu.y<0||bu.x>MAP.w||bu.y>MAP.h){s.bullets.splice(i,1);continue}
+ let remove=false;if(bu.owner==='player'){for(const b of s.bots){if(!b.dead&&Math.hypot(b.x-bu.x,b.y-bu.y)<b.r+bu.r){hurt(b,bu.damage);career.damage+=bu.damage;career.xp+=Math.max(1,Math.round(bu.damage/8));updatePass();updateQuests();b.flash=.12;if(b.hp<=0){b.dead=true;p.elims++;career.xp+=100;updatePass();s.loot.push({x:b.x,y:b.y,kind:'ammo',active:true});toast('ELIMINATION +1')}remove=true;break}}}else if(bu.owner==='bot'&&Math.hypot(p.x-bu.x,p.y-bu.y)<p.r+bu.r){hurt(p,bu.damage);remove=true}
+ if(remove)s.bullets.splice(i,1);
+ }
+ for(const w of s.walls)w.life-=dt;s.walls=s.walls.filter(w=>w.life>0);
+ if(p.hp<=0){finish(false);return}let alive=s.bots.filter(b=>!b.dead).length+1;if(alive===1){finish(true);return}
+ let loc=locations.reduce((best,l)=>Math.hypot(l.x-p.x,l.y-p.y)<Math.hypot(best.x-p.x,best.y-p.y)?l:best,locations[0]);document.getElementById('locName').textContent=loc.name;document.getElementById('locDesc').textContent=loc.desc;
+ if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)document.getElementById('toast').style.opacity=0}
+ updateHud();
+}
+function updateHud(){if(!state)return;let p=state.p;document.getElementById('hpbar').style.width=clamp(p.hp,0,100)+'%';document.getElementById('shbar').style.width=clamp(p.shield,0,100)+'%';document.getElementById('riftbar').style.width=p.rift+'%';document.getElementById('hpnum').textContent=Math.ceil(p.hp);document.getElementById('shnum').textContent=Math.ceil(p.shield);document.getElementById('ammo').textContent=p.ammo[p.weapon];document.getElementById('reserve').textContent='/ '+p.reserve[p.weapon];document.getElementById('elims').textContent=p.elims;document.getElementById('alive').textContent=state.bots.filter(b=>!b.dead).length+1;let t=Math.floor(state.elapsed);document.getElementById('timer').textContent=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');document.getElementById('phase').textContent='PHASE '+state.storm.phase;document.getElementById('stormbar').style.width=100*state.storm.r/1120+'%'}
+function finish(win){state.running=false;document.getElementById('endTitle').textContent=win?'VICTORY ROYALE!':'ELIMINATED';document.getElementById('endDesc').textContent=win?`Island secured. ${state.p.elims} eliminations in ${document.getElementById('timer').textContent}.`:`You got knocked out with ${state.p.elims} eliminations. Queue up and try again.`;document.getElementById('end').classList.remove('hide')}
+function poly(points,fill,stroke){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.stroke()}}
+function draw(){
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);ctx.fillStyle='#244f48';ctx.fillRect(0,0,W,H);
+ if(!state){drawIslandPreview();requestAnimationFrame(draw);return}
+ const s=state,p=s.p;ctx.save();ctx.translate(W/2-cam.x,H/2-cam.y);
+ // ocean and island silhouette
+ ctx.fillStyle='#143c5a';ctx.fillRect(0,0,MAP.w,MAP.h);
+ ctx.beginPath();ctx.moveTo(90,360);ctx.lineTo(250,150);ctx.lineTo(720,90);ctx.lineTo(1190,145);ctx.lineTo(1650,95);ctx.lineTo(2220,250);ctx.lineTo(2510,610);ctx.lineTo(2480,1210);ctx.lineTo(2250,1710);ctx.lineTo(1750,1820);ctx.lineTo(1240,1770);ctx.lineTo(780,1830);ctx.lineTo(270,1580);ctx.lineTo(80,1120);ctx.closePath();ctx.fillStyle='#5e9c66';ctx.fill();ctx.strokeStyle='#a6d98b';ctx.lineWidth=8;ctx.stroke();
+ // biomes
+ poly([[100,350],[240,150],[720,90],[900,280],[760,500],[480,560],[260,470]],'#d9f0e5');
+ poly([[1770,1110],[2300,1000],[2480,1210],[2250,1710],[1750,1820],[1650,1520]],'#d7c17a');
+ poly([[100,1100],[260,920],[550,1000],[780,1300],[780,1830],[270,1580]],'#8caa60');
+ // water and roads
+ ctx.strokeStyle='#67c6d6';ctx.lineWidth=26;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(320,760);ctx.bezierCurveTo(650,890,880,780,1120,1000);ctx.bezierCurveTo(1420,1210,1650,1000,2050,1300);ctx.stroke();
+ ctx.strokeStyle='#e5d9a1';ctx.lineWidth=19;ctx.beginPath();ctx.moveTo(240,700);ctx.bezierCurveTo(650,540,1000,780,1280,900);ctx.bezierCurveTo(1580,1020,1810,580,2250,760);ctx.moveTo(820,300);ctx.bezierCurveTo(1000,620,1100,1200,820,1570);ctx.moveTo(1280,900);ctx.bezierCurveTo(1470,1180,1770,1410,2130,1510);ctx.stroke();
+ // forest flecks
+ for(const tr of s.trees){ctx.fillStyle=tr.type>.5?'#2f6d4d':'#39794d';ctx.beginPath();ctx.arc(tr.x,tr.y,tr.r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#80bd6d';ctx.beginPath();ctx.arc(tr.x-tr.r*.25,tr.y-tr.r*.3,tr.r*.48,0,Math.PI*2);ctx.fill()}
+ for(const rock of s.rocks){ctx.fillStyle='#7b9286';ctx.beginPath();ctx.ellipse(rock.x,rock.y,rock.r,rock.r*.7,.3,0,Math.PI*2);ctx.fill()}
+ // rift zones
+ for(let i=0;i<rifts.length;i++){const r=rifts[i],pulse=1+Math.sin(s.elapsed*3+i)*.07;ctx.save();ctx.translate(r.x,r.y);ctx.scale(pulse,pulse);ctx.strokeStyle='#bb65ff99';ctx.lineWidth=5;ctx.setLineDash([12,10]);ctx.beginPath();ctx.arc(0,0,r.r,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.strokeStyle='#e2b5ff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,r.r*.72,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#9d4be733';ctx.beginPath();ctx.arc(0,0,r.r*.72,0,Math.PI*2);ctx.fill();ctx.restore()}
+ // buildings
+ for(const b of s.buildings){ctx.fillStyle='#0004';ctx.fillRect(b.x+5,b.y+7,b.w,b.h);ctx.fillStyle=b.color;ctx.fillRect(b.x,b.y,b.w,b.h);ctx.fillStyle='#ffffff27';ctx.fillRect(b.x+3,b.y+3,b.w-6,5);ctx.fillStyle='#3a4550';ctx.fillRect(b.x+b.w*.18,b.y+b.h*.25,b.w*.2,b.h*.16);ctx.fillRect(b.x+b.w*.6,b.y+b.h*.25,b.w*.2,b.h*.16);ctx.fillStyle='#5c5147';ctx.fillRect(b.x+b.w*.4,b.y+b.h*.68,b.w*.2,b.h*.32);ctx.strokeStyle='#473f45';ctx.lineWidth=2;ctx.strokeRect(b.x,b.y,b.w,b.h)}
+ // location names
+ for(const l of locations){ctx.font='1000 17px system-ui';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='#1a2a35';ctx.strokeText(l.name,l.x,l.y-120);ctx.fillStyle='#fff5d2';ctx.fillText(l.name,l.x,l.y-120)}
+ // chests
+ for(const c of s.chests){if(!c.active)continue;ctx.fillStyle='#0005';ctx.fillRect(c.x-12,c.y-7,28,24);ctx.fillStyle='#7b4a22';ctx.fillRect(c.x-14,c.y-12,28,22);ctx.fillStyle='#ffd75a';ctx.fillRect(c.x-14,c.y-12,28,5);ctx.fillRect(c.x-2,c.y-8,4,17);ctx.strokeStyle='#ffe9a0';ctx.lineWidth=2;ctx.strokeRect(c.x-14,c.y-12,28,22);ctx.fillStyle='#fff2a5';ctx.beginPath();ctx.arc(c.x,c.y-17,2+Math.sin(s.elapsed*6)*1.2,0,Math.PI*2);ctx.fill()}
+ // loot
+ for(const l of s.loot){if(!l.active)continue;ctx.fillStyle=l.kind==='shield'?'#48c7ff':l.kind==='med'?'#62ffad':l.kind==='materials'?'#d2b8ff':'#ffe16d';ctx.beginPath();ctx.arc(l.x,l.y,8+Math.sin(s.elapsed*5+l.x)*1.5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='#172036';ctx.font='bold 9px system-ui';ctx.textAlign='center';ctx.fillText(l.kind==='materials'?'M':l.kind==='shield'?'S':l.kind==='med'?'H':'A',l.x,l.y+3)}
+ // walls
+ for(const w of s.walls){ctx.fillStyle='#b5d8ff';ctx.fillRect(w.x,w.y,w.w,w.h);ctx.strokeStyle='#e9f4ff';ctx.strokeRect(w.x,w.y,w.w,w.h);ctx.beginPath();ctx.moveTo(w.x+5,w.y+2);ctx.lineTo(w.x+w.w-5,w.y+w.h-2);ctx.moveTo(w.x+5,w.y+w.h-2);ctx.lineTo(w.x+w.w-5,w.y+2);ctx.stroke()}
+ // storm boundary, outside tint
+ ctx.save();ctx.beginPath();ctx.rect(0,0,MAP.w,MAP.h);ctx.arc(s.storm.x,s.storm.y,s.storm.r,0,Math.PI*2,true);ctx.fillStyle='#853fbd26';ctx.fill('evenodd');ctx.strokeStyle='#bd69ff';ctx.lineWidth=7;ctx.setLineDash([20,12]);ctx.beginPath();ctx.arc(s.storm.x,s.storm.y,s.storm.r,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+ // bots
+ for(const b of s.bots){if(b.dead)continue;ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.angle);ctx.fillStyle='#0005';ctx.beginPath();ctx.ellipse(0,5,14,10,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=b.flash?'#fff':b.color;ctx.beginPath();ctx.arc(0,0,b.r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#20263c';ctx.fillRect(3,-4,14,8);ctx.fillStyle='#f5f7ff';ctx.beginPath();ctx.arc(3,-4,2,0,Math.PI*2);ctx.fill();ctx.restore();ctx.fillStyle='#181e2d';ctx.fillRect(b.x-15,b.y-22,30,4);ctx.fillStyle='#ff6b79';ctx.fillRect(b.x-15,b.y-22,30*clamp(b.hp/100,0,1),4)}
+ // bullets
+ for(const b of s.bullets){ctx.fillStyle=b.color;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();ctx.shadowColor=b.color;ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0}
+ // player
+ ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.angle);ctx.fillStyle='#0006';ctx.beginPath();ctx.ellipse(0,5,17,12,0,0,Math.PI*2);ctx.fill();ctx.fillStyle=({cyan:'#52e5ff',ember:'#ff8b48',violet:'#c66bff',lime:'#a8f85a'})[selectedSkin]||'#52e5ff';ctx.beginPath();ctx.arc(0,0,p.r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f7fbff';ctx.beginPath();ctx.arc(4,-4,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#23314b';ctx.fillRect(3,-5,19,10);ctx.fillStyle='#ffe56d';ctx.fillRect(18,-3,9,6);ctx.restore();
+ // nearby pickup prompt
+ const nearChest=s.chests.find(c=>c.active&&dist(p,c)<55),near=s.loot.find(l=>l.active&&dist(p,l)<48);if(nearChest||near){ctx.fillStyle='#091525dd';ctx.fillRect(p.x-78,p.y+26,156,23);ctx.fillStyle=nearChest?'#ffe45b':'#fff';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillText(nearChest?'E  OPEN CHEST':'E  PICK UP '+near.kind.toUpperCase(),p.x,p.y+41)}
+ ctx.restore();
+ drawMinimap();
+ requestAnimationFrame(draw)
+}
+function drawIslandPreview(){ctx.fillStyle='#12334b';ctx.fillRect(0,0,W,H);ctx.save();ctx.translate(W/2- MAP.w*.45,H/2-MAP.h*.45);ctx.scale(.45,.45);ctx.fillStyle='#5e9c66';ctx.beginPath();ctx.moveTo(90,360);ctx.lineTo(250,150);ctx.lineTo(720,90);ctx.lineTo(1190,145);ctx.lineTo(1650,95);ctx.lineTo(2220,250);ctx.lineTo(2510,610);ctx.lineTo(2480,1210);ctx.lineTo(2250,1710);ctx.lineTo(1750,1820);ctx.lineTo(1240,1770);ctx.lineTo(780,1830);ctx.lineTo(270,1580);ctx.lineTo(80,1120);ctx.closePath();ctx.fill();for(const l of locations){ctx.fillStyle=l.color;ctx.fillRect(l.x-40,l.y-30,80,60);ctx.fillStyle='#fff';ctx.font='bold 24px system-ui';ctx.textAlign='center';ctx.fillText(l.name,l.x,l.y-45)}for(const r of rifts){ctx.strokeStyle='#d17cff';ctx.lineWidth=7;ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.stroke()}ctx.restore()}
+function drawMinimap(){if(!state)return;const w=mini.width,h=mini.height;mx.clearRect(0,0,w,h);mx.fillStyle='#173b4d';mx.fillRect(0,0,w,h);mx.fillStyle='#609c69';mx.beginPath();mx.ellipse(w*.5,h*.5,w*.47,h*.47,-.1,0,Math.PI*2);mx.fill();mx.fillStyle='#d5c27e';mx.beginPath();mx.ellipse(w*.79,h*.76,w*.18,h*.18,0,0,Math.PI*2);mx.fill();for(const r of rifts){mx.strokeStyle='#d77aff';mx.lineWidth=2;mx.beginPath();mx.arc(r.x/MAP.w*w,r.y/MAP.h*h,r.r/MAP.w*w,0,Math.PI*2);mx.stroke()}mx.strokeStyle='#c26aff';mx.lineWidth=2;mx.beginPath();mx.arc(state.storm.x/MAP.w*w,state.storm.y/MAP.h*h,state.storm.r/MAP.w*w,0,Math.PI*2);mx.stroke();for(const b of state.bots){if(!b.dead){mx.fillStyle='#ff6878';mx.fillRect(b.x/MAP.w*w-2,b.y/MAP.h*h-2,4,4)}}mx.fillStyle='#ffe45b';mx.beginPath();mx.arc(state.p.x/MAP.w*w,state.p.y/MAP.h*h,4,0,Math.PI*2);mx.fill()}
+let prev=performance.now();function loop(now){let dt=Math.min(.033,(now-prev)/1000||0);prev=now;update(dt);requestAnimationFrame(loop)}requestAnimationFrame(loop);requestAnimationFrame(draw);
+
+function updatePass(){let level=Math.floor(career.xp/100)+1,progress=career.xp%100;document.getElementById('passLevel').textContent=level;document.getElementById('passXp').textContent=progress;document.getElementById('passBar').style.width=progress+'%';document.querySelectorAll('.reward-card').forEach((el,i)=>{let needed=[1,3,5,10][i];el.classList.toggle('unlocked',level>=needed)})}
+function updateQuests(){document.getElementById('questDamage').textContent=Math.min(250,Math.floor(career.damage))+' / 250';document.getElementById('questLoot').textContent=Math.min(5,career.loot)+' / 5';document.getElementById('questDash').textContent=Math.min(3,career.dashes)+' / 3'}
+document.querySelectorAll('.lobby-tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.lobby-tab').forEach(b=>b.classList.toggle('selected',b===btn));document.querySelectorAll('.lobby-panel').forEach(p=>p.classList.add('hide'));document.getElementById('tab-'+btn.dataset.tab).classList.remove('hide')}));
+
+const lockerItems={
+ cyan:{name:'RIFT RUNNER',rarity:'RARE OUTFIT',desc:'Born from a broken timeline.',color:'#52e5ff'},
+ ember:{name:'EMBER X',rarity:'EPIC OUTFIT',desc:'Drops in hot and leaves a spark.',color:'#ff8b48'},
+ violet:{name:'GLITCH GHOST',rarity:'EPIC OUTFIT',desc:'A shadow from the other side.',color:'#c66bff'},
+ lime:{name:'TOXIC TRAIL',rarity:'UNCOMMON OUTFIT',desc:'Unpredictable, bright, and bold.',color:'#a8f85a'}
+};
+let equipped={skin:'cyan',back:'rift-core',pickaxe:'rift-axe',glider:'rift-wings',emote:'dance'};
+let pendingSkin='cyan';
+function refreshLocker(){
+ const it=lockerItems[pendingSkin];document.getElementById('previewName').textContent=it.name;document.getElementById('previewRarity').textContent=it.rarity;document.getElementById('previewDesc').textContent=it.desc;document.getElementById('lockerAvatar').style.setProperty('--avatar-color',it.color);
+ document.querySelectorAll('.skin-card').forEach(b=>b.classList.toggle('chosen',b.dataset.skin===pendingSkin));
+ document.getElementById('equipSkin').textContent=equipped.skin===pendingSkin?'EQUIPPED ✓':'EQUIP OUTFIT';
+ const labels={back:{'rift-core':'RIFT CORE','mini-mech':'MINI MECH','time-pack':'TIME PACK','none':'NONE'},pickaxe:{'rift-axe':'RIFT AXE','star-hammer':'STAR HAMMER','pixel-blade':'PIXEL BLADE','none':'NONE'},glider:{'rift-wings':'RIFT WINGS','storm-sail':'STORM SAIL','neon-board':'NEON BOARD','none':'NONE'},emote:{dance:'RIFT DANCE',gg:'GG',robot:'ROBOT',none:'NONE'}};
+ document.querySelectorAll('.cosmetic-card').forEach(b=>b.classList.toggle('chosen',equipped[b.dataset.cosmetic]===b.dataset.item));
+ document.getElementById('skinStatus').textContent='Equipped: '+lockerItems[equipped.skin].name+' • '+labels.back[equipped.back]+' • '+labels.pickaxe[equipped.pickaxe]+' • '+labels.glider[equipped.glider]+' • '+labels.emote[equipped.emote];
+}
+document.querySelectorAll('.skin-card').forEach(btn=>btn.addEventListener('click',()=>{pendingSkin=btn.dataset.skin;refreshLocker()}));
+document.getElementById('equipSkin').addEventListener('click',()=>{equipped.skin=pendingSkin;selectedSkin=pendingSkin;refreshLocker();if(state)toast('OUTFIT EQUIPPED')});
+document.querySelectorAll('.cosmetic-card').forEach(btn=>btn.addEventListener('click',()=>{equipped[btn.dataset.cosmetic]=btn.dataset.item;refreshLocker();if(state)toast('COSMETIC EQUIPPED')}));
+refreshLocker();
+
+
+// touch controls
+const stick=document.getElementById('stick'),nub=document.getElementById('nub');let stickId=null,center={x:0,y:0};
+stick.addEventListener('pointerdown',e=>{stickId=e.pointerId;stick.setPointerCapture(e.pointerId);const r=stick.getBoundingClientRect();center={x:r.left+r.width/2,y:r.top+r.height/2};stickMove(e)});
+stick.addEventListener('pointermove',e=>{if(e.pointerId===stickId)stickMove(e)});
+function stickMove(e){let dx=e.clientX-center.x,dy=e.clientY-center.y,l=Math.hypot(dx,dy),m=34;if(l>m){dx=dx/l*m;dy=dy/l*m}nub.style.left=(34+dx)+'px';nub.style.top=(34+dy)+'px';touchMove={x:dx/m,y:dy/m};if(state&&Math.hypot(dx,dy)>8)state.p.angle=Math.atan2(dy,dx)}
+function resetStick(){stickId=null;touchMove={x:0,y:0};nub.style.left='34px';nub.style.top='34px'}stick.addEventListener('pointerup',resetStick);stick.addEventListener('pointercancel',resetStick);
+const firebtn=document.getElementById('firebtn');firebtn.addEventListener('pointerdown',e=>{touchFire=true;firebtn.setPointerCapture(e.pointerId)});firebtn.addEventListener('pointerup',()=>touchFire=false);firebtn.addEventListener('pointercancel',()=>touchFire=false);
+})();
+</script>
+</body>
+</html>
